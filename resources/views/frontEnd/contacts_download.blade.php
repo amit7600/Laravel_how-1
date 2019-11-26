@@ -10,6 +10,9 @@ thead{
     <div id="content" class="container">
         <div class="container-fluid p-0" style="margin-right: 0">
             <h3>{!! $layout->header_pdf !!}</h3>
+            <div>
+                <img src="{{$contact_map_image}}">
+            </div>
             <div class="col-md-8 pt-15 pr-0">
                 <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-organization">
                     <thead>
