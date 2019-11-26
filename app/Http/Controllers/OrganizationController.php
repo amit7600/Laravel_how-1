@@ -709,7 +709,6 @@ class OrganizationController extends Controller
         $organization->organization_denomination = $request->organization_organization_denomination;
         $organization->organization_judicatory_body = $request->organization_organization_judicatory_body;
         $organization->organization_type = $request->organization_organization_type;
-        // $organization->organization_locations = $request->organization_organization_facility_address;
         $organization->organization_url = $request->organization_organization_website;
         $organization->organization_facebook = $request->organization_organization_facebook;
         $organization->organization_c_board = $request->organization_organization_c_board; 
