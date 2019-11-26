@@ -100,7 +100,8 @@ button[data-id="contact_zipcode"] {
 <div class="wrapper">
     <!-- Page Content Holder -->
     <div id="contacts-content" class="container">
-        <form action="/contacts/action_group" method="GET">
+        <form action="/contacts/action_group" id="contacts_form" method="POST">
+        {{ csrf_field() }}
             <div class="row">
                 <div class="col-md-6 p-10">                        
                     <div class="form-group row">
@@ -223,6 +224,7 @@ button[data-id="contact_zipcode"] {
                     <input type="hidden" id="contact_languages_list" name="contact_languages_list">
                     <input type="hidden" id="contact_borough_list" name="contact_borough_list">
                     <input type="hidden" id="contact_zipcode_list" name="contact_zipcode_list">
+                    <input type="hidden" id="contact_map_image" name="contact_map_image">
 
                     <div class="form-group row">
                         <div class="col-sm-12 col-xs-12" id="clear-btn-div">
@@ -626,6 +628,27 @@ button[data-id="contact_zipcode"] {
                                 console.log('=========after filter===========');
                                 console.log(marks);                               
                             });
+                            $('#download_pdf').on('click', function(e) {
+                                e.preventDefault();
+                                console.log(map);
+                                var center_lat = map.center.lat();
+                                var center_lng = map.center.lng();
+                                // var zoom = map.zoom;
+                                var zoom = 10;
+                                var maptype = map.mapTypeId;
+                                var img_url = 'https://maps.googleapis.com/maps/api/staticmap?center='+ center_lat + ', ' + center_lng +
+                                         '&zoom='+zoom+'&size=600x300&maptype=' + maptype + '&key=AIzaSyDHW59pLhUQA4IODjApYTVnBdav32ORYYA'
+                                console.log(markers);
+                                for(i = 0; i < markers.length; i ++) {
+                                    var lat = markers[i].position.lat();
+                                    var lng = markers[i].position.lng();
+                                    var markers_param = "&markers="+ lat + ", " + lng;
+                                    img_url += markers_param;
+                                }
+                                console.log(img_url);
+                                $('input#contact_map_image').val(img_url);
+                                $('#contacts_form').submit();
+                            });
                         },
                         error: function (data) {
                             if (data.status == 0 || data.status == 414) {
@@ -694,6 +717,8 @@ button[data-id="contact_zipcode"] {
             $(this).trigger('click');
         }
     });
+
+    
 
     $('select#contact_borough').on('change', function() {
         
