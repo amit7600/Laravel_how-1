@@ -677,8 +677,7 @@ class ContactController extends Controller
                 
                 break;
 
-            case 'download_pdf':
-
+            case null:
                 $filter_religion = $request->input('religion_list');
                 $filter_faith_tradition = $request->input('faith_tradition_list');
                 $filter_denomination = $request->input('denomination_list');
@@ -690,6 +689,8 @@ class ContactController extends Controller
                 $filter_contact_languages = $request->input('contact_languages_list');
                 $filter_contact_borough = $request->input('contact_borough_list');
                 $filter_contact_zipcode = $request->input('contact_zipcode_list'); 
+
+                $contact_map_image = $request->input('contact_map_image');
 
                 $contacts = Contact::orderBy('contact_recordid', 'DESC'); 
 
@@ -798,7 +799,7 @@ class ContactController extends Controller
 
                 $layout = Layout::find(1);
                 set_time_limit(0);
-                $pdf = PDF::loadView('frontEnd.contacts_download', compact('contacts', 'layout'));
+                $pdf = PDF::loadView('frontEnd.contacts_download', compact('contacts', 'layout', 'contact_map_image'));
                 return $pdf->download('contacts.pdf');
 
                 break;
