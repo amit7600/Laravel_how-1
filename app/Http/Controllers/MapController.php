@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
 use App\Map;
+use Geolocation;
+use Geocode;
+use Spatie\Geocoder\Geocoder;
+use App\Location;
 use Image;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -37,8 +40,10 @@ class MapController extends Controller
     public function index()
     {
         $map = Map::find(1);
-
-        return view('backEnd.pages.map', compact('map'));
+        $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
+        $invalid_location_info_count = Location::whereNull('location_name')->count();
+        $recently_geocoded_numbers = 0;
+        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'recently_geocoded_numbers'));
     }
 
     /**
@@ -64,7 +69,8 @@ class MapController extends Controller
         $map->state=$request->state;
         $map->lat=$request->lat;
         $map->long=$request->long;
-        $map->zoom=$request->zoom;
+        $map->zoom=$request->zoom;       
+        $map->zoom_profile=$request->profile_zoom;
 
         $map->save();
 
@@ -124,6 +130,7 @@ class MapController extends Controller
             $map->lat=$request->input('lat');
             $map->long=$request->input('long');
             $map->zoom=$request->input('zoom');
+            $map->zoom_profile=$request->input('profile_zoom');
         }
         else {
             $map->active = 0;
@@ -168,4 +175,43 @@ class MapController extends Controller
 
         echo url('/uploads/'. $fileName);
     }
+
+    public function scan_ungeocoded_location(Request $request) {
+        $map = Map::find(1);
+        $geocoding_status = 'Not Started';
+        $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
+        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'geocoding_status'));
+    }
+
+    public function apply_geocode(Request $request) {
+        $map = Map::find(1);
+        
+        $ungeocoded_location_info_list = Location::whereNull('location_latitude')->get();
+        $invalid_location_info_count = Location::whereNull('location_name')->count();
+
+        $client = new \GuzzleHttp\Client();
+        $geocoder = new Geocoder($client);
+        
+        $geocode_api_key = env('GEOCODE_GOOGLE_APIKEY');
+        $geocoder->setApiKey($geocode_api_key);
+        $recently_geocoded_numbers = 0;
+
+        foreach ($ungeocoded_location_info_list as $key => $location_info) {
+            $location_name = $location_info->location_name;
+            if (!is_null($location_name)) {
+                $response = $geocoder->getCoordinatesForAddress($location_name);
+                $latitude = $response['lat'];
+                $longitude = $response['lng'];
+                $location_info->location_latitude = $latitude;
+                $location_info->location_longitude = $longitude;
+                $location_info->save();
+                $recently_geocoded_numbers = $recently_geocoded_numbers + 1;
+            }
+        }
+
+        $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
+        $recently_geocoded_numbers = $ungeocoded_location_numbers - $invalid_location_info_count;
+        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'recently_geocoded_numbers'));
+    }
+
 }
