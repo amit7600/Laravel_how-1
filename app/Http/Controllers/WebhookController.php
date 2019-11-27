@@ -57,12 +57,13 @@ class WebhookController extends Controller
     public function inbound_email(Request $request)
     {
         try {
-            $to = $request->get("To");
-            return $request;
-            $from = $request->input("From");
-            $body = $request->input("Text");
-            $subject = $request->input("Subject");
-            $num_attachments = $request->input("attachments");
+            \Log::info($request);
+
+            $to = $request->input("to");
+            $from = $request->input("from");
+            $body = $request["text"];
+            $subject = $request->input("subject");
+            $num_attachments = $request->input("attachment-info");
 
             $webhook = new CampaignReport();
             $webhook->body = $body;

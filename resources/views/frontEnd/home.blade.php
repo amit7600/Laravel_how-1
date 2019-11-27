@@ -25,32 +25,9 @@ Home
         color: yellow;
     }
 
-    .home-browse-list h4{
-        color: yellow;
+    .home-browse-list p {
+        font-weight: 200;
     }
-
-    .home-browse-list a .icon {
-        width: 120px;
-        height: 120px;
-        background-color: rgba(0,0,0,.5);
-        margin: 0 auto 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        -webkit-border-radius: 50%;
-        -moz-border-radius: 50%;
-        border-radius: 50%;
-    }
-
-    .home-browse-list a .icon:hover {
-        background-color: #f9ad19;        
-    }
-
-    .home-browse-list a .icon span {
-        font-size: 50px;
-        color: white;
-    }
-
 
 </style>
 <link href="{{asset('css/treeview.css')}}" rel="stylesheet">
@@ -64,45 +41,48 @@ Home
                     {!! $home->sidebar_content !!}
                 </div>
             </div>
-            <div class="col-lg-6 col-sm-12 col-md-6 home-browse-list" style="text-align: center;">
+            <div class="col-lg-6 col-sm-6 col-md-6 home-browse-list" style="text-align: left;">
                 <h1>Browse</h1>
-                <div class="row">
-                    <div class="col-lg-12 col-sm-12 col-md-12" style="text-align: center;">
-                        <a href="/organizations">  
-                            <div class="icon organizations">
-                                <span>O</span>
-                            </div>                         
-                            <h4 class="text-shadow-1 mb0">Organizations</h4>
-                        </a>
-                    </div>                    
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-action flex-column align-items-start" href="/organizations">
+                        <h4 class="list-group-item-heading mt-0 mb-5"> 
+                            Organizations
+                        </h4>
+                        <p class="mb-0">There is data table for organizations in this page. And this page has a few selectors for filter and google map. Filter by selectors and google map are available. And filtered data are available to export as pdf or csv. </p>
+                    </a>
+                    <a class="list-group-item list-group-item-action flex-column align-items-start" href="/contacts">
+                        <h4 class="list-group-item-heading mt-0 mb-5"> 
+                            Contacts
+                        </h4>
+                        <p class="mb-0">There is data table for contacts in this page. And this page has a few selectors for filter and google map. Filter by selectors and google map are available. And adding contacts to group is available. And also, filtered data are available to export as pdf or csv.</p>
+                    </a>
+                    <a class="list-group-item list-group-item-action flex-column align-items-start" href="/facilities">
+                        <h4 class="list-group-item-heading mt-0 mb-5"> 
+                            Facilities
+                        </h4>
+                        <p class="mb-0">There is data table for facilities in this page. And this page has a few selectors for filter and google map. Filter by selectors and google map are available. And filtered data are available to export as pdf or csv.</p>
+                    </a>
+                    <a class="list-group-item list-group-item-action flex-column align-items-start" href="/groups">
+                        <h4 class="list-group-item-heading mt-0 mb-5"> 
+                            Groups
+                        </h4>
+                        <p class="mb-0">There is data table for groups in this page. Every group can be edited and removed. And members of each group are being shown in this page</p>
+                    </a>
                 </div>
-                <div class="row">
-                    <div class="col-lg-6 col-sm-6 col-md-6" style="text-align: center;">
-                        <a href="/contacts">
-                            <div class="icon contacts">
-                                <span>C</span>
-                            </div>
-                            <h4 class="text-shadow-1 mb0">Contacts</h4>
-                        </a>
-                    </div>
-                    <div class="col-lg-6 col-sm-6 col-md-6" style="text-align: center;">
-                        <a href="/facilities">
-                            <div class="icon facilities">
-                                <span>F</span>
-                            </div>
-                            <h4 class="text-shadow-1 mb0">Facilities</h4>
-                        </a>
-                    </div>
-                </div>
-                <div class="row">                    
-                    <div class="col-lg-12 col-sm-12 col-md-12" style="text-align: center;">
-                        <a href="/groups">
-                            <div class="icon groups">
-                                <span>G</span>
-                            </div>
-                            <h4 class="text-shadow-1 mb0">Groups</h4>
-                        </a>
-                    </div>
+                <h1>Communicate</h1>
+                <div class="list-group">
+                    <a class="list-group-item list-group-item-action flex-column align-items-start" href="/campaigns">
+                        <h4 class="list-group-item-heading mt-0 mb-5"> 
+                            Campaigns
+                        </h4>
+                        <p class="mb-0">This page shows data related to campaigns</p>
+                    </a>
+                    <a class="list-group-item list-group-item-action flex-column align-items-start" href="/messages">
+                        <h4 class="list-group-item-heading mt-0 mb-5"> 
+                            Messages
+                        </h4>
+                        <p class="mb-0">This page is for manage messages.</p>
+                    </a>
                 </div>
             </div>
         </div>
@@ -123,6 +103,11 @@ $(document).ready(function(){
         console.log(id);
         $("#category_" +  id).prop( "checked", true );
         $("#filter").submit();
+    });
+    $('.list-group a').hover(function () {
+        $(this).addClass('active');
+    }, function () {
+        $(this).removeClass('active');
     });
 });
 </script>
