@@ -43,7 +43,8 @@ class MapController extends Controller
         $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
         $invalid_location_info_count = Location::whereNull('location_name')->count();
         $recently_geocoded_numbers = 0;
-        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'recently_geocoded_numbers'));
+        $recently_enriched_numbers = 0;
+        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'recently_geocoded_numbers', 'recently_enriched_numbers'));
     }
 
     /**

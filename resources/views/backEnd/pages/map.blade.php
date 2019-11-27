@@ -80,9 +80,6 @@ Map Settings
               </div>
 
              {!! Form::close() !!}
-
-             
-          
           
           </div>
         </div>
@@ -157,6 +154,77 @@ Map Settings
                     @else
                     <h5 id="recent_geocoded_number" style="color: blue; font-style: italic;">
                       All valid locations have already been geocoded before.
+                    </h5> 
+                    @endif
+                  </div>
+                </div> 
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Enrich</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <div class="row">              
+              <div class="col-md-8"> 
+                <div class="item form-group">
+                  <label class="control-label col-md-6 col-sm-6 col-xs-12" for="email">Scan database for enrichable locations
+                  </label>
+                  <div class="col-md-4 col-sm-4 col-xs-12">
+                    <a class="btn btn-primary open-td" href="/scan_enrichable_location/" id="scan-enrich-btn" style="color: white;">Scan</a>                    
+                  </div>
+                </div> 
+              </div>
+
+              <div class="col-md-8"> 
+                <div class="item form-group">
+                  <label class="control-label col-md-6 col-sm-6 col-xs-12" for="email">Output number of fields without additional NYC data fields
+                  </label>
+                  <div class="col-md-4 col-sm-4 col-xs-12">
+                    <h5 id="invalid_location_numbers" style="color: blue; font-style: italic;">
+                      0
+                    </h5>
+                  </div>
+                </div> 
+              </div>
+
+              <div class="col-md-8"> 
+                <div class="item form-group">
+                  <label class="control-label col-md-6 col-sm-6 col-xs-12" for="email">Enrich these locations
+                  </label>
+                  <div class="col-md-4 col-sm-4 col-xs-12">
+                    <a class="btn btn-danger open-td" href="/apply_enrich/" id="enrich-btn" style="color: white;">Enrich</a>                    
+                  </div>
+                </div> 
+              </div>
+
+              <div class="col-md-8"> 
+                <div class="item form-group">
+                  <label class="control-label col-md-6 col-sm-6 col-xs-12" for="email">Output status of the enrichment
+                  </label>
+                  <div class="col-md-4 col-sm-4 col-xs-12">
+                    @if ($recently_enriched_numbers != 0)
+                    <h5 id="recent_enriched_number" style="color: blue; font-style: italic;">
+                      {{$recently_geocoded_numbers}} data have just been enriched.
+                    </h5>
+                    @else
+                    <h5 id="recent_enriched_number" style="color: blue; font-style: italic;">
+                      All valid locations have already been enriched before.
                     </h5> 
                     @endif
                   </div>
