@@ -86,7 +86,8 @@ button[data-id="borough"] {
 <div class="wrapper">
     <!-- Page Content Holder -->
     <div id="organizations-content" class="container">
-        <form action="/organizations/action_group" method="GET">
+        <form action="/organizations/action_group" id="organizations_form" method="POST">
+        {{ csrf_field() }}
             <div class="row">
                 <div class="col-md-6 p-20">                        
                     <div class="form-group row">
@@ -175,6 +176,8 @@ button[data-id="borough"] {
                         <div id="map" style="width:initial;margin-top: 10px;height: 50vh;"></div>
                     </div>
                 </div>
+
+                <input type="hidden" id="organization_map_image" name="organization_map_image">
 
                 <div class="col-md-12">
                     <div class="form-group row mt-5">
@@ -488,6 +491,26 @@ button[data-id="borough"] {
                                 sessionStorage.setItem('check_marks', 'true');
                                 console.log('=========after filter===========');
                                 console.log(marks);                               
+                            });
+
+                            $('#download_pdf').on('click', function(e) {
+                                e.preventDefault();                               
+                                var center_lat = map.center.lat();
+                                var center_lng = map.center.lng();
+                                // var zoom = map.zoom;
+                                var zoom = 10;
+                                var maptype = map.mapTypeId;
+                                var img_url = 'https://maps.googleapis.com/maps/api/staticmap?center='+ center_lat + ', ' + center_lng +
+                                         '&zoom='+zoom+'&size=600x300&maptype=' + maptype + '&key=AIzaSyDHW59pLhUQA4IODjApYTVnBdav32ORYYA'
+                                for(i = 0; i < Math.min(25, markers.length); i ++) {
+                                    var lat = markers[i].position.lat();
+                                    var lng = markers[i].position.lng();
+                                    var markers_param = "&markers="+ lat + ", " + lng;
+                                    img_url += markers_param;
+                                }
+                                console.log(img_url);
+                                $('input#organization_map_image').val(img_url);
+                                $('#organizations_form').submit();
                             });
                         },
                         error: function (data) {

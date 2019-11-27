@@ -22,7 +22,7 @@
         "nesbot/carbon": "2.0.0-beta.2 as 1.25.0",
         "roland/crud": "dev-master",
         "sendgrid/sendgrid": "^7.3",
-        "spatie/geocoder": "^3.4",
+        "spatie/geocoder": "^3.6",
         "stevebauman/location": "^3.0",
         "twilio/sdk": "^5.38",
         "usmanhalalit/laracsv": "^2.0"

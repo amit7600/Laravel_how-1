@@ -299,6 +299,7 @@ class OrganizationController extends Controller
     }
 
     public function group_operation(Request $request) {
+      
         switch ($request->input('btn_submit')) {
             case 'download_csv':
 
@@ -371,13 +372,14 @@ class OrganizationController extends Controller
                 
                 break;
 
-            case 'download_pdf':
+            case null:
 
                 $filter_religion = $request->input('religion_list');
                 $filter_faith_tradition = $request->input('faith_tradition_list');
                 $filter_denomination = $request->input('denomination_list');
                 $filter_judicatory_body = $request->input('judicatory_body_list');
                 $filter_type = $request->input('type_list');
+                $organization_map_image = $request->input('organization_map_image');
 
                 $organizations = Organization::orderBy('organization_recordid', 'DESC');
 
@@ -424,7 +426,7 @@ class OrganizationController extends Controller
                 
                 $layout = Layout::find(1);
                 set_time_limit(0);
-                $pdf = PDF::loadView('frontEnd.organizations_download', compact('organizations', 'layout'));
+                $pdf = PDF::loadView('frontEnd.organizations_download', compact('organizations', 'layout', 'organization_map_image'));
                 return $pdf->download('organizations.pdf');
 
                 break;
