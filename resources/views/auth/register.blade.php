@@ -71,7 +71,11 @@ Register
                 <div class="cols-sm-10">
                   <div class="input-group">
                     <span class="input-group-addon"><i class="fa fa-home fa" aria-hidden="true"></i></span>
-                    {!! Form::text('organization', null, ['class' => 'form-control','placeholder '=>'organization']) !!}
+                    <select class="form-control selectpicker" data-live-search="true" id="organization" name="organization">
+                    @foreach($organization_name_list as $key => $organization)
+                        <option value="{{$organization->organization_name}}">{{$organization->organization_name}}</option>
+                    @endforeach
+                    </select>
                   </div>
                    {!! $errors->first('organization', '<p class="help-block">:message</p>') !!}
                 </div>

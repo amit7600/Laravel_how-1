@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Layout;
+use App\Organization;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -56,7 +57,9 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         $layout = Layout::first();
-        return view('auth.register', compact('layout'));
+        $organization_list = ['aaa', 'bbb'];
+        $organization_name_list = Organization::select("organization_name")->distinct()->get();
+        return view('auth.register', compact('layout', 'organization_name_list'));
     }
 
     public function register(Request $request){
