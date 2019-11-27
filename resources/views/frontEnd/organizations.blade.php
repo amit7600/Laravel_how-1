@@ -498,11 +498,11 @@ button[data-id="borough"] {
                                 var center_lat = map.center.lat();
                                 var center_lng = map.center.lng();
                                 // var zoom = map.zoom;
-                                var zoom = 10;
+                                var zoom = 12;
                                 var maptype = map.mapTypeId;
                                 var img_url = 'https://maps.googleapis.com/maps/api/staticmap?center='+ center_lat + ', ' + center_lng +
                                          '&zoom='+zoom+'&size=600x300&maptype=' + maptype + '&key=AIzaSyDHW59pLhUQA4IODjApYTVnBdav32ORYYA'
-                                for(i = 0; i < Math.min(25, markers.length); i ++) {
+                                for(i = 0; i < Math.min(60  , markers.length); i ++) {
                                     var lat = markers[i].position.lat();
                                     var lng = markers[i].position.lng();
                                     var markers_param = "&markers="+ lat + ", " + lng;
