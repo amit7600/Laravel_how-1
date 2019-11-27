@@ -9,16 +9,16 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 Route::auth();
 // this route for response incoming message
 Route::get('forward', 'WebhookController@index');
 
 // this route for response incoming email
-Route::get('inbound', 'WebhookController@inbound_email');
+Route::post('inbound', 'WebhookController@inbound_email');
 
-Route::group(['middleware' => ['web', 'auth'] ], function () {
-    
+Route::group(['middleware' => ['web', 'auth']], function () {
+
     Route::get('/', ['uses' => 'HomeController@home']);
     Route::get('/home', function () {
         //return view('welcome');
@@ -29,9 +29,8 @@ Route::group(['middleware' => ['web', 'auth'] ], function () {
         return redirect('/login');
     });
 
-
     Route::match(['get', 'post'], '/search', [
-        'uses'          => 'ExploreController@geocode'
+        'uses' => 'ExploreController@geocode',
     ]);
 
     Route::get('/about', ['uses' => 'HomeController@about']);
@@ -49,7 +48,7 @@ Route::group(['middleware' => ['web', 'auth'] ], function () {
     Route::get('/contact/{id}', 'ContactController@contact');
     Route::get('/contact/{id}/edit', 'ContactController@edit');
     Route::get('/contact/{id}/update', 'ContactController@update');
-    Route::get('/contact/{id}/add_group', 'ContactController@add_group');    
+    Route::get('/contact/{id}/add_group', 'ContactController@add_group');
     Route::get('/contact/{id}/{group_name}/update_group', 'ContactController@update_group');
     Route::get('/contact_create', 'ContactController@create');
     Route::get('/add_new_contact', 'ContactController@add_new_contact');
@@ -93,13 +92,12 @@ Route::group(['middleware' => ['web', 'auth'] ], function () {
     Route::get('/explore/category_{id}', 'ExploreController@category');
     Route::get('/explore/cityagency_{id}', 'ExploreController@cityagency');
 
-
     //download pdf
     Route::get('/download_service/{id}', 'ServiceController@download');
     Route::get('/download_organization/{id}', 'OrganizationController@download');
 
     Route::post('/range', 'ExploreController@filterValues1');
-    
+
     // this is for campaign and message
     Route::resource('campaigns', 'CampaignController');
     Route::post('updateStatus', 'CampaignController@updateStatus')->name('updateStatus');
@@ -115,99 +113,98 @@ Route::group(['middleware' => ['web', 'auth'] ], function () {
 });
 
 Route::resource('login_register_edit', 'EditLoginRegisterController');
- Route::group(['middleware' => ['web', 'auth', 'permission'] ], function () {
-        Route::get('dashboard', ['uses' => 'HomeController@dashboard', 'as' => 'home.dashboard']);
+Route::group(['middleware' => ['web', 'auth', 'permission']], function () {
+    Route::get('dashboard', ['uses' => 'HomeController@dashboard', 'as' => 'home.dashboard']);
 
-        Route::resource('pages', 'PagesController');
-        //users
-        Route::resource('user', 'UserController');
-        Route::get('user/{user}/permissions', ['uses' => 'UserController@permissions', 'as' => 'user.permissions']);
-        Route::post('user/{user}/save', ['uses' => 'UserController@save', 'as' => 'user.save']);
-        Route::get('user/{user}/activate', ['uses' => 'UserController@activate', 'as' => 'user.activate']);
-        Route::get('user/{user}/deactivate', ['uses' => 'UserController@deactivate', 'as' => 'user.deactivate']);
-          Route::post('user/ajax_all', ['uses' => 'UserController@ajax_all']);
+    Route::resource('pages', 'PagesController');
+    //users
+    Route::resource('user', 'UserController');
+    Route::get('user/{user}/permissions', ['uses' => 'UserController@permissions', 'as' => 'user.permissions']);
+    Route::post('user/{user}/save', ['uses' => 'UserController@save', 'as' => 'user.save']);
+    Route::get('user/{user}/activate', ['uses' => 'UserController@activate', 'as' => 'user.activate']);
+    Route::get('user/{user}/deactivate', ['uses' => 'UserController@deactivate', 'as' => 'user.deactivate']);
+    Route::post('user/ajax_all', ['uses' => 'UserController@ajax_all']);
 
-        //roles
-        Route::resource('role', 'RoleController');
-        Route::get('role/{role}/permissions', ['uses' => 'RoleController@permissions', 'as' => 'role.permissions']);
-        Route::post('role/{role}/save', ['uses' => 'RoleController@save', 'as' => 'role.save']);
-        Route::post('role/check', ['uses' => 'RoleController@check']);
+    //roles
+    Route::resource('role', 'RoleController');
+    Route::get('role/{role}/permissions', ['uses' => 'RoleController@permissions', 'as' => 'role.permissions']);
+    Route::post('role/{role}/save', ['uses' => 'RoleController@save', 'as' => 'role.save']);
+    Route::post('role/check', ['uses' => 'RoleController@check']);
 
-        Route::get('/logout', ['uses' => 'Auth\LoginController@logout']);
+    Route::get('/logout', ['uses' => 'Auth\LoginController@logout']);
 
-        Route::get('/sync_services', ['uses' => 'ServiceController@airtable']);  
-        Route::get('/sync_locations', ['uses' => 'LocationController@airtable']);
-        Route::get('/sync_organizations', ['uses' => 'OrganizationController@airtable']);
-        Route::get('/sync_contact', ['uses' => 'ContactController@airtable']);
-        Route::get('/sync_phones', ['uses' => 'PhoneController@airtable']);
-        Route::get('/sync_address', ['uses' => 'AddressController@airtable']);
-        Route::get('/sync_schedule', ['uses' => 'ScheduleController@airtable']);
-        Route::get('/sync_taxonomy', ['uses' => 'TaxonomyController@airtable']);
-        Route::get('/sync_details', ['uses' => 'DetailController@airtable']);
-        Route::get('/sync_service_area', ['uses' => 'AreaController@airtable']);
+    Route::get('/sync_services', ['uses' => 'ServiceController@airtable']);
+    Route::get('/sync_locations', ['uses' => 'LocationController@airtable']);
+    Route::get('/sync_organizations', ['uses' => 'OrganizationController@airtable']);
+    Route::get('/sync_contact', ['uses' => 'ContactController@airtable']);
+    Route::get('/sync_phones', ['uses' => 'PhoneController@airtable']);
+    Route::get('/sync_address', ['uses' => 'AddressController@airtable']);
+    Route::get('/sync_schedule', ['uses' => 'ScheduleController@airtable']);
+    Route::get('/sync_taxonomy', ['uses' => 'TaxonomyController@airtable']);
+    Route::get('/sync_details', ['uses' => 'DetailController@airtable']);
+    Route::get('/sync_service_area', ['uses' => 'AreaController@airtable']);
 
+    //Route::get('/tb_projects', ['uses' => 'ProjectController@index']);
+    Route::resource('tb_services', 'ServiceController');
+    Route::resource('tb_locations', 'LocationController');
+    Route::resource('tb_organizations', 'OrganizationController');
+    Route::resource('tb_contact', 'ContactController');
+    Route::resource('tb_phones', 'PhoneController');
+    Route::resource('tb_address', 'AddressController');
+    Route::resource('tb_schedule', 'ScheduleController');
+    Route::resource('tb_service_area', 'AreaController');
 
-        //Route::get('/tb_projects', ['uses' => 'ProjectController@index']);
-        Route::resource('tb_services', 'ServiceController');
-        Route::resource('tb_locations', 'LocationController');
-        Route::resource('tb_organizations', 'OrganizationController');
-        Route::resource('tb_contact', 'ContactController');
-        Route::resource('tb_phones', 'PhoneController');
-        Route::resource('tb_address', 'AddressController');
-        Route::resource('tb_schedule', 'ScheduleController');
-        Route::resource('tb_service_area', 'AreaController');
+    Route::get('/tb_regular_schedules', function () {
+        return redirect('/tb_schedule');
+    });
 
-        Route::get('/tb_regular_schedules', function () {
-            return redirect('/tb_schedule');
-        });
+    Route::resource('tb_taxonomy', 'TaxonomyController');
+    Route::resource('tb_details', 'DetailController');
+    Route::resource('tb_languages', 'LanguageController');
+    Route::resource('tb_accessibility', 'AccessibilityController');
 
-        Route::resource('tb_taxonomy', 'TaxonomyController');
-        Route::resource('tb_details', 'DetailController');
-        Route::resource('tb_languages', 'LanguageController');
-        Route::resource('tb_accessibility', 'AccessibilityController');
+    Route::get('/tb_accessibility_for_disabilites', function () {
+        return redirect('/tb_accessibility');
+    });
 
-        Route::get('/tb_accessibility_for_disabilites', function () {
-            return redirect('/tb_accessibility');
-        });
+    Route::get('/tb_services_taxonomy', function () {
+        return redirect('/tb_services');
+    });
 
-        Route::get('/tb_services_taxonomy', function () {
-            return redirect('/tb_services');
-        });
+    Route::get('/tb_services_location', function () {
+        return redirect('/tb_locations');
+    });
 
-        Route::get('/tb_services_location', function () {
-            return redirect('/tb_locations');
-        });
+    Route::resource('layout_edit', 'EditlayoutController');
+    Route::resource('home_edit', 'EdithomeController');
+    Route::resource('about_edit', 'EditaboutController');
+    // Route::resource('login_register_edit', 'EditLoginRegisterController');
 
-        Route::resource('layout_edit', 'EditlayoutController');
-        Route::resource('home_edit', 'EdithomeController');
-        Route::resource('about_edit', 'EditaboutController');
-        // Route::resource('login_register_edit', 'EditLoginRegisterController');
+    // Route::resource('meta_filter', 'MetafilterController');
 
-        // Route::resource('meta_filter', 'MetafilterController');
+    Route::resource('map', 'MapController');
+    Route::get('/scan_ungeocoded_location', 'MapController@scan_ungeocoded_location');
+    Route::get('/apply_geocode', 'MapController@apply_geocode');
 
-        Route::resource('map', 'MapController');
-        Route::get('/scan_ungeocoded_location', 'MapController@scan_ungeocoded_location');
-        Route::get('/apply_geocode', 'MapController@apply_geocode');
-        
-        Route::get('/import', ['uses' => 'PagesController@import']);
-        Route::get('/export', ['uses' => 'PagesController@export']);
-        Route::get('/meta_filter', ['uses' => 'PagesController@metafilter']);
-        Route::post('/meta/{id}', 'PagesController@metafilter_save');
+    Route::get('/import', ['uses' => 'PagesController@import']);
+    Route::get('/export', ['uses' => 'PagesController@export']);
+    Route::get('/meta_filter', ['uses' => 'PagesController@metafilter']);
+    Route::post('/meta/{id}', 'PagesController@metafilter_save');
 
-        Route::post('/taxonomy_filter', 'PagesController@taxonomy_filter');
-        Route::post('/postal_code_filter', 'PagesController@postal_filter');
+    Route::post('/taxonomy_filter', 'PagesController@taxonomy_filter');
+    Route::post('/postal_code_filter', 'PagesController@postal_filter');
 
-        Route::post('/meta_filter', 'PagesController@operation');
-        Route::post('/meta_delete_filter', 'PagesController@delete_operation');
-        Route::post('/meta_filter/{id}', 'PagesController@metafilter_edit');
+    Route::post('/meta_filter', 'PagesController@operation');
+    Route::post('/meta_delete_filter', 'PagesController@delete_operation');
+    Route::post('/meta_filter/{id}', 'PagesController@metafilter_edit');
 
-        Route::resource('data', 'DataController');
-        Route::resource('analytics', 'AnalyticsController');
+    Route::resource('data', 'DataController');
+    Route::resource('analytics', 'AnalyticsController');
 
-        Route::post('/organization_delete_filter', 'OrganizationController@delete_organization');
-        Route::post('/facility_delete_filter', 'LocationController@delete_facility');
-        Route::post('/contact_delete_filter', 'ContactController@delete_contact');
-        Route::post('/group_delete_filter', 'GroupController@delete_group');
-        Route::post('/group_remove_members', 'GroupController@group_remove_members');
+    Route::post('/organization_delete_filter', 'OrganizationController@delete_organization');
+    Route::post('/facility_delete_filter', 'LocationController@delete_facility');
+    Route::post('/contact_delete_filter', 'ContactController@delete_contact');
+    Route::post('/group_delete_filter', 'GroupController@delete_group');
+    Route::post('/group_remove_members', 'GroupController@group_remove_members');
 
- });
+});

@@ -20,10 +20,11 @@ class EmailController extends Controller
                     $contact = Contact::whereId($value)->first();
                     if ($contact) {
                         $contact_email = $contact->contact_email;
+                        // $contact_email = 'amit.d9ithub@gmail.com';
 
                         if ($contact_email != null) {
-                            $from = 'howcalm@sarapis.org';
-                            $name = 'Devin Balkind';
+                            $from = env('MAIL_FROM_ADDRESS');
+                            $name = env('MAIL_FROM_NAME');
                             $email = new \SendGrid\Mail\Mail();
                             $email->setFrom($from, $name);
                             $email->setSubject($campaign->subject);
@@ -65,14 +66,13 @@ class EmailController extends Controller
 
                     }
                 }
-                return;
+                return true;
             } else {
-                return;
+                return 'Campaign not found!';
             }
 
         } catch (\Throwable $th) {
-            return $th;
-
+            return $th->getMessage();
         }
 
     }

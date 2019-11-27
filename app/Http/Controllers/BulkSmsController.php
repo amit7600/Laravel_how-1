@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Campaign;
+use App\CampaignReport;
 use App\Contact;
 use App\Http\Controllers\EmailController;
 use App\Phone;
@@ -27,20 +28,26 @@ class BulkSmsController extends Controller
         try {
             $campaign = Campaign::whereId($id)->first();
             if ($campaign && $campaign->campaign_type == 1) {
-                $this->mailController->send_email($campaign);
+                $response = $this->mailController->send_email($campaign);
             } elseif ($campaign && $campaign->campaign_type == 2) {
-                $this->send_sms($campaign);
+                $response = $this->send_sms($campaign);
             } elseif ($campaign && $campaign->campaign_type == 3) {
                 $this->send_audio($campaign);
             } elseif ($campaign && $campaign->campaign_type == 4) {
-                $this->send_sms($campaign);
-                $this->send_audio($campaign);
+                $response = $this->send_sms($campaign);
+                $response = $this->send_audio($campaign);
             }
-            return redirect()->to('/campaigns')->with('success', 'Campaign send successfully');
+            if ($response === true) {
+                return redirect()->to('/campaigns')->with('success', 'Campaign send successfully');
+            } else {
+                return redirect()->to('/campaigns')->with('error', $response);
+
+            }
 
         } catch (\Throwable $th) {
             //throw $th;d
-            return redirect()->back()->with('error', $th->getMessage());
+            dd($th);
+            return redirect()->to('/campaigns')->with('error', $th->getMessage());
 
         }
     }
@@ -51,7 +58,6 @@ class BulkSmsController extends Controller
             $url = env('APP_URL');
             if ($campaign) {
                 $recipients = $campaign->recipient != '' ? explode(',', $campaign->recipient) : '';
-
                 foreach ($recipients as $key => $value) {
                     $contact = Contact::whereId($value)->first();
                     if ($contact) {
@@ -59,7 +65,6 @@ class BulkSmsController extends Controller
 
                         if ($phone_number) {
                             $contact_number = $phone_number->phone_number;
-
                             $response = $this->client->messages->create(
                                 $contact_number,
                                 [
@@ -89,15 +94,15 @@ class BulkSmsController extends Controller
                         }
                     }
                 }
-                return redirect()->to('/campaigns')->with('success', 'Campaign send successfully!');
+                return true;
 
             } else {
-                return redirect()->to('/campaigns')->with('error', 'Campaign data not found');
+                return 'Campaign not found!';
             }
 
         } catch (\Throwable $th) {
-            DB::rollBabk();
-            return redirect()->to('/campaigns')->with('error', $th->getMessage());
+            DB::rollBack();
+            return $th->getMessage();
         }
     }
     public function send_audio($campaign)
@@ -146,10 +151,10 @@ class BulkSmsController extends Controller
                         }
                     }
                 }
-                return;
+                return true;
 
             } else {
-                return;
+                return 'Campaign not found!';
             }
 
         } catch (\Throwable $th) {
