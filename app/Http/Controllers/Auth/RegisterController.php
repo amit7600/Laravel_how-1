@@ -57,7 +57,6 @@ class RegisterController extends Controller
     public function showRegistrationForm()
     {
         $layout = Layout::first();
-        $organization_list = ['aaa', 'bbb'];
         $organization_name_list = Organization::select("organization_name")->distinct()->get();
         return view('auth.register', compact('layout', 'organization_name_list'));
     }
@@ -82,6 +81,9 @@ class RegisterController extends Controller
         //End activation
 
         if($user){
+            var_dump($request->organization);
+            $user->organization = $request->organization;
+            $user->save();
             $user->roles()->sync([2]); // 2 = client
             Session::flash('message', 'Registration is completed');
             Session::flash('status', 'success');
