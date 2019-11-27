@@ -46,6 +46,11 @@ ul#ui-id-1 {
 #tbl-org-profile-contact_wrapper {
     overflow-x: scroll;
 }
+
+#tbl-org-profile-contact {
+    width: 100% !important;
+}
+
 </style>
 
 @section('content')
@@ -144,13 +149,13 @@ ul#ui-id-1 {
                 </div>
             </div>
 
-            <div class="col-md-12 pt-15 pb-15 pl-30 pl-30">
+            <div class="col-md-8 pt-15 pb-15 pl-30 pl-30">
                <div class="card">
                     <div class="card-block">
                         <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-org-profile-contact">
                             <thead>
                                 <tr>
-                                    <th class="default-active"></th>
+                                    <th class="default-active" style="visibility: hidden;">Action</th>
                                     <th class="default-inactive">ID</th>
                                     <th class="default-active">First Name</th>
                                     <th class="default-active">Middle Name</th>
