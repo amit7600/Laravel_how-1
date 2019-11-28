@@ -168,8 +168,8 @@ class OrganizationController extends Controller
         $filter_faith_tradition = $request->filter_faith_tradition;
         $filter_denomination = $request->filter_denomination;
         $filter_judicatory_body = $request->filter_judicatory_body;
-        $filter_type = $request->filter_type;
-        $filter_borough = $request->filter_borough;
+        $filter_type = $request->filter_type;       
+        $filter_tag = $request->filter_tag;
         $filter_map = $request->filter_map;
 
         $organizations = Organization::orderBy('organization_recordid', 'DESC');
@@ -182,15 +182,15 @@ class OrganizationController extends Controller
                 ->orWhere('organization_judicatory_body', 'LIKE', '%' . $search_term . '%')
                 ->orWhere('organization_type', 'LIKE', '%' . $search_term . '%')
                 ->orWhere('organization_url', 'LIKE', '%' . $search_term . '%')
-                ->orWhere('organization_description', 'LIKE', '%' . $search_term . '%');
+                ->orWhere('organization_description', 'LIKE', '%' . $search_term . '%')
+                ->orWhere('organization_tag', 'LIKE', '%' . $search_term . '%');
         }
 
         $filter_religion_list = [];
         $filter_faith_tradition_list = [];
         $filter_denomination_list = [];
         $filter_judicatory_body_list = [];
-        $filter_type_list = [];
-        $filter_borough_list = [];
+        $filter_type_list = [];        
         $filter_map_list = [];
 
         if ($filter_religion) {
@@ -208,9 +208,6 @@ class OrganizationController extends Controller
         }
         if ($filter_type) {
             $filter_type_list = explode('|', $filter_type);            
-        }
-        if ($filter_borough) {
-            $filter_borough_list = explode('|', $filter_borough);            
         }
         if ($filter_map) {
             $filter_map_list = json_decode($filter_map);
@@ -252,14 +249,14 @@ class OrganizationController extends Controller
         if ($filter_type_list) {
             $organizations = $organizations->whereIn('organization_type', $filter_type_list);
         }
-        if ($filter_borough_list) {
-            $organizations = $organizations->whereIn('organization_borough', $filter_borough_list);
+        if ($filter_tag) {
+            $organizations = $organizations->where('organization_tag', 'LIKE', '%' . $filter_tag . '%');
         }
         if ($filtered_location_recordid_list) {
             $organizations = $organizations->whereIn('organization_locations', $filtered_location_recordid_list);
         }
 
-        if ($filter_religion_list || $filter_faith_tradition_list || $filter_denomination_list || $filter_judicatory_body_list || $filter_type_list || $filter_borough_list || $filtered_location_recordid_list) {
+        if ($filter_religion_list || $filter_faith_tradition_list || $filter_denomination_list || $filter_judicatory_body_list || $filter_type_list || $filter_type_list || $filtered_location_recordid_list) {
 
             $filtered_locations_list = new Collection();
             $filtered_all_organizations = $organizations->get();            
@@ -292,6 +289,7 @@ class OrganizationController extends Controller
             $organization_info[10] = $organization->organization_facebook;
             $organization_info[11] = $organization->organization_internet_access;
             $organization_info[12] = $organization->organization_description;
+            $organization_info[13] = $organization->organization_tag;
 
             array_push($result, $organization_info);
         }
@@ -447,7 +445,15 @@ class OrganizationController extends Controller
         $organization_judicatory_bodys = Organization::select("organization_judicatory_body")->distinct()->get();
         $organization_types = Organization::select("organization_type")->distinct()->get();
         $organization_locations = Organization::select("organization_locations")->distinct()->get();
+        $organization_tags = Organization::select("organization_tag")->distinct()->get();
         $locations = Location::with('services', 'address', 'phones')->distinct()->get();
+
+        $tag_list = [];
+        foreach ($organization_tags as $key => $value) {
+            $tags = explode(", " , trim($value->organization_tag));
+            $tag_list = array_merge($tag_list, $tags);
+        }
+        $tag_list = array_unique($tag_list);
 
         $address_city_list = [];
         foreach ($address_cities as $key => $value) {
@@ -518,7 +524,7 @@ class OrganizationController extends Controller
         $checked_hours= [];
 
         return view('frontEnd.organizations', compact('address_city_list', 'organization_religions', 'organization_faith_traditions', 'organization_denominations', 'organization_judicatory_bodys', 'organization_types', 'organization_locations', 'locations', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 
-        'type_list', 'religion_list', 'faith_tradition_list', 'denomination_list', 'judicatory_body_list', 'organization_location_list'));
+        'type_list', 'tag_list', 'religion_list', 'faith_tradition_list', 'denomination_list', 'judicatory_body_list', 'organization_location_list'));
     }
 
     public function organization($id)
