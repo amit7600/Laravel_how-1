@@ -221,9 +221,6 @@ div.tokenfield {
                 <div class="card">
                     <div class="card-block">
                         <p>{{$organization->organization_description}}
-                            User comment style for using various pages of components (like blog,
-                            tweets, etc) that feature a left- or right-aligned avatar avatar-lgalongside
-                            textual content. You can use the basic class
                         </p>
                     </div>
                 </div>
