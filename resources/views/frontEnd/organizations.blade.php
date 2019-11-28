@@ -64,6 +64,10 @@ button[data-id="type"] {
     height: 100%;
     border: 1px solid #ddd;
 }
+button[data-id="tag"] {
+    height: 100%;
+    border: 1px solid #ddd;
+}
 button[data-id="borough"] {
     height: 100%;
     border: 1px solid #ddd;
@@ -141,11 +145,23 @@ button[data-id="borough"] {
                         </div>
                     </div>  
 
+                    <div class="form-group row">
+                        <label class="control-label sel-label-org col-sm-3">Tag: </label>
+                        <div class="col-sm-9 col-sm-6 col-xs-12" id="tag-div">
+                            <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
+                            @foreach($tag_list as $key => $tag)
+                                <option value="{{$tag}}">{{$tag}}</option>
+                            @endforeach
+                            </select>
+                        </div>
+                    </div>
+
                     <input type="hidden" id="religion_list" name="religion_list"> 
                     <input type="hidden" id="faith_tradition_list" name="faith_tradition_list">
                     <input type="hidden" id="denomination_list" name="denomination_list">
                     <input type="hidden" id="judicatory_body_list" name="judicatory_body_list">
                     <input type="hidden" id="type_list" name="type_list">
+                    <input type="hidden" id="tag_list" name="tag_list">
                     
                     <div class="form-group row">
                         <div class="col-sm-12 col-xs-12" id="clear-btn-div">
@@ -194,8 +210,8 @@ button[data-id="borough"] {
                     <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-organization">
                         <thead>
                             <tr>
-                                <th></th>
-                                <th></th>
+                                <th style="visibility: hidden;">Open Action</th>
+                                <th style="visibility: hidden;">Delete Action</th>
                                 <th class="default-inactive">Id</th>
                                 <th class="default-active">Name</th>
                                 <th class="default-active">Religion</th>
@@ -206,7 +222,8 @@ button[data-id="borough"] {
                                 <th class="default-inactive">Website</th>
                                 <th class="default-inactive">Facebook</th>
                                 <th class="default-inactive">Internet Access</th>
-                                <th class="default-inactive">Comments</th>                          
+                                <th class="default-inactive">Comments</th>  
+                                <th class="default-active">Tag</th>                         
                             </tr>
                         </thead>
                     </table>
@@ -277,8 +294,8 @@ button[data-id="borough"] {
                     var filter_faith_tradition = data.columns[5].search.value;
                     var filter_denomination = data.columns[6].search.value;
                     var filter_judicatory_body = data.columns[7].search.value;
-                    var filter_type = data.columns[9].search.value;
-                    var filter_borough = data.columns[8].search.value;
+                    var filter_type = data.columns[8].search.value;
+                    var filter_tag = data.columns[13].search.value;
                     var check_marks = sessionStorage.getItem('check_marks');
                   
                     $.ajaxSetup({
@@ -298,8 +315,8 @@ button[data-id="borough"] {
                             filter_faith_tradition: filter_faith_tradition,
                             filter_denomination: filter_denomination,
                             filter_judicatory_body: filter_judicatory_body,
-                            filter_type: filter_type,
-                            filter_borough: filter_borough,
+                            filter_type: filter_type,                            
+                            filter_tag: filter_tag,
                             filter_map: filter_map
                         },
                         success: function (response) {
@@ -552,6 +569,7 @@ button[data-id="borough"] {
         $("#judicatory_body").selectpicker("");
         $("#type").selectpicker("");
         $("#location").selectpicker("");  
+        $("#tag").selectpicker("");
     })
     $('select#religion').on('change', function() {
         
@@ -600,25 +618,23 @@ button[data-id="borough"] {
         search = selectedList.join('|')
  
         dataTable
-            .column(9)
-            .search(search ? search : '', true, false).draw();
-    });
-    $('select#borough').on('change', function() {
-        
-        var selectedList = $(this).val();
-        search = selectedList.join('|')
-        dataTable
             .column(8)
             .search(search ? search : '', true, false).draw();
     });
+    $('select#tag').on('change', function() {
+        
+        var selectedList = $(this).val();
+        $('input#tag_list').val(selectedList);
+        search = selectedList
+ 
+        dataTable
+            .column(13)
+            .search(search ? search : '', true, false).draw();
+    });
 
-    $('button#clear-filter-org-btn').on('click', function() {
-        $('select#religion').val([]).change();
-        $('select#faith_tradition').val([]).change();
-        $('select#denomination').val([]).change();
-        $('select#judicatory_body').val([]).change();
-        $('select#type').val([]).change();
-        $('select#borough').val([]).change();
+    $('button#clear-filter-org-btn').on('click', function(e) {
+        e.preventDefault();
+        window.location.reload(true);
     });
 
     $('button.delete-td').on('click', function() {
