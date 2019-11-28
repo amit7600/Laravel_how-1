@@ -57,6 +57,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/get_all_organizations', 'OrganizationController@get_all_organizations');
     Route::post('/organizations/action_group', 'OrganizationController@group_operation');
     Route::get('/organization/{id}', 'OrganizationController@organization');
+    Route::get('/organization/{id}/tagging', 'OrganizationController@tagging');
     Route::get('/organization/{id}/edit', 'OrganizationController@edit');
     Route::get('/organization/{id}/update', 'OrganizationController@update');
     Route::get('/organization_create', 'OrganizationController@create');
