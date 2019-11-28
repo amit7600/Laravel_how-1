@@ -636,6 +636,15 @@ class OrganizationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function tagging(Request $request, $id) {
+        $organization = Organization::find($id); 
+        $organization->organization_tag = $request->tokenfield;
+        $organization->save();
+        return redirect('organization/'.$id);
+    }
+
+
     public function edit($id)
     {
         $map = Map::find(1);
