@@ -48,25 +48,25 @@ Home
                         <h4 class="list-group-item-heading mt-0 mb-5"> 
                             Organizations
                         </h4>
-                        <p class="mb-0">There is data table for organizations in this page. And this page has a few selectors for filter and google map. Filter by selectors and google map are available. And filtered data are available to export as pdf or csv. </p>
+                        <p class="mb-0">Houses of Worship, Religious Schools, Faith-Based Service Providers and more. </p>
                     </a>
                     <a class="list-group-item list-group-item-action flex-column align-items-start" href="/contacts">
                         <h4 class="list-group-item-heading mt-0 mb-5"> 
                             Contacts
                         </h4>
-                        <p class="mb-0">There is data table for contacts in this page. And this page has a few selectors for filter and google map. Filter by selectors and google map are available. And adding contacts to group is available. And also, filtered data are available to export as pdf or csv.</p>
+                        <p class="mb-0">Individuals who work at the organizations in this system.</p>
                     </a>
                     <a class="list-group-item list-group-item-action flex-column align-items-start" href="/facilities">
                         <h4 class="list-group-item-heading mt-0 mb-5"> 
                             Facilities
                         </h4>
-                        <p class="mb-0">There is data table for facilities in this page. And this page has a few selectors for filter and google map. Filter by selectors and google map are available. And filtered data are available to export as pdf or csv.</p>
+                        <p class="mb-0">Physical locations of the organizations in this system.</p>
                     </a>
                     <a class="list-group-item list-group-item-action flex-column align-items-start" href="/groups">
                         <h4 class="list-group-item-heading mt-0 mb-5"> 
                             Groups
                         </h4>
-                        <p class="mb-0">There is data table for groups in this page. Every group can be edited and removed. And members of each group are being shown in this page</p>
+                        <p class="mb-0">Group contacts together to send them communication campaigns.</p>
                     </a>
                 </div>
                 <h1>Communicate</h1>
@@ -75,13 +75,13 @@ Home
                         <h4 class="list-group-item-heading mt-0 mb-5"> 
                             Campaigns
                         </h4>
-                        <p class="mb-0">This page shows data related to campaigns</p>
+                        <p class="mb-0">Send SMS, email and voice messages to groups of contains.</p>
                     </a>
                     <a class="list-group-item list-group-item-action flex-column align-items-start" href="/messages">
                         <h4 class="list-group-item-heading mt-0 mb-5"> 
                             Messages
                         </h4>
-                        <p class="mb-0">This page is for manage messages.</p>
+                        <p class="mb-0">View all messages sent and received by the system.</p>
                     </a>
                 </div>
             </div>
