@@ -123,10 +123,10 @@ div.tokenfield {
             
             <div class="col-md-4 property">
 				<div class="pt-10 pb-10 pl-0 btn-download">
-                    <form method="GET" action="/organization_tagging" id="organization_tagging">
+                    <form method="GET" action="/organization/{{$organization->organization_recordid}}/tagging" id="organization_tagging">
 					    <a href="/organization/{{$organization->organization_recordid}}/edit" class="btn btn-primary "><i class="fa fa-fw fa-edit"></i>Edit</a>
                         <button type="submit" class="btn btn-secondary btn-tag-save">Save tagging</button>
-                        <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="red,green,blue" />
+                        <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$organization->organization_tag}}" />
                     </form>
 				</div>
 				<div class="card">
