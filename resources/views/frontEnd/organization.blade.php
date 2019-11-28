@@ -123,7 +123,7 @@ ul#ui-id-1 {
                     <button class="btn btn-danger delete-td" value="{{$organization->organization_recordid}}" data-toggle="modal" data-target=".bs-delete-modal-lg"><i class="fa fa-fw fa-remove"></i>Delete</button>
 				</div>
 				<div class="card">
-					<div id="map" style="width:initial;margin-top: 0;height: 50vh;"></div>
+					<div id="map" style="width:initial;margin-top: 0;height: 325px;"></div>
 					<div class="card-block">
 						<div class="p-10">
 						@if(isset($organization->location))
