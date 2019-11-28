@@ -51,6 +51,10 @@ ul#ui-id-1 {
     width: 100% !important;
 }
 
+div.tokenfield {
+    margin-top: 12px;
+}
+
 </style>
 
 @section('content')
@@ -60,7 +64,7 @@ ul#ui-id-1 {
 		<div class="row m-0">
         	<div class="col-md-8 pt-15 pb-15 pl-30">
                <div class="card">
-                    <div class="card-block">
+                    <div class="card-block" style="height: 570px;">
                         <h4 class="card-title">
 							<a href="">@if($organization->organization_logo_x)<img src="{{$organization->organization_logo_x}}" height="80">@endif {{$organization->organization_name}} @if($organization->organization_alternate_name!='')({{$organization->organization_alternate_name}})@endif
 							</a>
@@ -119,8 +123,11 @@ ul#ui-id-1 {
             
             <div class="col-md-4 property">
 				<div class="pt-10 pb-10 pl-0 btn-download">
-					<a href="/organization/{{$organization->organization_recordid}}/edit" class="btn btn-primary "><i class="fa fa-fw fa-edit"></i>Edit</a>
-                    <button class="btn btn-danger delete-td" value="{{$organization->organization_recordid}}" data-toggle="modal" data-target=".bs-delete-modal-lg"><i class="fa fa-fw fa-remove"></i>Delete</button>
+                    <form method="GET" action="/organization_tagging" id="organization_tagging">
+					    <a href="/organization/{{$organization->organization_recordid}}/edit" class="btn btn-primary "><i class="fa fa-fw fa-edit"></i>Edit</a>
+                        <button type="submit" class="btn btn-secondary btn-tag-save">Save tagging</button>
+                        <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="red,green,blue" />
+                    </form>
 				</div>
 				<div class="card">
 					<div id="map" style="width:initial;margin-top: 0;height: 325px;"></div>
@@ -150,7 +157,8 @@ ul#ui-id-1 {
             </div>
 
             <div class="col-md-8 pt-15 pb-15 pl-30 pl-30">
-               <div class="card">
+                <h3>Contacts</h3>
+                <div class="card">
                     <div class="card-block">
                         <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-org-profile-contact">
                             <thead>
@@ -208,6 +216,19 @@ ul#ui-id-1 {
                 </div>
             </div>
 
+            <div class="col-md-4 pt-15 pb-15 pl-30 pl-30">
+                <h3>Comments</h3>
+                <div class="card">
+                    <div class="card-block">
+                        <p>{{$organization->organization_description}}
+                            User comment style for using various pages of components (like blog,
+                            tweets, etc) that feature a left- or right-aligned avatar avatar-lgalongside
+                            textual content. You can use the basic class
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             <div class="modal fade bs-delete-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -236,6 +257,9 @@ ul#ui-id-1 {
     </div>
 </div>
 
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
+
 <script>
     var dataTable;
     $(document).ready(function() {
@@ -251,6 +275,15 @@ ul#ui-id-1 {
             ]
         });           
     })
+    $(document).ready(function() {   
+        $('#tokenfield').tokenfield({
+        autocomplete: {
+            source: ['red','blue','green','yellow','violet','brown','purple','black','white'],
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
+    });
     $(document).ready(function(){  
         setTimeout(function(){
         var locations = <?php print_r(json_encode($locations)) ?>;
