@@ -31,6 +31,8 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
 
   <link rel="stylesheet" href="../../frontend/assets/css/site.min.css">
+  <link href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
+
   <!-- Plugins -->
   <link rel="stylesheet" href="../../frontend/global/vend/animsition/animsition.css">
   <link rel="stylesheet" href="../../frontend/global/vend/asscrollable/asScrollable.css">
