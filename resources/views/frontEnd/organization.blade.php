@@ -182,15 +182,13 @@ span.date {
                                 <tr>
                                     <th class="default-active" style="visibility: hidden;">Action</th>
                                     <th class="default-inactive">ID</th>
-                                    <th class="default-active">First Name</th>
-                                    <th class="default-active">Middle Name</th>
-                                    <th class="default-active">Last Name</th>
+                                    <th class="default-active">Name</th>
                                     <th class="default-active">Contact Type</th>
                                     <th class="default-active">Languages Spoken</th>
                                     <th class="default-active">Religious Title</th>
                                     <th class="default-active">Position Title</th> 
                                     <th class="default-active">Other Languages</th> 
-                                    <th class="default-active">Pronouns</th> 
+                                    <th class="default-inactive">Pronouns</th> 
                                     <th class="default-inactive">Organization</th>                                  
                                     <th class="default-inactive">Mailing Address</th>   
                                     <th class="default-inactive">Cell Phone</th>  
@@ -208,9 +206,7 @@ span.date {
                                         <a class="btn btn-primary open-td" href="/contact/{{$contact->contact_recordid}}" style="color: white;">Open</a>
                                     </td>
                                     <td>{{$contact->contact_recordid}}</td>
-                                    <td>{{$contact->contact_first_name}}</td>
-                                    <td>{{$contact->contact_middle_name}}</td>
-                                    <td>{{$contact->contact_last_name}}</td>
+                                    <td>{{$contact->contact_first_name}} {{$contact->contact_middle_name}} {{$contact->contact_last_name}}</td>
                                     <td>{{$contact->contact_type}}</td>
                                     <td>{{$contact->contact_languages_spoken}}</td>
                                     <td>{{$contact->contact_religious_title}}</td>
@@ -254,7 +250,7 @@ span.date {
                             <form class="comment-reply" action="/organization/{{$organization->organization_recordid}}/add_comment" method="POST">
                                 {{ csrf_field() }}
                                 <div class="form-group">
-                                    <textarea class="form-control" name="reply_content" rows="5" placeholder="Comment here">
+                                    <textarea class="form-control" name="reply_content" rows="2" placeholder="Comment here">
                                     </textarea>
                                 </div>
                                 <div class="form-group">
@@ -306,7 +302,7 @@ span.date {
             dom: 'lBfrtip',
             buttons: [{
                 extend: 'colvis',
-                columns: ':gt(9)'
+                columns: ':gt(7)'
             }],
             columnDefs: [
                 { targets: 'default-inactive', visible: false}

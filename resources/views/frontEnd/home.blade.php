@@ -75,7 +75,7 @@ Home
                         <h4 class="list-group-item-heading mt-0 mb-5"> 
                             Campaigns
                         </h4>
-                        <p class="mb-0">Send SMS, email and voice messages to groups of contains.</p>
+                        <p class="mb-0">Send SMS, email and voice messages to groups of contacts.</p>
                     </a>
                     <a class="list-group-item list-group-item-action flex-column align-items-start" href="/messages">
                         <h4 class="list-group-item-heading mt-0 mb-5"> 
