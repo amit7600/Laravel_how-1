@@ -51,10 +51,6 @@ ul#ui-id-1 {
     width: 100% !important;
 }
 
-div.tokenfield {
-    margin-top: 12px;
-}
-
 .comment-author {
     color: #3949ab !important;
     font-size: 18px !important;
@@ -62,6 +58,9 @@ div.tokenfield {
 span.date {
     font-style: italic;
     color: maroon;
+}
+#tagging-div {
+    margin-top: 12px !important;
 }
 
 </style>
@@ -76,7 +75,10 @@ span.date {
                     <div class="card-block" style="height: 570px;">
                         <h4 class="card-title">
 							<a href="">@if($organization->organization_logo_x)<img src="{{$organization->organization_logo_x}}" height="80">@endif {{$organization->organization_name}} @if($organization->organization_alternate_name!='')({{$organization->organization_alternate_name}})@endif
-							</a>
+                            </a>
+                            <a href="/organization/{{$organization->organization_recordid}}/edit" class="btn btn-floating btn-success waves-effect waves-classic" style="float: right;">
+                                <i class="icon md-edit" style="margin-right: 0px;"></i>
+                            </a>
                         </h4>
                         <h4>
 							<span class="badge bg-red pl-0 organize_font"><b>Religion:</b></span> 
@@ -129,13 +131,19 @@ span.date {
                     </div>
                 </div>
             </div>           
-            
             <div class="col-md-4 property">
 				<div class="pt-10 pb-10 pl-0 btn-download">
                     <form method="GET" action="/organization/{{$organization->organization_recordid}}/tagging" id="organization_tagging">
-					    <a href="/organization/{{$organization->organization_recordid}}/edit" class="btn btn-primary "><i class="fa fa-fw fa-edit"></i>Edit</a>
-                        <button type="submit" class="btn btn-secondary btn-tag-save">Save tagging</button>
-                        <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$organization->organization_tag}}" />
+                        <div class="row m-0" id="tagging-div">
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$organization->organization_tag}}" />
+                            </div> 
+                            <div class="col-md-2">  
+                                <button type="submit" class="btn btn-secondary btn-tag-save">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </div> 
+                        </div>
                     </form>
 				</div>
 				<div class="card">
