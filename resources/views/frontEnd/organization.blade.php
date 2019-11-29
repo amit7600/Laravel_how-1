@@ -55,6 +55,11 @@ div.tokenfield {
     margin-top: 12px;
 }
 
+.comment-author {
+    color: #3949ab !important;
+    font-size: 18px !important;
+}
+
 </style>
 
 @section('content')
@@ -220,8 +225,28 @@ div.tokenfield {
                 <h3>Comments</h3>
                 <div class="card">
                     <div class="card-block">
-                        <p>{{$organization->organization_description}}
-                        </p>
+                        <div class="comment-body media-body">
+                            <a class="comment-author" href="javascript:void(0)">Marin Cess</a>
+                            <div class="comment-meta">
+                                <span class="date">5 days ago</span>
+                            </div>
+                            <div class="comment-content">
+                                <p>Dude, this is awesome. Thanks so much</p>
+                            </div>
+                            <div class="comment-actions">
+                                <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Reply</a>
+                            </div>
+                            <form class="comment-reply" action="#" method="post">
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="5" placeholder="Comment here">
+                                    </textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary waves-effect waves-classic">Reply</button>
+                                    <button type="button" id="close-reply-window-btn" class="btn btn-link grey-600 waves-effect waves-classic">Close</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -280,6 +305,9 @@ div.tokenfield {
         },
         showAutocompleteOnFocus: true
         });
+    });
+    $(document).ready(function() {
+        $('.comment-reply').hide();
     });
     $(document).ready(function(){  
         setTimeout(function(){
@@ -383,6 +411,14 @@ div.tokenfield {
         $(this).prev().toggle();
         return false;
         });
+    });
+    $("#reply-btn").on('click', function(e) {
+        e.preventDefault();
+        $('.comment-reply').show();
+    });
+    $("#close-reply-window-btn").on('click', function(e) {
+        e.preventDefault();
+        $('.comment-reply').hide();
     });
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap"
