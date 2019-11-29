@@ -57,30 +57,41 @@ class WebhookController extends Controller
     public function inbound_email(Request $request)
     {
         try {
-            \Log::info($request);
+            $file = fopen(public_path('uploads/email.txt'), 'w');
 
-            $to = $request->input("to");
-            $from = $request->input("from");
-            $body = $request["text"];
+            fwrite($file, print_r($_POST, true));
+            fclose($file);
+
+            $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
+            $handle = fopen(public_path('uploads/email.txt'), 'r');
+
+            $message = $mailParser->parse($handle);
+            fclose($handle);
+
+            $envelope = json_decode($request->input('envelope'), true);
+
+            $to = $envelope['to'][0];
+            $from = $envelope["from"];
             $subject = $request->input("subject");
-            $num_attachments = $request->input("attachment-info");
+            CampaignReport::create([
+                'status' => 'Incoming',
+                'direction' => 'Inbound-api',
+                'toNumber' => $to,
+                'fromNumber' => $from,
+                'type' => '1',
+                'body' => $message->getTextContent(),
+                'date_sent' => Carbon::now(),
+            ]);
+            $file = fopen(public_path('uploads/email.txt'), 'w');
 
-            $webhook = new CampaignReport();
-            $webhook->body = $body;
-            $webhook->status = 'Incoming';
-            $webhook->direction = 'Inbound-api';
-            $webhook->toNumber = $to;
-            $webhook->fromNumber = $from;
-            $type = 1;
-            $webhook->type = $type;
-            $webhook->date_sent = Carbon::now();
-            $webhook->save();
+            fwrite($file, '');
+            fclose($file);
 
         } catch (\Throwable $th) {
+            \Log::info($th->getMessage());
             $webhook = new CampaignReport();
             $webhook->error_message = $th->getMessage();
             $webhook->save();
-            return $th;
         }
 
     }
