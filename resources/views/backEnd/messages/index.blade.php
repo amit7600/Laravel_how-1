@@ -163,7 +163,7 @@ Organizations
                             <div class="row">
                                 <label class="control-label sel-label-org pl-4 ">Direction</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12" id="religion-div">
-                                    {!! Form::select('direction',['outbound-api' => 'Outbound Api','Inbound-api' =>
+                                    {!! Form::select('direction',['Outbound-api' => 'Outbound Api','Inbound-api' =>
                                     'Inbound-api'],null,['class'
                                     =>'form-control','placeholder' => 'Select Direction','id' => 'direction'] ) !!}
                                 </div>
