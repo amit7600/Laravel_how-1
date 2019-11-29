@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Session;
+use Sentinel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Functions\Airtable;
 use App\Address;
@@ -23,6 +26,22 @@ use PDF;
 
 class OrganizationController extends Controller
 {
+
+    protected $user;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user= Auth::user();
+
+            return $next($request);
+        });
+    }
 
     public function airtable()
     {
@@ -715,6 +734,17 @@ class OrganizationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function add_comment(Request $request, $id) {
+        $organization = Organization::find($id);
+        $organization_recordid = $organization->organization_recordid;
+        $comment_content = $request->reply_content;
+        $user = Sentinel::getUser();
+        $user_id = $user->id;
+        $date_time = date("Y-m-d h:i:sa");
+
+        exit();
+    }
     public function update(Request $request, $id)
     {
         $organization = Organization::find($id);
