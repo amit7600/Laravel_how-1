@@ -59,6 +59,10 @@ div.tokenfield {
     color: #3949ab !important;
     font-size: 18px !important;
 }
+span.date {
+    font-style: italic;
+    color: maroon;
+}
 
 </style>
 
@@ -226,17 +230,21 @@ div.tokenfield {
                 <div class="card">
                     <div class="card-block">
                         <div class="comment-body media-body">
-                            <a class="comment-author" href="javascript:void(0)">Marin Cess</a>
-                            <div class="comment-meta">
-                                <span class="date">5 days ago</span>
-                            </div>
-                            <div class="comment-content">
-                                <p>Dude, this is awesome. Thanks so much</p>
-                            </div>
+                            @foreach($comment_list as $key => $comment)
+                                <a class="comment-author" href="javascript:void(0)">{{$comment->comments_user_firstname}} {{$comment->comments_user_lastname}}</a>
+                                <div class="comment-meta">
+                                    <span class="date">{{$comment->comments_datetime}}</span>
+                                </div>
+                                <div class="comment-content">
+                                    <p style="color: black;">{{$comment->comments_content}}</p>
+                                </div>
+                                <hr>
+                            @endforeach
                             <div class="comment-actions">
                                 <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Reply</a>
                             </div>
-                            <form class="comment-reply" action="/organization/{{$organization->organization_recordid}}/add_comment" method="GET">
+                            <form class="comment-reply" action="/organization/{{$organization->organization_recordid}}/add_comment" method="POST">
+                                {{ csrf_field() }}
                                 <div class="form-group">
                                     <textarea class="form-control" name="reply_content" rows="5" placeholder="Comment here">
                                     </textarea>
