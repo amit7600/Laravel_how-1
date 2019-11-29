@@ -236,9 +236,9 @@ div.tokenfield {
                             <div class="comment-actions">
                                 <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Reply</a>
                             </div>
-                            <form class="comment-reply" action="#" method="post">
+                            <form class="comment-reply" action="/organization/{{$organization->organization_recordid}}/add_comment" method="GET">
                                 <div class="form-group">
-                                    <textarea class="form-control" rows="5" placeholder="Comment here">
+                                    <textarea class="form-control" name="reply_content" rows="5" placeholder="Comment here">
                                     </textarea>
                                 </div>
                                 <div class="form-group">

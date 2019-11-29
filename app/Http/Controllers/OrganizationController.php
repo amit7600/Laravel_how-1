@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Auth;
 use App\Http\Controllers\Controller;
 use App\Functions\Airtable;
 use App\Address;
@@ -715,6 +716,16 @@ class OrganizationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function add_comment(Request $request, $id) {
+        $organization = Organization::find($id);
+        $comment_content = $request->reply_content;
+
+        $user = Auth::user();
+        var_dump($user);
+        exit;
+        
+    }
     public function update(Request $request, $id)
     {
         $organization = Organization::find($id);
