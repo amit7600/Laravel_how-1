@@ -60,6 +60,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/organization/{id}/tagging', 'OrganizationController@tagging');
     Route::get('/organization/{id}/edit', 'OrganizationController@edit');
     Route::get('/organization/{id}/update', 'OrganizationController@update');
+    Route::post('/organization/{id}/add_comment', 'OrganizationController@add_comment');
     Route::get('/organization_create', 'OrganizationController@create');
     Route::get('/add_new_organization', 'OrganizationController@add_new_organization');
 

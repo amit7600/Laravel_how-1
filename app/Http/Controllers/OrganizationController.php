@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Session;
+use Sentinel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Functions\Airtable;
 use App\Address;
 use App\Organization;
 use App\Contact;
+use App\Comment;
 use App\Organizationdetail;
 use App\Organizationcontact;
 use App\Location;
@@ -23,6 +27,22 @@ use PDF;
 
 class OrganizationController extends Controller
 {
+
+    protected $user;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $this->user= Auth::user();
+
+            return $next($request);
+        });
+    }
 
     public function airtable()
     {
@@ -533,18 +553,9 @@ class OrganizationController extends Controller
         $contacts = Contact::orderBy('contact_recordid')->where('contacts.contact_organizations', '=', $id)->get();
         $locations = Location::with('services', 'address', 'phones')->where('location_organization', '=', $id)->get();
         $map = Map::find(1);
-        $parent_taxonomy = [];
-        $child_taxonomy = [];
-        $checked_organizations = [];
-        $checked_insurances = [];
-        $checked_ages = [];
-        $checked_languages = [];
-        $checked_settings = [];
-        $checked_culturals = [];
-        $checked_transportations = [];
-        $checked_hours= [];
+        $comment_list = Comment::where('comments_organization', '=', $id)->get();
 
-        return view('frontEnd.organization', compact('organization', 'contacts', 'locations', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours'));
+        return view('frontEnd.organization', compact('organization', 'contacts', 'locations', 'map', 'parent_taxonomy', 'comment_list'));
     }
 
     public function download($id)
@@ -715,6 +726,46 @@ class OrganizationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function add_comment(Request $request, $id) {
+
+        $contacts = Contact::orderBy('contact_recordid')->where('contacts.contact_organizations', '=', $id)->get();
+        $locations = Location::with('services', 'address', 'phones')->where('location_organization', '=', $id)->get();
+        $map = Map::find(1);
+
+        $organization = Organization::find($id);
+        $comment_content = $request->reply_content;
+        $user = Sentinel::getUser();
+        $date_time = date("Y-m-d h:i:sa");
+        $comment = new Comment();
+
+        $comment_recordids = Comment::select("comments_recordid")->distinct()->get();                 
+        $comment_recordid_list = array();
+        foreach ($comment_recordids as $key => $value) {
+            $comment_recordid = $value->comments_recordid;
+            array_push($comment_recordid_list, $comment_recordid);
+        }
+        $comment_recordid_list = array_unique($comment_recordid_list);
+        $new_recordid = Comment::max('comments_recordid') + 1;            
+        if (in_array($new_recordid, $comment_recordid_list)) {
+            $new_recordid = Comment::max('comments_recordid') + 1;
+        }     
+
+        $comment->comments_recordid = $new_recordid;
+        $comment->comments_content = $comment_content;
+        $comment->comments_user = $user->id;
+        $comment->comments_user_firstname = $user->first_name;
+        $comment->comments_user_lastname = $user->last_name;
+        $comment->comments_organization = $id;
+        $comment->comments_datetime = $date_time;
+        $comment->save();
+
+        $comment_list = Comment::where('comments_organization', '=', $id)->get();
+
+        // return view('frontEnd.organization', compact('organization', 'contacts', 'locations', 'map', 'user', 'comment_list'));
+        return redirect('organization/'.$id);
+        
+    }
     public function update(Request $request, $id)
     {
         $organization = Organization::find($id);
