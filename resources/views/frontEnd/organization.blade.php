@@ -131,7 +131,6 @@ span.date {
                     </div>
                 </div>
             </div>           
-            
             <div class="col-md-4 property">
 				<div class="pt-10 pb-10 pl-0 btn-download">
                     <form method="GET" action="/organization/{{$organization->organization_recordid}}/tagging" id="organization_tagging">
