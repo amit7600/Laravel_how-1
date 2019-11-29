@@ -10,6 +10,7 @@ Register
 <style type="text/css">
 .dropdown-menu.open{
   max-height: 300px !important;
+  max-width: 100px !important;
 }
 div.filter-option {
   background: white;

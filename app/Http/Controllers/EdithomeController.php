@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Session;
 use Validator;
 use Sentinel;
+use Image;
 use Route;
 
 class EdithomeController extends Controller
@@ -110,6 +111,14 @@ class EdithomeController extends Controller
     {
         $layout = Layout::find(1);
         $layout->sidebar_content = $request->sidebar_content;
+
+        if($request->hasFile('home_bk_img_file')){
+            $homepage_background = $request->file('home_bk_img_file');
+            $filename = time() . '.' . $homepage_background->getClientOriginalExtension();
+            Image::make($homepage_background)->resize(1800, 1000, function ($constraint) {
+            $constraint->aspectRatio();})->save( public_path('/uploads/images/' . $filename ) );
+            $layout->homepage_background = $filename;
+        }
         $layout->save();
 
         if ($this->validator($request,Sentinel::getUser()->id)->fails()) {

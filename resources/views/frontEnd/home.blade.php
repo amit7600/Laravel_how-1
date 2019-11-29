@@ -33,7 +33,7 @@ Home
 <link href="{{asset('css/treeview.css')}}" rel="stylesheet">
 @section('content')       
    
-<div class="after_serach">
+<div class="after_serach" style="background-image: url({{asset('uploads/images/'.$home->homepage_background)}});">
     <div class="container">
         <div class="row">                
             <div class="col-lg-6 col-sm-12 col-md-6" style="text-align: center;">

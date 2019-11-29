@@ -22,7 +22,9 @@ Edit Home
 
         {!! Form::model($page, [
             'url' => ['home_edit', 1],
-            'class' => 'form-horizontal', 'method' => 'put'
+            'class' => 'form-horizontal', 
+            'method' => 'put',
+            'enctype'=> 'multipart/form-data'
         ]) !!}
         
             <div class="form-group {{ $errors->has('name') ? 'has-error' : ''}}">
@@ -52,6 +54,30 @@ Edit Home
                 </label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
                   <textarea id="summernote1" type="text" name="sidebar_content" class="optional form-control col-md-7 col-xs-12">{{$layout->sidebar_content}}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group m-form__group row">
+                <label class="control-label col-md-3 col-sm-3 col-xs-12">
+                    Backgroup Image of Home Page
+                </label>
+                <div class="col-md-6 col-sm-12">
+                    
+                    <!-- <div class="row">
+                      <img src="/uploads/images/{{$layout->homepage_background}}" id="home_bk_img" style="width: 200px;">
+                    </div> -->
+                    <div class="row">
+                    <div class="col-md-6">
+                      <label class="custom-file">
+                          <input type="file" id="home_bk_img_file" class="custom-file-input" onchange="readURL(this);" name="home_bk_img_file">
+                          <span class="custom-file-control"></span>
+                      </label>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <label>Recommended size 1824px wide and 1000px tall.</label>
+                      </div>
+                    </div>
                 </div>
             </div>
 
