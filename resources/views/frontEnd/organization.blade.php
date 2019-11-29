@@ -59,6 +59,10 @@ div.tokenfield {
     color: #3949ab !important;
     font-size: 18px !important;
 }
+span.date {
+    font-style: italic;
+    color: maroon;
+}
 
 </style>
 
@@ -227,12 +231,12 @@ div.tokenfield {
                     <div class="card-block">
                         <div class="comment-body media-body">
                             @foreach($comment_list as $key => $comment)
-                                <a class="comment-author" href="javascript:void(0)">{{$comment->comments_user}}</a>
+                                <a class="comment-author" href="javascript:void(0)">{{$comment->comments_user_firstname}} {{$comment->comments_user_lastname}}</a>
                                 <div class="comment-meta">
                                     <span class="date">{{$comment->comments_datetime}}</span>
                                 </div>
                                 <div class="comment-content">
-                                    <p>{{$comment->comments_content}}</p>
+                                    <p style="color: black;">{{$comment->comments_content}}</p>
                                 </div>
                                 <hr>
                             @endforeach

@@ -736,7 +736,6 @@ class OrganizationController extends Controller
         $organization = Organization::find($id);
         $comment_content = $request->reply_content;
         $user = Sentinel::getUser();
-        $user_id = $user->id;
         $date_time = date("Y-m-d h:i:sa");
         $comment = new Comment();
 
@@ -754,7 +753,9 @@ class OrganizationController extends Controller
 
         $comment->comments_recordid = $new_recordid;
         $comment->comments_content = $comment_content;
-        $comment->comments_user = $user_id;
+        $comment->comments_user = $user->id;
+        $comment->comments_user_firstname = $user->first_name;
+        $comment->comments_user_lastname = $user->last_name;
         $comment->comments_organization = $id;
         $comment->comments_datetime = $date_time;
         $comment->save();
