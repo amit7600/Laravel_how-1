@@ -288,18 +288,18 @@ button[data-id="contact_zipcode"] {
                     <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-contact">
                         <thead>
                             <tr>
-                                <th></th>      
-                                <th></th>  
-                                <th></th>                         
-                                <th class="default-active">Id</th>
+                                <th></th>   
+                                <th style="visibility: hidden;">Open Action</th>
+                                <th style="visibility: hidden;">Delete Action</th>                         
+                                <th class="default-inactive">Id</th>
                                 <th class="default-active">First Name</th>
                                 <th class="default-active">Middle Name</th>
                                 <th class="default-active">Last Name</th>
                                 <th class="default-active">Organization</th>
                                 <th class="default-active">Contact Type</th>
-                                <th class="default-active">Religious Title</th>
+                                <th class="default-active">Religious Prefix</th>
 
-                                <th class="default-active">Position Title</th> 
+                                <th class="default-active">Job Title</th> 
                                 <th class="default-inactive">Languages Spoken</th>
                                 <th class="default-inactive">Other Languages</th>       
                                 <th class="default-inactive">Pronouns</th>
