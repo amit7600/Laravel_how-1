@@ -66,6 +66,10 @@ button[data-id="contact_type"] {
     height: 100%;
     border: 1px solid #ddd;
 }
+button[data-id="tag"] {
+    height: 100%;
+    border: 1px solid #ddd;
+}
 button[data-id="contact_address"] {
     height: 100%;
     border: 1px solid #ddd;
@@ -214,6 +218,16 @@ button[data-id="contact_zipcode"] {
                             </select>
                         </div>
                     </div>   
+                    <div class="form-group row">
+                        <label class="control-label sel-label-org col-sm-3">Tag: </label>
+                        <div class="col-sm-9 col-sm-6 col-xs-12" id="tag-div">
+                            <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
+                            @foreach($tag_list as $key => $tag)
+                                <option value="{{$tag}}">{{$tag}}</option>
+                            @endforeach
+                            </select>
+                        </div>
+                    </div>
 
                     <input type="hidden" id="religion_list" name="religion_list"> 
                     <input type="hidden" id="faith_tradition_list" name="faith_tradition_list">
@@ -225,6 +239,7 @@ button[data-id="contact_zipcode"] {
                     <input type="hidden" id="contact_borough_list" name="contact_borough_list">
                     <input type="hidden" id="contact_zipcode_list" name="contact_zipcode_list">
                     <input type="hidden" id="contact_map_image" name="contact_map_image">
+                    <input type="hidden" id="tag_list" name="tag_list">
 
                     <div class="form-group row">
                         <div class="col-sm-12 col-xs-12" id="clear-btn-div">
@@ -322,6 +337,7 @@ button[data-id="contact_zipcode"] {
                                 <th class="default-inactive">Zipcode</th> 
                                 <th class="default-inactive">Organization ID</th> 
                                 <th class="default-inactive">Organization Name</th> 
+                                <th class="default-inactive">Tag</th>
                                                        
                             </tr>
                         </thead>
@@ -377,7 +393,7 @@ button[data-id="contact_zipcode"] {
             "order": [[ 2, 'desc' ]],
             "buttons": [{
                 extend: 'colvis',
-                columns: [11, 12, 13, 14, 19]
+                columns: [11, 12, 13, 14, 19, 30]
             }],
             "serverSide": true,          
             "searching": true,                   
@@ -392,6 +408,7 @@ button[data-id="contact_zipcode"] {
                     var search_term = data.search.value;
                     var filter_contact_borough = data.columns[26].search.value;
                     var filter_contact_zipcode = data.columns[27].search.value;
+                    var filter_tag = data.columns[30].search.value;
                     var filter_contact_languages = data.columns[11].search.value;
                     var filter_contact_address = data.columns[25].search.value;
                     var filter_contact_type = data.columns[8].search.value;
@@ -430,6 +447,7 @@ button[data-id="contact_zipcode"] {
                             filter_judicatory_body: filter_judicatory_body,
                             filter_email: filter_email,
                             filter_phone: filter_phone,
+                            filter_tag: filter_tag,
                             filter_map: filter_map,
                         },
                         success: function (response) {
@@ -798,6 +816,16 @@ button[data-id="contact_zipcode"] {
         dataTable
             .column(24)
             .search(search ? '^' + search + '$' : '', true, false).draw();
+    });
+    $('select#tag').on('change', function() {
+        
+        var selectedList = $(this).val();
+        $('input#tag_list').val(selectedList);
+        search = selectedList
+ 
+        dataTable
+            .column(30)
+            .search(search ? search : '', true, false).draw();
     });
     $('select#email').on('change', function() {       
         

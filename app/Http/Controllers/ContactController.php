@@ -190,6 +190,7 @@ class ContactController extends Controller
         $filter_judicatory_body = $request->filter_judicatory_body;
         $filter_email = $request->filter_email;
         $filter_phone = $request->filter_phone;
+        $filter_tag = $request->filter_tag;
         $filter_map = $request->filter_map;
 
         $contacts = Contact::orderBy('contact_recordid', 'DESC');
@@ -342,6 +343,9 @@ class ContactController extends Controller
         if ($filter_contact_languages_list) {
             $contacts = $contacts->whereIn('contact_languages_spoken', $filter_contact_languages_list);
         }
+        if ($filter_tag) {
+            $contacts = $contacts->where('contact_tag', 'LIKE', '%' . $filter_tag . '%');
+        }
         
         if ($filter_religion_list || $filter_faith_tradition_list || $filter_denomination_list || $filter_judicatory_body_list || $filter_contact_zipcode_list || $filter_contact_borough_list || $filter_contact_address_list || $filter_contact_languages_list || $filter_contact_type_list || $filter_contact_languages_list || $filtered_location_recordid_list) {
 
@@ -404,6 +408,7 @@ class ContactController extends Controller
             $contact_info[27] = $contact->address['address_zip_code'];
             $contact_info[28] = $contact->organization['organization_recordid'];
             $contact_info[29] = $contact->organization['organization_name'];
+            $contact_info[30] = $contact->contact_tag;
 
             array_push($result, $contact_info);
         }
@@ -429,7 +434,15 @@ class ContactController extends Controller
         $organization_judicatory_bodys = Organization::select("organization_judicatory_body")->distinct()->get();
         $organization_boroughs = Organization::select("organization_borough")->distinct()->get();
         $organization_zipcodes = Organization::select("organization_zipcode")->distinct()->get();
+        $contact_tags = Contact::select("contact_tag")->distinct()->get();
         $locations = Location::with('services', 'address', 'phones')->distinct()->get();
+
+        $tag_list = [];
+        foreach ($contact_tags as $key => $value) {
+            $tags = explode(", " , trim($value->contact_tag));
+            $tag_list = array_merge($tag_list, $tags);
+        }
+        $tag_list = array_unique($tag_list);
 
         $address_address_list = [];
         foreach ($address_addresses as $key => $value) {
@@ -470,7 +483,7 @@ class ContactController extends Controller
 
         return view('frontEnd.contacts', compact('contact_types', 'contact_languages', 'contact_addresses', 'organization_religions', 'organization_faith_traditions', 'organization_denominations', 'organization_judicatory_bodys'
         , 'organization_boroughs', 'organization_zipcodes', 'address_address_list', 'address_city_list', 'address_zipcode_list',
-        'map', 'locations', 'faith_tradition_list', 'denomination_list'));
+        'map', 'locations', 'faith_tradition_list', 'denomination_list', 'tag_list'));
     }
 
     public function group_operation(Request $request) 
@@ -1233,6 +1246,13 @@ class ContactController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function tagging(Request $request, $id) {
+        $contact = Contact::find($id); 
+        $contact->contact_tag = $request->tokenfield;
+        $contact->save();
+        return redirect('contact/'.$id);
+    }
 
     public function add_new_contact(Request $request) 
     {

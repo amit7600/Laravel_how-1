@@ -46,6 +46,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/contacts/contacts_update_dynamic_group', 'ContactController@contacts_update_dynamic_group');
     Route::get('/contacts/create_new_static_group_add_members', 'ContactController@create_new_static_group_add_members');
     Route::get('/contact/{id}', 'ContactController@contact');
+    Route::get('/contact/{id}/tagging', 'ContactController@tagging');
     Route::get('/contact/{id}/edit', 'ContactController@edit');
     Route::get('/contact/{id}/update', 'ContactController@update');
     Route::get('/contact/{id}/add_group', 'ContactController@add_group');
