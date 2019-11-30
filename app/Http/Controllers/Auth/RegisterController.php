@@ -76,8 +76,8 @@ class RegisterController extends Controller
 
          $user = Sentinel::register($request->all());
         //Activate the user ** 
-         $activation = Activation::create($user);
-         $activation = Activation::complete($user, $activation->code);
+        // $activation = Activation::create($user);
+         //$activation = Activation::complete($user, $activation->code);
         //End activation
 
         if($user){
