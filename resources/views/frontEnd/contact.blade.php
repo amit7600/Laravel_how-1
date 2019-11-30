@@ -55,6 +55,9 @@ table#tbl-message-profile-contact {
     display: flex;
     flex-direction: column;
 }
+#tagging-div {
+    margin-top: 12px !important;
+}
 </style>
 
 @section('content')
@@ -62,16 +65,23 @@ table#tbl-message-profile-contact {
     <!-- Page Content Holder -->
     <div id="content" class="container">
 		<div class="row m-0">
-        	<div class="col-md-8 pt-15 pb-15 pl-30">
+        	<div class="col-md-8 pt-15 pl-30">
                <div class="card">
                     <div class="card-block">
                         <h4 class="card-title">
 							<a href="">@if($contact->contact_first_name!='?'){{$contact->contact_first_name}}@endif @if($contact->contact_middle_name!=''){{$contact->contact_middle_name}}@endif @if($contact->contact_last_name!=''){{$contact->contact_last_name}}@endif
-							</a>
+                            </a>
+                            <a href="/contact/{{$contact->contact_recordid}}/edit" class="btn btn-floating btn-success waves-effect waves-classic" style="float: right;">
+                                <i class="icon md-edit" style="margin-right: 0px;"></i>
+                            </a>
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Religious Title:</b></span> 
+							<span class="badge bg-red pl-0 organize_font"><b>Religious Prefix:</b></span> 
 							{{$contact->contact_religious_title}}
+                        </h4>
+                        <h4>
+							<span class="badge bg-red pl-0 organize_font"><b>Job Title:</b></span> 
+							{{$contact->contact_title}}
                         </h4>
                         <h4>
 							<span class="badge bg-red pl-0 organize_font"><b>Organization:</b></span> 
@@ -125,8 +135,19 @@ table#tbl-message-profile-contact {
                 </div>
             </div> 
             <div class="col-md-4 property">
-				<div class="pt-10 pb-10 pl-0 btn-download">
-					<a href="/contact/{{$contact->contact_recordid}}/edit" class="btn btn-primary"><i class="fa fa-fw fa-edit"></i>Edit</a>
+				<div class="pt-10 pl-0 btn-download">
+                    <form method="GET" action="/contact/{{$contact->contact_recordid}}/tagging" id="contact_tagging">
+                        <div class="row m-0" id="tagging-div">
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$contact->contact_tag}}" />
+                            </div> 
+                            <div class="col-md-2">  
+                                <button type="submit" class="btn btn-secondary btn-tag-save">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </div> 
+                        </div>
+                    </form>
                     <div class="dropdown">
                         <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fa fa-fw fa-home"></i> Add to Group
@@ -140,23 +161,13 @@ table#tbl-message-profile-contact {
                     <button class="btn btn-secondary message-td" value="{{$contact->contact_recordid}}" data-toggle="modal" data-target=".bs-message-modal-lg"><i class="fa fa-fw fa-envelope"></i> Send a Message</button>
 				</div>
 				<div class="card">
-					<div id="map" style="width:initial;margin-top: 0;height: 50vh;"></div>					
-                </div>
-               
-                <div class="card-block">
-                    <h4 class="card-title">
-                        Groups
-                    </h4>
-                    <div class="p-10" id="contact_group_list_div">
-                        @foreach($contact_group_name_list as $key => $contact_group_name)
-                            <a href="/group/{{$contact_group_recordid_list[$key]}}">{{$contact_group_name}}</a>
-                        @endforeach
-                    </div>
+					<div id="map" style="width:initial;margin-top: 10px;height: 90vh;"></div>					
                 </div>
             </div> 
-            <div class="col-md-12 pt-15 pb-15 pl-30 pl-30">
-               <div class="card">
+            <div class="col-md-8 pb-15 pl-30 pl-30">
+                <div class="card">
                     <div class="card-block">
+                        <h3>Messages</h3>
                         <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-message-profile-contact">
                             <thead>
                                 <tr>
@@ -173,6 +184,18 @@ table#tbl-message-profile-contact {
                                 </tr>
                             </thead>
                         </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card-block">
+                    <h3 class="card-title">
+                        Groups
+                    </h3>
+                    <div class="p-10" id="contact_group_list_div">
+                        @foreach($contact_group_name_list as $key => $contact_group_name)
+                            <a href="/group/{{$contact_group_recordid_list[$key]}}">{{$contact_group_name}}</a>
+                        @endforeach
                     </div>
                 </div>
             </div>

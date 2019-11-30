@@ -309,15 +309,7 @@ span.date {
             ]
         });           
     })
-    $(document).ready(function() {   
-        $('#tokenfield').tokenfield({
-        autocomplete: {
-            source: ['red','blue','green','yellow','violet','brown','purple','black','white'],
-            delay: 100
-        },
-        showAutocompleteOnFocus: true
-        });
-    });
+   
     $(document).ready(function() {
         $('.comment-reply').hide();
     });
@@ -326,7 +318,6 @@ span.date {
         var locations = <?php print_r(json_encode($locations)) ?>;
         var organization = <?php print_r(json_encode($organization->organization_name)) ?>;
         var maplocation = <?php print_r(json_encode($map)) ?>;
-        console.log(locations);
 
         if(maplocation.active == 1){
             avglat = maplocation.lat;
