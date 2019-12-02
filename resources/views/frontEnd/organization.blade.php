@@ -314,6 +314,16 @@ span.date {
         $('.comment-reply').hide();
         $('#reply_content').val('');
     });
+
+    $(document).ready(function() {   
+        $('#tokenfield').tokenfield({
+        autocomplete: {
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
+    });
+
     $(document).ready(function(){  
         setTimeout(function(){
         var locations = <?php print_r(json_encode($locations)) ?>;

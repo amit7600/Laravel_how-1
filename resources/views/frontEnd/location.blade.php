@@ -58,6 +58,10 @@ table#tbl-location-profile-history {
     overflow-x: scroll;
 }
 
+#tagging-div {
+    margin-top: 12px !important;
+}
+
 </style>
 
 @section('content')
@@ -65,12 +69,15 @@ table#tbl-location-profile-history {
     <!-- Page Content Holder -->
     <div id="content" class="container">
 		<div class="row m-0">
-        	<div class="col-md-8 pt-15 pb-15 pl-30">
+        	<div class="col-md-8 pt-15 pb-16 pl-30">
                <div class="card">
                     <div class="card-block">
                         <h4 class="card-title">
 							<a href="">{{$facility->location_name}}
-							</a>
+                            </a>
+                            <a href="/facility/{{$facility->location_recordid}}/edit" class="btn btn-floating btn-success waves-effect waves-classic" style="float: right;">
+                                <i class="icon md-edit" style="margin-right: 0px;"></i>
+                            </a>
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Organization:</b></span> 
@@ -104,17 +111,28 @@ table#tbl-location-profile-history {
                 </div>
             </div>  
             <div class="col-md-4 property">
-				<div class="pt-10 pb-10 pl-0 btn-download">
-					<a href="/facility/{{$facility->location_recordid}}/edit" class="btn btn-primary "><i class="fa fa-fw fa-edit"></i>Edit</a>
-                    <button class="btn btn-danger delete-td" value="{{$facility->location_recordid}}" data-toggle="modal" data-target=".bs-delete-modal-lg"><i class="fa fa-fw fa-remove"></i>Delete</button>
+                <div class="pt-10 pl-0 btn-download">
+                    <form method="GET" action="/facility/{{$facility->location_recordid}}/tagging" id="location_tagging">
+                        <div class="row m-0" id="tagging-div">
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$facility->location_tag}}" />
+                            </div> 
+                            <div class="col-md-2">  
+                                <button type="submit" class="btn btn-secondary btn-tag-save">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </div> 
+                        </div>
+                    </form>
 				</div>
 				<div class="card">
-					<div id="map" style="width:initial;margin-top: 0;height: 50vh;"></div>
+					<div id="map" style="width:initial;margin-top: 0; height: 49vh;"></div>
                 </div>
             </div> 
             <div class="col-md-8 pt-15 pb-15 pl-30 pl-30">
                <div class="card">
-                    <div class="card-block">  
+                    <div class="card-block">
+                        <h3>Facility Change Log</h3>  
                         <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-location-profile-history">
                             <thead>
                                 <tr> 
@@ -169,6 +187,8 @@ table#tbl-location-profile-history {
     </div>
 </div>
 
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
 
 <script>
   
@@ -186,6 +206,16 @@ table#tbl-location-profile-history {
             ]
         });           
     })
+
+    $(document).ready(function() {   
+        $('#tokenfield').tokenfield({
+        autocomplete: {
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
+    });
+
     $(document).ready(function(){  
         setTimeout(function(){
         var locations = <?php print_r(json_encode($locations)) ?>;       
@@ -287,6 +317,9 @@ table#tbl-location-profile-history {
         var value = $(this).val();
         $('input#facility_recordid').val(value);
     });
+
+
+
     
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap"

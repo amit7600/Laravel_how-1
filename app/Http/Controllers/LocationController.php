@@ -448,6 +448,13 @@ class LocationController extends Controller
         'location_types', 'address_address_list', 'address_city_list', 'address_zipcode_list', 'map'));
     }
 
+    public function tagging(Request $request, $id) {
+        $location = Location::find($id); 
+        $location->location_tag = $request->tokenfield;
+        $location->save();
+        return redirect('facility/'.$id);
+    }
+
     public function facility($id)
     {
         $facility = Location::where('location_recordid', '=', $id)->first();

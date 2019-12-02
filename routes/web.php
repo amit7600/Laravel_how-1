@@ -77,6 +77,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/get_all_facilities', 'LocationController@get_all_facilities');
     Route::get('/facilities/action_group', 'LocationController@group_operation');
     Route::get('/facility/{id}', 'LocationController@facility');
+    Route::get('/facility/{id}/tagging', 'LocationController@tagging');
     Route::get('/facility/{id}/edit', 'LocationController@edit');
     Route::get('/facility/{id}/update', 'LocationController@update');
     Route::get('/facility_create', 'LocationController@create');
