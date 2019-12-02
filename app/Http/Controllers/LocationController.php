@@ -181,6 +181,7 @@ class LocationController extends Controller
         $filter_borough = $request->filter_borough;
         $filter_zipcode = $request->filter_zipcode;
         $filter_type = $request->filter_type;
+        $filter_tag = $request->filter_tag;
 
         $facilities = Location::orderBy('location_recordid', 'DESC');
         
@@ -189,6 +190,7 @@ class LocationController extends Controller
                 ->where('location_name', 'LIKE', '%' . $search_term . '%')
                 ->orWhere('location_description', 'LIKE', '%' . $search_term . '%')
                 ->orWhere('location_type', 'LIKE', '%' . $search_term . '%')
+                ->orWhere('location_tag', 'LIKE', '%' . $search_term . '%')
                 ->whereHas('organization', function (Builder $query) use ($search_term) {
                     $query->where('organization_name', 'LIKE', '%' . $search_term . '%');
                 });
@@ -214,6 +216,9 @@ class LocationController extends Controller
 
         if ($filter_type_list) {
             $facilities = $facilities->whereIn('location_type', $filter_type_list);
+        }
+        if ($filter_tag) {
+            $facilities = $facilities->where('location_tag', 'LIKE', '%' . $filter_tag . '%');
         }
 
         if ($filter_address_list || $filter_borough_list || $filter_zipcode_list) {
@@ -281,6 +286,7 @@ class LocationController extends Controller
                 $facility_info[11] = $facility->address[0]['address_city'];
             }
             $facility_info[12] = $facility->location_description;
+            $facility_info[13] = $facility->location_tag;
 
             array_push($result, $facility_info);
         }
@@ -421,6 +427,14 @@ class LocationController extends Controller
         $address_cities = Address::select("address_city")->distinct()->get();
         $address_zipcodes = Address::select("address_zip_code")->distinct()->get();        
         $locations = Location::with('services', 'address', 'phones')->distinct()->get();
+        $location_tags = Location::select("location_tag")->distinct()->get();
+
+        $tag_list = [];
+        foreach ($location_tags as $key => $value) {
+            $tags = explode(", " , trim($value->location_tag));
+            $tag_list = array_merge($tag_list, $tags);
+        }
+        $tag_list = array_unique($tag_list);
 
         $address_address_list = [];
         foreach ($address_addresses as $key => $value) {
@@ -446,7 +460,7 @@ class LocationController extends Controller
         $map = Map::find(1);      
 
         return view('frontEnd.locations', compact('locations',
-        'location_types', 'address_address_list', 'address_city_list', 'address_zipcode_list', 'map'));
+        'location_types', 'address_address_list', 'address_city_list', 'address_zipcode_list', 'tag_list', 'map'));
     }
 
     public function tagging(Request $request, $id) {
