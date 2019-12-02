@@ -51,6 +51,10 @@ button[data-id="borough"] {
     height: 100%;
     border: 1px solid #ddd;
 }
+button[data-id="tag"] {
+    height: 100%;
+    border: 1px solid #ddd;
+}
 button[data-id="zipcode"] {
     height: 100%;
     border: 1px solid #ddd;
@@ -116,12 +120,23 @@ button[data-id="address"] {
                             @endforeach
                             </select>
                         </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label sel-label-org pl-4">Tag: </label>
+                        <div class="col-sm-6 col-sm-6 col-xs-12" id="tag-div">
+                            <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
+                            @foreach($tag_list as $key => $tag)
+                                <option value="{{$tag}}">{{$tag}}</option>
+                            @endforeach
+                            </select>
+                        </div>
                     </div>  
 
                     <input type="hidden" id="address_list" name="address_list"> 
                     <input type="hidden" id="borough_list" name="borough_list">
                     <input type="hidden" id="zipcode_list" name="zipcode_list">
                     <input type="hidden" id="type_list" name="type_list">
+                    <input type="hidden" id="tag_list" name="tag_list">
                     
                     <div class="form-group row">
                         <label class="control-label sel-label-org pl-4"></label>
@@ -162,6 +177,7 @@ button[data-id="address"] {
                                 <th class="default-inactive">Zipcode</th>
                                 <th class="default-inactive">Borough</th>
                                 <th class="default-inactive">Comments</th>
+                                <th class="default-inactive">Tag</th>
                             </tr>
                         </thead>
                     </table>
@@ -211,7 +227,7 @@ button[data-id="address"] {
             "order": [[ 2, 'desc' ]],
             "buttons": [{
                 extend: 'colvis',
-                columns: [8, 9, 10, 12]
+                columns: [8, 9, 10, 12, 13]
             }],
             "serverSide": true,          
             "searching": true,                   
@@ -227,6 +243,7 @@ button[data-id="address"] {
                     var filter_borough = data.columns[11].search.value;
                     var filter_zipcode = data.columns[10].search.value;
                     var filter_type = data.columns[9].search.value;
+                    var filter_tag = data.columns[13].search.value;
                   
                     console.log(data);
                     console.log(data.columns);
@@ -238,7 +255,8 @@ button[data-id="address"] {
                             + "&filter_address=" + filter_address
                             + "&filter_borough=" + filter_borough
                             + "&filter_zipcode=" + filter_zipcode
-                            + "&filter_type=" + filter_type,
+                            + "&filter_type=" + filter_type
+                            + "&filter_tag=" + filter_tag,
                         success: function (response) {
                             callback({
                                 draw: data.draw,
@@ -323,6 +341,7 @@ button[data-id="address"] {
         $("#borough").selectpicker("");
         $("#zipcode").selectpicker("");
         $("#type").selectpicker("");
+        $("#tag").selectpicker("");
     })
 
     $('select#address').on('change', function() {
@@ -361,12 +380,19 @@ button[data-id="address"] {
             .column(9)
             .search(search ? search : '', true, false).draw();
     });
+    $('select#tag').on('change', function() {
+        
+        var selectedList = $(this).val();
+        $('input#tag_list').val(selectedList);
+        search = selectedList
+ 
+        dataTable
+            .column(13)
+            .search(search ? search : '', true, false).draw();
+    });
     $('button#clear-filter-locations-btn').on('click', function(e) {
         e.preventDefault();
-        $('select#address').val([]).change();
-        $('select#borough').val([]).change();
-        $('select#zipcode').val([]).change();
-        $('select#type').val([]).change();
+        window.location.reload(true);
     });
 
     $(document).ready(function(){  
