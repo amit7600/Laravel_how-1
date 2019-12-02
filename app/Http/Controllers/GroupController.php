@@ -32,6 +32,14 @@ class GroupController extends Controller
         return view('frontEnd.groups', compact('groups', 'type_list', 'map'));        
     }
 
+    public function tagging(Request $request, $id) {
+        $group = Group::find($id); 
+        $group->group_tag = $request->tokenfield;
+        $group->save();
+        return redirect('group/'.$id);
+    }
+
+
     public function group($id) {
         $group = Group::where('group_recordid', '=', $id)->first(); 
         $group_type = $group->group_type;        
@@ -139,8 +147,7 @@ class GroupController extends Controller
     public function create()
     {
         $map = Map::find(1);
-        $group_type_list = ['Dynamic', 'Static'];
-        return view('frontEnd.group-create', compact('map', 'group_type_list'));
+        return view('frontEnd.group-create', compact('map'));
     }
 
     /**
@@ -191,8 +198,8 @@ class GroupController extends Controller
     {
         $group = new Group;
         $group->group_name = $request->group_name;        
-        $group->group_type = $request->group_type;
-        $group->group_emails = $request->group_email;
+        // $group->group_type = $request->group_type;
+        // $group->group_emails = $request->group_email;
         $group->group_last_modified = date("Y-m-d h:i:sa");
         $group->group_created_at = date("Y-m-d h:i:sa");
         $group->group_members = '0';

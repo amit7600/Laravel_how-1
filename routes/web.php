@@ -69,6 +69,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/groups', 'GroupController@groups');
     Route::get('/group/{id}', 'GroupController@group');
     Route::get('/group/{id}/edit', 'GroupController@edit');
+    Route::get('/group/{id}/tagging', 'GroupController@tagging');
     Route::get('/group/{id}/update', 'GroupController@update');
     Route::get('/group_create', 'GroupController@create');
     Route::get('/add_new_group', 'GroupController@add_new_group');
