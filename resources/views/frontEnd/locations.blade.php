@@ -239,6 +239,8 @@ button[data-id="address"] {
     var marks = [];
 
     $(document).ready(function() {
+        $('#waiting').hide();
+        sessionStorage.setItem('check_marks', '');
         dataTable = $('#tbl-location').DataTable({
             "scrollX": true,
             "dom": 'lBfrtip',
@@ -299,6 +301,11 @@ button[data-id="address"] {
                                 var value = $(this).val();
                                 $('input#facility_recordid').val(value);
                             });
+
+                            console.log(check_marks);
+                            if (sessionStorage.getItem('check_marks') == 'true') {
+                                return;
+                            }
 
                             var locations = response.filtered_locations_list;       
                             var maplocation = <?php print_r(json_encode($map)) ?>;
