@@ -182,6 +182,7 @@ class LocationController extends Controller
         $filter_zipcode = $request->filter_zipcode;
         $filter_type = $request->filter_type;
         $filter_tag = $request->filter_tag;
+        $filter_map = $request->filter_map;
 
         $facilities = Location::orderBy('location_recordid', 'DESC');
         
@@ -200,6 +201,7 @@ class LocationController extends Controller
         $filter_borough_list = [];
         $filter_zipcode_list = [];
         $filter_type_list = [];
+        $filter_map_list = [];
 
         if ($filter_address) {
             $filter_address_list = explode('|', $filter_address);            
@@ -214,11 +216,39 @@ class LocationController extends Controller
             $filter_type_list = explode('|', $filter_type);            
         }
 
+        if ($filter_map) {
+            $filter_map_list = json_decode($filter_map);
+        }
+        $filtered_location_recordid_list = [];
+        if ($filter_map_list) {
+            $lat = round($filter_map_list[0]->lat, 7);
+            $lng = round($filter_map_list[0]->lng, 7);
+            $query = Location::where(function ($q) use ($lat, $lng) {
+                $q->where('location_latitude', $lat)
+                    ->where('location_longitude', $lng);
+            });
+            foreach($filter_map_list as $key => $filter_map_value) {
+                if ($key == 0) continue;
+                $lat = round($filter_map_value->lat, 7);
+                $lng = round($filter_map_value->lng, 7);
+                $query = $query->orWhere(function ($q) use ($lat, $lng) {
+                    $q->where('location_latitude', $lat)
+                        ->where('location_longitude', $lng);
+                });
+            }
+            $filtered_location_recordid_list = $query->pluck('location_recordid')->toArray();
+            
+        }
+
         if ($filter_type_list) {
             $facilities = $facilities->whereIn('location_type', $filter_type_list);
         }
         if ($filter_tag) {
             $facilities = $facilities->where('location_tag', 'LIKE', '%' . $filter_tag . '%');
+        }
+
+        if ($filtered_location_recordid_list) {
+            $facilities = $facilities->whereIn('location_recordid', $filtered_location_recordid_list);
         }
 
         if ($filter_address_list || $filter_borough_list || $filter_zipcode_list) {

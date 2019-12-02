@@ -80,7 +80,7 @@ button[data-id="address"] {
     <div id="locations-content" class="container">
         <form action="/facilities/action_group" method="GET">
             <div class="row">
-                <div class="col-sm-8 p-20">                        
+                <div class="col-sm-6 p-20">                        
                     <div class="form-group row">
                         <label class="control-label sel-label-org pl-4">Type: </label>
                         <div class="col-md-6 col-sm-6 col-xs-12" id="type-div">
@@ -136,17 +136,34 @@ button[data-id="address"] {
                     <input type="hidden" id="borough_list" name="borough_list">
                     <input type="hidden" id="zipcode_list" name="zipcode_list">
                     <input type="hidden" id="type_list" name="type_list">
-                    <input type="hidden" id="tag_list" name="tag_list">
+                    <input type="hidden" id="tag_list" name="tag_list">                     
                     
                     <div class="form-group row">
                         <label class="control-label sel-label-org pl-4"></label>
                         <div class="col-md-6 col-sm-6 col-xs-12" id="clear-btn-div">
                             <button class="btn btn-success btn-rounded" id="clear-filter-locations-btn"><i class="fa fa-refresh"></i> Clear Filters</button>
                         </div>
-                    </div>        
+                    </div>  
+
+                    <div id="waiting" style="text-align: center; margin-top: 50px;">
+                        <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom" style="font-size: 100px;"></i>
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                          
                 </div>
-                <div class="col-md-4 property">
+                <div class="col-md-6 property">
                     <div class="card">
+                        <div class="form-group row mt-5">
+                            <div class="col-sm-4">
+                                <button type="button" class="btn btn-secondary" id="enable-polygon-btn" style="width: 100%;">Draw</button>
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="button" class="btn btn-primary form-control" id="filter-polygon-btn">Apply</button>
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="button" class="btn btn-success form-control" id="reset-filter-polygon-btn" onClick="document.location.reload(true)">Reset</button>
+                            </div>
+                        </div>
                         <div id="map" style="width:initial;margin-top: 0;height: 50vh;"></div>
                     </div>
                 </div>
@@ -218,7 +235,8 @@ button[data-id="address"] {
 <script src="{{asset('js/markerclusterer.js')}}"></script>
 <script>
     var dataTable;
-   
+    var filter_map = "";
+    var marks = [];
 
     $(document).ready(function() {
         dataTable = $('#tbl-location').DataTable({
@@ -244,25 +262,37 @@ button[data-id="address"] {
                     var filter_zipcode = data.columns[10].search.value;
                     var filter_type = data.columns[9].search.value;
                     var filter_tag = data.columns[13].search.value;
-                  
-                    console.log(data);
-                    console.log(data.columns);
+                    var check_marks = sessionStorage.getItem('check_marks');
+
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                        }
+                    });
+                    $('#waiting').show();
               
                     $.ajax({
-                        type: "GET",
-                        url: "/get_all_facilities?start=" + start + "&length=" + length
-                            + "&search_term=" + search_term
-                            + "&filter_address=" + filter_address
-                            + "&filter_borough=" + filter_borough
-                            + "&filter_zipcode=" + filter_zipcode
-                            + "&filter_type=" + filter_type
-                            + "&filter_tag=" + filter_tag,
+                        type: "POST",
+                        url: "/get_all_facilities",
+                        data: {
+                            start: start,
+                            length: length,
+                            search_term: search_term,
+                            filter_address: filter_address,
+                            filter_borough: filter_borough,
+                            filter_zipcode: filter_zipcode,
+                            filter_type: filter_type,
+                            filter_tag: filter_tag,                           
+                            filter_map: filter_map
+                        },
                         success: function (response) {
+                            $('#waiting').hide();
                             callback({
                                 draw: data.draw,
                                 data: response.data,
                                 recordsTotal: response.recordsTotal,
-                                recordsFiltered: response.recordsFiltered
+                                recordsFiltered: response.recordsFiltered,
+                                marks: response.marks
                             });
                             $('button.delete-td').on('click', function(e) {
                                 e.preventDefault();
@@ -275,13 +305,13 @@ button[data-id="address"] {
                             if(maplocation.active == 1){
                                 avglat = maplocation.lat;
                                 avglng = maplocation.long;
-                                zoom = maplocation.zoom;
+                                zoom = maplocation.zoom * 15;
                             }
                             else
                             {
                                 avglat = 40.730981;
                                 avglng = -73.998107;
-                                zoom = 12;
+                                zoom = 12 * 15;
                             }
                             latitude = locations[0].location_latitude;
                             longitude = locations[0].location_longitude;
@@ -293,6 +323,50 @@ button[data-id="address"] {
                                 zoom: zoom,
                                 center: {lat: parseFloat(latitude), lng: parseFloat(longitude)}
                             });
+
+                            var poly = new google.maps.Polygon({
+                                strokeColor: '#000000',
+                                strokeOpacity: 1.0,
+                                strokeWeight: 3
+                            });
+
+                            $('#enable-polygon-btn').on('click', function(e) {
+                                e.preventDefault();
+                                poly = new google.maps.Polygon({
+                                    strokeColor: '#000000',
+                                    strokeOpacity: 1.0,
+                                    strokeWeight: 3
+                                });
+                                
+                                poly.setMap(map);
+                                map.addListener('click', addLatLng);
+                            });
+
+                            $('#filter-polygon-btn').on('click', function(e) {
+                                e.preventDefault();
+                                google.maps.event.clearListeners(map, 'click');
+                            });
+
+                            $('#reset-filter-polygon-btn').on('click', function(e) {
+                                e.preventDefault();
+                                google.maps.event.clearListeners(map, 'click');
+                                poly.setMap(null);
+                                clearMarkers();
+                                marks = [];
+                            });
+
+                            // Sets the map on all markers in the array.
+                            function setMapOnAll(map) {
+                                for (var i = 0; i < marks.length; i++) {
+                                    marks[i].setMap(map);
+                                }
+                            }
+
+                            // Removes the markers from the map, but keeps them in the array.
+                            function clearMarkers() {
+                                setMapOnAll(null);
+                            }
+
                             var locations_info = locations.map((value) => {
                                 return {
                                     lat: parseFloat(value.location_latitude),
@@ -305,9 +379,102 @@ button[data-id="address"] {
                                 });
                             });
                             var markerCluster = new MarkerClusterer(map, markers,
-                                {imagePath: "{{asset('images/m')}}"});
+                                {imagePath: "{{asset('images/m')}}"}
+                            );
+
+                            function addLatLng(event) {
+                                var path = poly.getPath();
+                                // Because path is an MVCArray, we can simply append a new coordinate
+                                // and it will automatically appear.
+                                path.push(event.latLng);
+
+                                // Add a new marker at the new plotted point on the polyline.
+                                var marker = new google.maps.Marker({
+                                    position: event.latLng,
+                                    title: '#' + path.getLength(),
+                                    map: map
+                                });
+                                marks.push(marker);
+                            }
+
+                            google.maps.Polygon.prototype.Contains = function (point) {
+                                
+                                var crossings = 0,
+                                    path = this.getPath();
+                                // for each edge
+                                for (var i = 0; i < path.getLength(); i++) {
+                                    var a = path.getAt(i),
+                                        j = i + 1;
+                                    if (j >= path.getLength()) {
+                                        j = 0;
+                                    }
+                                    var b = path.getAt(j);
+                                    if (rayCrossesSegment(point, a, b)) {
+                                        crossings++;
+                                    }
+                                }
+                                // odd number of crossings?
+                                return (crossings % 2 == 1);
+                                function rayCrossesSegment(point, a, b) {
+                                    var px = point.lng(),
+                                        py = point.lat(),
+                                        ax = a.lng(),
+                                        ay = a.lat(),
+                                        bx = b.lng(),
+                                        by = b.lat();
+                                    if (ay > by) {
+                                        ax = b.lng();
+                                        ay = b.lat();
+                                        bx = a.lng();
+                                        by = a.lat();
+                                    }
+                                    // alter longitude to cater for 180 degree crossings
+                                    if (px < 0) {
+                                        px += 360;
+                                    }
+                                    if (ax < 0) {
+                                        ax += 360;
+                                    }
+                                    if (bx < 0) {
+                                        bx += 360;
+                                    }
+                                    if (py == ay || py == by) py += 0.00000001;
+                                    if ((py > by || py < ay) || (px > Math.max(ax, bx))) return false;
+                                    if (px < Math.min(ax, bx)) return true;
+                                    var red = (ax != bx) ? ((by - ay) / (bx - ax)) : Infinity;
+                                    var blue = (ax != px) ? ((py - ay) / (px - ax)) : Infinity;
+                                    return (blue >= red);
+                                }
+                            };
+
+                            $('#filter-polygon-btn').on('click', function(e) {
+                                e.preventDefault();
+                                var filtered_points = [];
+                                for (i = 0; i < markers.length; i++) {
+                                    var point = new google.maps.LatLng(markers[i].position.lat(), markers[i].position.lng());
+                                    if (poly.Contains(point)) {
+                                        var lat = markers[i].position.lat();
+                                        var lng = markers[i].position.lng();
+                                        filtered_points.push({
+                                            lat: lat,
+                                            lng: lng
+                                        });
+                                    } 
+                                }
+                                
+                                filter_map = JSON.stringify(filtered_points);
+                                
+                                dataTable.ajax.reload();
+                                sessionStorage.setItem('check_marks', 'true');
+                                console.log('=========after filter===========');
+                                console.log(marks);                               
+                            });
+
                         },
                         error: function (data) {
+                            if (data.status == 0 || data.status == 414) {
+                                console.log('Organizations in filtered Ploygon are too much. Enlarge Map and filter in more detailed area.');
+                            }
                             console.log('Error:', data);
                         }
                     });
@@ -399,18 +566,17 @@ button[data-id="address"] {
         setTimeout(function(){
             var locations = <?php print_r(json_encode($locations)) ?>;        
             var maplocation = <?php print_r(json_encode($map)) ?>;
-            console.log(locations);
 
             if(maplocation.active == 1){
                 avglat = maplocation.lat;
                 avglng = maplocation.long;
-                zoom = maplocation.zoom;
+                zoom = maplocation.zoom * 15;
             }
             else
             {
                 avglat = 40.730981;
                 avglng = -73.998107;
-                zoom = 12;
+                zoom = 12 * 15;
             }
 
             latitude = locations[0].location_latitude;
@@ -419,15 +585,8 @@ button[data-id="address"] {
             if(latitude == null){
                 latitude = avglat;
                 longitude = avglng;
-            }
+            }           
             
-            // var mymap = new GMaps({
-            //     el: '#map',
-            //     lat: latitude,
-            //     lng: longitude,
-            //     zoom: zoom
-            // });
-
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: zoom,
                 center: {lat: parseFloat(latitude), lng: parseFloat(longitude)}
