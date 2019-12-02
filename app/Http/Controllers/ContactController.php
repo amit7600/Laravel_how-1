@@ -1156,7 +1156,7 @@ class ContactController extends Controller
         $checked_hours = [];
 
         // this section for message table in contact
-        $contacts = CampaignReport::where('contact_id', $contact->id)->where('status','Delivered')->get();
+        $contacts = CampaignReport::where('contact_id', $contact->id)->where('status','!=','Delivered')->get();
 
         return view('frontEnd.contact', compact('organization', 'contact', 'locations', 'mailing_address', 'contact_organization_name', 'organization_id', 'comment_list',
             'office_phone_number', 'cell_phone_number', 'emergency_phone_number', 'office_fax_phone_number', 'groups', 'group_names', 'contact_group_name_list', 'contact_group_recordid_list',

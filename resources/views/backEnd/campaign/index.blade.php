@@ -249,7 +249,7 @@ Organizations
                                     <span
                                         class="{{$delivered > 0 ? 'badge badge-success' : 'badge badge-danger'}}">{{$delivered > 0 ? 'Sent' : 'Draft'}}</span>
                                 </td>
-                                <td>{{$campaign->updated_at}} </td>
+                                <td>{{date('d-m-Y h:m:s',strtotime($campaign->updated_at))}} </td>
                                 <td>
                                     @if ($delivered > 0)
                                     <a href="{{ route('campaign_report',$campaign->id) }}" style="color:#3f51b5">

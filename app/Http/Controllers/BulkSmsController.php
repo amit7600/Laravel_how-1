@@ -7,6 +7,7 @@ use App\CampaignReport;
 use App\Contact;
 use App\Http\Controllers\EmailController;
 use App\Phone;
+use Carbon\Carbon;
 use DB;
 use Sentinel;
 use Twilio\Rest\Client;
@@ -81,7 +82,7 @@ class BulkSmsController extends Controller
                                 'user_id' => Sentinel::check()->id,
                                 'type' => $campaign->campaign_type,
                                 'status' => $data->status,
-                                'date_sent' => $data->date_sent,
+                                'date_sent' => Carbon::now(),
                                 'direction' => $data->direction,
                                 'toNumber' => $data->to,
                                 'toContact' => $contact->contact_first_name,
@@ -138,7 +139,7 @@ class BulkSmsController extends Controller
                                 'user_id' => Sentinel::check()->id,
                                 'type' => $campaign->campaign_type,
                                 'status' => $data->status,
-                                'date_sent' => $data->date_sent,
+                                'date_sent' => Carbon::now(),
                                 'direction' => $data->direction,
                                 'toNumber' => $data->to,
                                 'toContact' => $contact->contact_first_name,

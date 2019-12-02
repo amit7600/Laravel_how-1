@@ -163,7 +163,7 @@ Organizations
                             <div class="row">
                                 <label class="control-label sel-label-org pl-4 ">Direction</label>
                                 <div class="col-md-6 col-sm-6 col-xs-12" id="religion-div">
-                                    {!! Form::select('direction',['Outbound-api' => 'Outbound Api','Inbound-api' =>
+                                    {!! Form::select('direction',['outbound-api' => 'Outbound Api','Inbound-api' =>
                                     'Inbound-api'],null,['class'
                                     =>'form-control','placeholder' => 'Select Direction','id' => 'direction'] ) !!}
                                 </div>
@@ -257,7 +257,7 @@ Organizations
                                 <td>{{$value->body}}</td>
                                 <td>{{$value->toNumber}}</td>
                                 <td>{{$value->fromNumber}}</td>
-                                <td>{{$value->date_sent}}</td>
+                                <td>{{date('d-m-Y h:m:s',strtotime($value->date_sent))}}</td>
                                 <!-- <td>
                                     @if ($value->status == 'Incoming')
                                     {!! Form::select('campaignData',$campaignDetail,$value->campaign_id,['class'
@@ -308,7 +308,7 @@ Organizations
     $(function () {
         $('#startDate').datetimepicker({ 
         //   pickTime: false, 
-        format: "mm/dd/yyyy", 
+        format: "dd-mm-yyyy", 
         weekStart: 1,
         todayBtn: 1,
         autoclose: 1,
@@ -321,7 +321,7 @@ Organizations
         $('#endDate').datetimepicker({ 
         //   pickTime: false, 
         //   format: "DD-MM-YYYY",
-        format: "mm/dd/yyyy", 
+        format: "dd-mm-yyyy", 
         weekStart: 1,
         todayBtn: 1,
         autoclose: 1,
@@ -385,7 +385,6 @@ Organizations
                 search = selectedList.join('|')
                 search = search.replace(/\(/g, "\\(")
                 search = search.replace(/\)/g, "\\)")
-                console.log(search)
                 dataTable
                 .column(5)
                 .search(search ? search : '', true, false,false).draw();
