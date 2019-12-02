@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-Contact Edit
+Contact Create
 @stop
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
@@ -114,6 +114,18 @@ Contact Edit
                         <input class="form-control selectpicker"  type="text" id="contact_type" name="contact_type" value="">    
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="control-label sel-label-org pl-4">Religious Prefix: </label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
+                        <input class="form-control selectpicker"  type="text" id="contact_religious_title" name="contact_religious_title" value="">    
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label sel-label-org pl-4">Job Title: </label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
+                        <input class="form-control selectpicker"  type="text" id="contact_title" name="contact_title" value="">    
+                    </div>
+                </div>
                 <div class="form-group">                 
                     <label class="control-label sel-label-org pl-4">Organization Name: </label>
                     <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
@@ -139,13 +151,7 @@ Contact Edit
                     <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
                         <input class="form-control selectpicker"  type="text" id="contact_other_languages" name="contact_other_languages" value="">
                     </div>
-                </div> 
-                <div class="form-group">
-                    <label class="control-label sel-label-org pl-4">Religious Title: </label>
-                    <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
-                        <input class="form-control selectpicker"  type="text" id="contact_religious_title" name="contact_religious_title" value="">    
-                    </div>
-                </div>
+                </div>                 
                 <div class="form-group">
                     <label class="control-label sel-label-org pl-4">Pronouns: </label>
                     <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
