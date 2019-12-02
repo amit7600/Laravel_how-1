@@ -335,6 +335,8 @@ Contact
     $(document).ready(function() {
        dataTable = $('#tbl-message').DataTable();           
     })
+
+    
     $(document).ready(function() {
         $('.comment-reply').hide();
         $('#reply_content').val('');
@@ -346,6 +348,15 @@ Contact
     $("#close-reply-window-btn").on('click', function(e) {
         e.preventDefault();
         $('.comment-reply').hide();
+    });
+    $(document).ready(function() {   
+        $('#tokenfield').tokenfield({
+        autocomplete: {
+            source: [],
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
     });
     $(document).ready(function(){  
         setTimeout(function(){
