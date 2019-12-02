@@ -80,6 +80,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/facility/{id}/tagging', 'LocationController@tagging');
     Route::get('/facility/{id}/edit', 'LocationController@edit');
     Route::get('/facility/{id}/update', 'LocationController@update');
+    Route::post('/facility/{id}/add_comment', 'LocationController@add_comment');
     Route::get('/facility_create', 'LocationController@create');
     Route::get('/add_new_facility', 'LocationController@add_new_facility');
 

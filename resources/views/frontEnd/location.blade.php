@@ -158,6 +158,40 @@ table#tbl-location-profile-history {
                     </div>
                 </div>
             </div>
+
+            <div class="col-md-4 pt-15 pb-15 pl-30 pl-30">
+                <div class="card">
+                    <div class="card-block">
+                        <h3>Comments</h3>
+                        <div class="comment-body media-body">
+                            @foreach($comment_list as $key => $comment)
+                                <a class="comment-author" href="javascript:void(0)">{{$comment->comments_user_firstname}} {{$comment->comments_user_lastname}}</a>
+                                <div class="comment-meta">
+                                    <span class="date">{{$comment->comments_datetime}}</span>
+                                </div>
+                                <div class="comment-content">
+                                    <p style="color: black;">{{$comment->comments_content}}</p>
+                                </div>
+                                <hr>
+                            @endforeach
+                            <div class="comment-actions">
+                                <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Add a comment</a>
+                            </div>
+                            <form class="comment-reply" action="/facility/{{$facility->location_recordid}}/add_comment" method="POST">
+                                {{ csrf_field() }}
+                                <div class="form-group">
+                                    <textarea class="form-control" id="reply_content" name="reply_content" rows="3">
+                                    </textarea>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary waves-effect waves-classic">Post</button>
+                                    <button type="button" id="close-reply-window-btn" class="btn btn-link grey-600 waves-effect waves-classic">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div class="modal fade bs-delete-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -214,6 +248,11 @@ table#tbl-location-profile-history {
         },
         showAutocompleteOnFocus: true
         });
+    });
+
+    $(document).ready(function() {
+        $('.comment-reply').hide();
+        $('#reply_content').val('');
     });
 
     $(document).ready(function(){  
@@ -318,8 +357,14 @@ table#tbl-location-profile-history {
         $('input#facility_recordid').val(value);
     });
 
-
-
+    $("#reply-btn").on('click', function(e) {
+        e.preventDefault();
+        $('.comment-reply').show();
+    });
+    $("#close-reply-window-btn").on('click', function(e) {
+        e.preventDefault();
+        $('.comment-reply').hide();
+    });
     
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap"
