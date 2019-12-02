@@ -9,6 +9,7 @@ use Geolocation;
 use Geocode;
 use Spatie\Geocoder\Geocoder;
 use App\Location;
+use App\Address;
 use Image;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -42,9 +43,15 @@ class MapController extends Controller
         $map = Map::find(1);
         $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
         $invalid_location_info_count = Location::whereNull('location_name')->count();
-        $recently_geocoded_numbers = 0;
-        $recently_enriched_numbers = 0;
-        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'recently_geocoded_numbers', 'recently_enriched_numbers'));
+
+        $geocode_status_text = '';
+        if ($ungeocoded_location_numbers == $invalid_location_info_count) {
+            $geocode_status_text = 'All valid locations have already been geocoded.';
+        }
+
+        $location_count = Location::whereNotNull('location_name')->count();
+
+        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'location_count', 'geocode_status_text'));
     }
 
     /**
@@ -185,17 +192,11 @@ class MapController extends Controller
     }
 
     public function apply_geocode(Request $request) {
-        $map = Map::find(1);
-        
         $ungeocoded_location_info_list = Location::whereNull('location_latitude')->get();
-        $invalid_location_info_count = Location::whereNull('location_name')->count();
-
         $client = new \GuzzleHttp\Client();
         $geocoder = new Geocoder($client);
-        
         $geocode_api_key = env('GEOCODE_GOOGLE_APIKEY');
         $geocoder->setApiKey($geocode_api_key);
-        $recently_geocoded_numbers = 0;
 
         foreach ($ungeocoded_location_info_list as $key => $location_info) {
             $location_name = $location_info->location_name;
@@ -206,13 +207,49 @@ class MapController extends Controller
                 $location_info->location_latitude = $latitude;
                 $location_info->location_longitude = $longitude;
                 $location_info->save();
-                $recently_geocoded_numbers = $recently_geocoded_numbers + 1;
             }
         }
 
-        $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
-        $recently_geocoded_numbers = $ungeocoded_location_numbers - $invalid_location_info_count;
-        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'recently_geocoded_numbers'));
+        return redirect('map');
     }
 
+    public function apply_enrich(Request $request) {
+        $valid_location_list = Location::whereNotNull('location_address')->get();
+        foreach ($valid_location_list as $key => $valid_location) {
+            $address = Address::where('address_recordid', '=', $valid_location->location_address)->first();
+            $borough = $address->address_city;
+            $house_address_info = explode(' ', $address->address_1);
+            $house_number = $house_address_info[0];
+            $street = $house_address_info[1];
+            $app_id = 'b985eb41';
+            $app_key = '9e7522143dca2c6347306d73882b6e3f';
+            // $request_url = '/v1/address.json?houseNumber=314&street=west 100 st&borough=manhattan&app_id=abc123&app_key=def456';
+            $request_url = 'https://api.cityofnewyork.us/geoclient/v1/address.json?houseNumber='.$house_number.'&street='.$street.' st&borough='.$borough.'&app_id='.$app_id.'&app_key='.$app_key;
+
+            var_dump($request_url);
+
+            // $json = file_get_contents($request_url);
+            // $obj = json_decode($json);
+            // var_dump($obj);
+
+            $options = array(
+                CURLOPT_RETURNTRANSFER => true,   // return web page
+                CURLOPT_HEADER         => false,  // don't return headers
+                CURLOPT_FOLLOWLOCATION => true,   // follow redirects
+                CURLOPT_MAXREDIRS      => 10,     // stop after 10 redirects
+                CURLOPT_ENCODING       => "",     // handle compressed
+                CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
+                CURLOPT_CONNECTTIMEOUT => 120,    // time-out on connect
+                CURLOPT_TIMEOUT        => 120,    // time-out on response
+            ); 
+
+            $ch = curl_init($request_url);
+            curl_setopt_array($ch, $options);
+            $content  = curl_exec($ch);
+            curl_close($ch);
+            var_dump($content);
+            
+            exit;
+        }
+    }
 }
