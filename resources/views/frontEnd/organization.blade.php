@@ -213,12 +213,12 @@ span.date {
                                     <td>{{$contact->contact_title}}</td>  
                                     <td>{{$contact->contact_other_languages}}</td>
                                     <td>{{$contact->contact_pronouns}}</td>
-                                    <td>{{$contact->contact_organizations}}</td>                                  
-                                    <td>{{$contact->contact_mailing_address}}</td>
-                                    <td>{{$contact->contact_cell_phones}}</td>
-                                    <td>{{$contact->contact_office_phones}}</td>
-                                    <td>{{$contact->contact_emergency_phones}}</td>
-                                    <td>{{$contact->contact_office_fax_phones}}</td>
+                                    <td>{{$contact->organization['organization_name']}}</td>                                  
+                                    <td>{{$contact->address['address']}}</td>
+                                    <td>{{$contact->cellphone['phone_number']}}</td>
+                                    <td>{{$contact->officephone['phone_number']}}</td>
+                                    <td>{{$contact->emergencyphone['phone_number']}}</td>
+                                    <td>{{$contact->faxphone['phone_number']}}</td>
                                     <td>{{$contact->contact_personal_email}}</td>
                                     <td>{{$contact->contact_email}}</td>
                                 </tr>
@@ -245,16 +245,16 @@ span.date {
                                 <hr>
                             @endforeach
                             <div class="comment-actions">
-                                <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Reply</a>
+                                <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Add a comment</a>
                             </div>
                             <form class="comment-reply" action="/organization/{{$organization->organization_recordid}}/add_comment" method="POST">
                                 {{ csrf_field() }}
                                 <div class="form-group">
-                                    <textarea class="form-control" name="reply_content" rows="2" placeholder="Comment here">
+                                    <textarea class="form-control" id="reply_content" name="reply_content" rows="3">
                                     </textarea>
                                 </div>
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary waves-effect waves-classic">Reply</button>
+                                    <button type="submit" class="btn btn-primary waves-effect waves-classic">Post</button>
                                     <button type="button" id="close-reply-window-btn" class="btn btn-link grey-600 waves-effect waves-classic">Close</button>
                                 </div>
                             </form>
@@ -312,6 +312,7 @@ span.date {
    
     $(document).ready(function() {
         $('.comment-reply').hide();
+        $('#reply_content').val('');
     });
     $(document).ready(function(){  
         setTimeout(function(){
