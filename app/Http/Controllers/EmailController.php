@@ -58,8 +58,10 @@ class EmailController extends Controller
                                 'toContact' => $contact->contact_first_name,
                                 'fromNumber' => env('MAIL_FROM_ADDRESS'),
                                 'toNumber' => $contact_email,
-                                'direction' => 'Outbound-api',
+                                'direction' => 'outbound-api',
                                 'fromContact' => 'HowCalm',
+                                'contact_id' => $value,
+                                'subject' => $campaign->subject,
                                 'body' => $campaign->body,
                                 'campaign_id' => $campaign->id,
                             ]);

@@ -182,15 +182,13 @@ span.date {
                                 <tr>
                                     <th class="default-active" style="visibility: hidden;">Action</th>
                                     <th class="default-inactive">ID</th>
-                                    <th class="default-active">First Name</th>
-                                    <th class="default-active">Middle Name</th>
-                                    <th class="default-active">Last Name</th>
+                                    <th class="default-active">Name</th>
                                     <th class="default-active">Contact Type</th>
                                     <th class="default-active">Languages Spoken</th>
                                     <th class="default-active">Religious Title</th>
                                     <th class="default-active">Position Title</th> 
                                     <th class="default-active">Other Languages</th> 
-                                    <th class="default-active">Pronouns</th> 
+                                    <th class="default-inactive">Pronouns</th> 
                                     <th class="default-inactive">Organization</th>                                  
                                     <th class="default-inactive">Mailing Address</th>   
                                     <th class="default-inactive">Cell Phone</th>  
@@ -208,21 +206,19 @@ span.date {
                                         <a class="btn btn-primary open-td" href="/contact/{{$contact->contact_recordid}}" style="color: white;">Open</a>
                                     </td>
                                     <td>{{$contact->contact_recordid}}</td>
-                                    <td>{{$contact->contact_first_name}}</td>
-                                    <td>{{$contact->contact_middle_name}}</td>
-                                    <td>{{$contact->contact_last_name}}</td>
+                                    <td>{{$contact->contact_first_name}} {{$contact->contact_middle_name}} {{$contact->contact_last_name}}</td>
                                     <td>{{$contact->contact_type}}</td>
                                     <td>{{$contact->contact_languages_spoken}}</td>
                                     <td>{{$contact->contact_religious_title}}</td>
                                     <td>{{$contact->contact_title}}</td>  
                                     <td>{{$contact->contact_other_languages}}</td>
                                     <td>{{$contact->contact_pronouns}}</td>
-                                    <td>{{$contact->contact_organizations}}</td>                                  
-                                    <td>{{$contact->contact_mailing_address}}</td>
-                                    <td>{{$contact->contact_cell_phones}}</td>
-                                    <td>{{$contact->contact_office_phones}}</td>
-                                    <td>{{$contact->contact_emergency_phones}}</td>
-                                    <td>{{$contact->contact_office_fax_phones}}</td>
+                                    <td>{{$contact->organization['organization_name']}}</td>                                  
+                                    <td>{{$contact->address['address']}}</td>
+                                    <td>{{$contact->cellphone['phone_number']}}</td>
+                                    <td>{{$contact->officephone['phone_number']}}</td>
+                                    <td>{{$contact->emergencyphone['phone_number']}}</td>
+                                    <td>{{$contact->faxphone['phone_number']}}</td>
                                     <td>{{$contact->contact_personal_email}}</td>
                                     <td>{{$contact->contact_email}}</td>
                                 </tr>
@@ -249,16 +245,16 @@ span.date {
                                 <hr>
                             @endforeach
                             <div class="comment-actions">
-                                <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Reply</a>
+                                <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Add a comment</a>
                             </div>
                             <form class="comment-reply" action="/organization/{{$organization->organization_recordid}}/add_comment" method="POST">
                                 {{ csrf_field() }}
                                 <div class="form-group">
-                                    <textarea class="form-control" name="reply_content" rows="5" placeholder="Comment here">
+                                    <textarea class="form-control" id="reply_content" name="reply_content" rows="3">
                                     </textarea>
                                 </div>
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary waves-effect waves-classic">Reply</button>
+                                    <button type="submit" class="btn btn-primary waves-effect waves-classic">Post</button>
                                     <button type="button" id="close-reply-window-btn" class="btn btn-link grey-600 waves-effect waves-classic">Close</button>
                                 </div>
                             </form>
@@ -306,31 +302,33 @@ span.date {
             dom: 'lBfrtip',
             buttons: [{
                 extend: 'colvis',
-                columns: ':gt(9)'
+                columns: ':gt(7)'
             }],
             columnDefs: [
                 { targets: 'default-inactive', visible: false}
             ]
         });           
     })
+   
+    $(document).ready(function() {
+        $('.comment-reply').hide();
+        $('#reply_content').val('');
+    });
+
     $(document).ready(function() {   
         $('#tokenfield').tokenfield({
         autocomplete: {
-            source: ['red','blue','green','yellow','violet','brown','purple','black','white'],
             delay: 100
         },
         showAutocompleteOnFocus: true
         });
     });
-    $(document).ready(function() {
-        $('.comment-reply').hide();
-    });
+
     $(document).ready(function(){  
         setTimeout(function(){
         var locations = <?php print_r(json_encode($locations)) ?>;
         var organization = <?php print_r(json_encode($organization->organization_name)) ?>;
         var maplocation = <?php print_r(json_encode($map)) ?>;
-        console.log(locations);
 
         if(maplocation.active == 1){
             avglat = maplocation.lat;

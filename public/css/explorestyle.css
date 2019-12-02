@@ -935,10 +935,16 @@ a[aria-expanded="true"]::before {
   line-height: 26px;
   display: inline-flex;
 }
+.card-block span.badge {
+  display: inline-block;
+  font-size: 75%;
+  line-height: 1;
+}
 .card-block span.organize_font {
   font-size: 14px;
   font-weight: 400;
 }
+
 .card-block .panel-link {
   font-size: 16px;
 }

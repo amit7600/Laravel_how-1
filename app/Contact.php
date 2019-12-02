@@ -49,4 +49,9 @@ class Contact extends Model
     {
         return $this->belongsTo('App\Phone', 'contact_emergency_phones', 'phone_recordid');
     }
+
+    public function faxphone()
+    {
+        return $this->belongsTo('App\Phone', 'contact_office_fax_phones', 'phone_recordid');
+    }
 }

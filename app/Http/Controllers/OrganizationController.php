@@ -729,10 +729,6 @@ class OrganizationController extends Controller
 
     public function add_comment(Request $request, $id) {
 
-        $contacts = Contact::orderBy('contact_recordid')->where('contacts.contact_organizations', '=', $id)->get();
-        $locations = Location::with('services', 'address', 'phones')->where('location_organization', '=', $id)->get();
-        $map = Map::find(1);
-
         $organization = Organization::find($id);
         $comment_content = $request->reply_content;
         $user = Sentinel::getUser();
@@ -762,7 +758,6 @@ class OrganizationController extends Controller
 
         $comment_list = Comment::where('comments_organization', '=', $id)->get();
 
-        // return view('frontEnd.organization', compact('organization', 'contacts', 'locations', 'map', 'user', 'comment_list'));
         return redirect('organization/'.$id);
         
     }

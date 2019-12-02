@@ -46,8 +46,10 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/contacts/contacts_update_dynamic_group', 'ContactController@contacts_update_dynamic_group');
     Route::get('/contacts/create_new_static_group_add_members', 'ContactController@create_new_static_group_add_members');
     Route::get('/contact/{id}', 'ContactController@contact');
+    Route::get('/contact/{id}/tagging', 'ContactController@tagging');
     Route::get('/contact/{id}/edit', 'ContactController@edit');
     Route::get('/contact/{id}/update', 'ContactController@update');
+    Route::post('/contact/{id}/add_comment', 'ContactController@add_comment');
     Route::get('/contact/{id}/add_group', 'ContactController@add_group');
     Route::get('/contact/{id}/{group_name}/update_group', 'ContactController@update_group');
     Route::get('/contact_create', 'ContactController@create');
@@ -75,8 +77,10 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/get_all_facilities', 'LocationController@get_all_facilities');
     Route::get('/facilities/action_group', 'LocationController@group_operation');
     Route::get('/facility/{id}', 'LocationController@facility');
+    Route::get('/facility/{id}/tagging', 'LocationController@tagging');
     Route::get('/facility/{id}/edit', 'LocationController@edit');
     Route::get('/facility/{id}/update', 'LocationController@update');
+    Route::post('/facility/{id}/add_comment', 'LocationController@add_comment');
     Route::get('/facility_create', 'LocationController@create');
     Route::get('/add_new_facility', 'LocationController@add_new_facility');
 
