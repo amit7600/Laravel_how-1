@@ -49,6 +49,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/contact/{id}/tagging', 'ContactController@tagging');
     Route::get('/contact/{id}/edit', 'ContactController@edit');
     Route::get('/contact/{id}/update', 'ContactController@update');
+    Route::post('/contact/{id}/add_comment', 'ContactController@add_comment');
     Route::get('/contact/{id}/add_group', 'ContactController@add_group');
     Route::get('/contact/{id}/{group_name}/update_group', 'ContactController@update_group');
     Route::get('/contact_create', 'ContactController@create');

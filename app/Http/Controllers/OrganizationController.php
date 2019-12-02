@@ -762,7 +762,6 @@ class OrganizationController extends Controller
 
         $comment_list = Comment::where('comments_organization', '=', $id)->get();
 
-        // return view('frontEnd.organization', compact('organization', 'contacts', 'locations', 'map', 'user', 'comment_list'));
         return redirect('organization/'.$id);
         
     }
