@@ -238,7 +238,7 @@ Organizations
                             @php
                             $delivered = 0;
                             foreach($campaign->report as $value){
-                            if ($value->status == 'Delivered') {
+                            if ($value->status == 'Delivered' || $value->status == 'sent') {
                             $delivered += 1;
                             }
                             }
@@ -249,7 +249,7 @@ Organizations
                                     <span
                                         class="{{$delivered > 0 ? 'badge badge-success' : 'badge badge-danger'}}">{{$delivered > 0 ? 'Sent' : 'Draft'}}</span>
                                 </td>
-                                <td>{{date("d-m-Y",strtotime($campaign->updated_at))}} </td>
+                                <td>{{date('d-m-Y h:m:s',strtotime($campaign->updated_at))}} </td>
                                 <td>
                                     @if ($delivered > 0)
                                     <a href="{{ route('campaign_report',$campaign->id) }}" style="color:#3f51b5">
@@ -389,32 +389,6 @@ Organizations
             cancel: function(){
             }
         });
-
-        // if(confirm('Are you sure want to change status?')){
-        //     var token = $('meta[name="_token"]').attr('content');
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: "{{route('updateStatus')}}",
-        //         data: {'_token':token, 'id':id},          
-        //         success: function(resultData) { 
-        //             if(resultData.success){
-        //                 if(resultData.status == 0){
-        //                     $('#id_'+id).removeClass('badge-danger')
-        //                     $('#id_'+id).addClass('badge-success')
-        //                     $('#id_'+id).text('Active');
-        //                     alert('Successfully update status')
-        //                 }else{
-        //                     $('#id_'+id).removeClass('badge-success')
-        //                     $('#id_'+id).addClass('badge-danger')
-        //                     $('#id_'+id).text('Inactive');
-        //                     alert('Successfully update status')
-                            
-        //                 }
-
-        //             }              
-        //         }
-        //     })     
-        // }
         
     }
     $(function () {

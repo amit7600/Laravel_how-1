@@ -13,7 +13,7 @@ class CampaignReport extends Model
 
     protected $table = 'campaign_reports';
 
-    protected $fillable = ['user_id', 'type', 'status', 'direction', 'date_sent', 'toNumber', 'toContact', 'fromNumber', 'fromContact', 'body', 'created_by', 'updated_by', 'campaign_id', 'mediaurl', 'error_message'];
+    protected $fillable = ['user_id', 'type', 'status', 'direction', 'date_sent', 'toNumber', 'toContact', 'fromNumber', 'fromContact', 'body', 'created_by', 'updated_by', 'campaign_id', 'mediaurl', 'error_message', 'contact_id', 'subject'];
 
     public function campaign()
     {
