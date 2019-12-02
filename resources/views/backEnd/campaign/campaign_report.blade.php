@@ -199,7 +199,16 @@ Organizations
                                     <td> {{ $value->direction }} </td>
                                     <td> {{ $value->date_sent }} </td>
                                     <td> {{ $value->toNumber }} </td>
-                                    <td> {{ $value->toContact }} </td>
+                                    @php
+                                    $contact = \App\Contact::whereId($value->contact_id)->first();
+                                    @endphp
+                                    <td>
+                                        @if ($contact)
+                                        <a href="/contact/{{$contact->contact_recordid}}">{{ $value->toContact }}</a>
+                                        @else
+                                        {{ $value->toContact }}
+                                        @endif
+                                    </td>
                                     <td> {{ $value->fromNumber }} </td>
                                     <td> {{ $value->fromContact }} </td>
                                     <td> {{ $value->body }} </td>

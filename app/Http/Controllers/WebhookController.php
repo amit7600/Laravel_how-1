@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\CampaignReport;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use PhpMimeMailParser\Parser;
 use Twilio\Rest\Client;
 use Twilio\Twiml;
 
@@ -57,17 +58,24 @@ class WebhookController extends Controller
     public function inbound_email(Request $request)
     {
         try {
-            $file = fopen(public_path('uploads/email.txt'), 'w');
+            $file = fopen(public_path('uploads/email.eml'), 'w');
 
             fwrite($file, print_r($_POST, true));
             fclose($file);
+            $parser = new \PhpMimeMailParser\Parser();
+            $path = public_path('uploads/email.eml');
+            $parser->setText(file_get_contents($path));
 
-            $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
-            $handle = fopen(public_path('uploads/email.txt'), 'r');
+            $attachments = $parser->getAttachments();
+            $mediaurl = [];
+            foreach ($attachments as $attachment) {
+                $fname = $attachment->getFilename();
+                $path = '/uploads/receive/' . $fname;
+                $attachment->save(public_path('uploads/receive/'), Parser::ATTACHMENT_DUPLICATE_SUFFIX);
 
-            $message = $mailParser->parse($handle);
-            fclose($handle);
-
+                array_push($mediaurl, $path);
+            }
+            $imgUrl = implode(',', $mediaurl);
             $envelope = json_decode($request->input('envelope'), true);
 
             $to = $envelope['to'][0];
@@ -79,16 +87,17 @@ class WebhookController extends Controller
                 'toNumber' => $to,
                 'fromNumber' => $from,
                 'type' => '1',
-                'body' => $message->getTextContent(),
+                'body' => $parser->getMessageBody('text'),
+                'mediaurl' => $imgUrl,
                 'date_sent' => Carbon::now(),
             ]);
-            $file = fopen(public_path('uploads/email.txt'), 'w');
+            $file = fopen(public_path('uploads/email.eml'), 'w');
 
             fwrite($file, '');
             fclose($file);
 
         } catch (\Throwable $th) {
-            \Log::info($th->getMessage());
+            \Log::info($th);
             $webhook = new CampaignReport();
             $webhook->error_message = $th->getMessage();
             $webhook->save();

@@ -106,7 +106,7 @@ Organizations
     <div class="col-md-2 left_side_menu">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="#">Campaigns</a>
+                <a class="nav-link" href="{{route('campaigns.index')}}">Campaigns</a>
                 <ul class="nav flex-column">
                     <li><a class="{{Request::segment(1) == 'campaigns' ? 'nav-link active' : 'nav-link'}}"
                             href="{{route('campaigns.index')}}">View All</a></li>
@@ -255,9 +255,9 @@ Organizations
                                 <td>{{ $value->status}}
                                 </td>
                                 <td>{{$value->body}}</td>
-                                <td>{{$value->toContact}}</td>
-                                <td>{{$value->fromContact}}</td>
-                                <td>{{date('m/d/Y',strtotime($value->date_sent))}}</td>
+                                <td>{{$value->toNumber}}</td>
+                                <td>{{$value->fromNumber}}</td>
+                                <td>{{$value->date_sent}}</td>
                                 <!-- <td>
                                     @if ($value->status == 'Incoming')
                                     {!! Form::select('campaignData',$campaignDetail,$value->campaign_id,['class'

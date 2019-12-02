@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f662383e91a428f2886cd61393c23db",
+    "content-hash": "52093dce0f6bb4835360c5fe4e43d70e",
     "packages": [
         {
             "name": "arcanedev/log-viewer",
@@ -2200,6 +2200,88 @@
             "description": "A library to read, parse and export to PDF SVG files.",
             "homepage": "https://github.com/PhenX/php-svg-lib",
             "time": "2016-12-13T20:25:45+00:00"
+        },
+        {
+            "name": "php-mime-mail-parser/php-mime-mail-parser",
+            "version": "5.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-mime-mail-parser/php-mime-mail-parser.git",
+                "reference": "27983433aabeccee832573c3c56e6a4855e57745"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-mime-mail-parser/php-mime-mail-parser/zipball/27983433aabeccee832573c3c56e6a4855e57745",
+                "reference": "27983433aabeccee832573c3c56e6a4855e57745",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mailparse": "*",
+                "php": "^7.1"
+            },
+            "replace": {
+                "exorus/php-mime-mail-parser": "*",
+                "messaged/php-mime-mail-parser": "*"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/php-token-stream": "^3.0",
+                "phpunit/phpunit": "^7.0",
+                "squizlabs/php_codesniffer": "^3.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpMimeMailParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "eXorus",
+                    "email": "exorus.spam@gmail.com",
+                    "homepage": "https://github.com/eXorus/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "M.Valinskis",
+                    "email": "M.Valins@gmail.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
+                },
+                {
+                    "name": "eugene.emmett.wood",
+                    "email": "gene_w@cementhorizon.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
+                },
+                {
+                    "name": "alknetso",
+                    "email": "alkne@gmail.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
+                },
+                {
+                    "name": "bucabay",
+                    "email": "gabe@fijiwebdesign.com",
+                    "homepage": "http://www.fijiwebdesign.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A fully tested email parser for PHP 7.1+ (mailparse extension wrapper).",
+            "homepage": "https://github.com/php-mime-mail-parser/php-mime-mail-parser",
+            "keywords": [
+                "MimeMailParser",
+                "mail",
+                "mailparse",
+                "mime",
+                "parser",
+                "php"
+            ],
+            "time": "2019-09-23T11:57:58+00:00"
         },
         {
             "name": "phpoffice/phpexcel",

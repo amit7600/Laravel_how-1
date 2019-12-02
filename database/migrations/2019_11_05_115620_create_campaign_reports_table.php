@@ -16,6 +16,7 @@ class CreateCampaignReportsTable extends Migration
         Schema::create('campaign_reports', function (Blueprint $table) {
             $table->increments('id');
             $table->bigInteger('user_id')->nullable();
+            $table->bigInteger('contact_id')->nullable();
             $table->enum('type', [1, 2, 3, 4])->nullable()->comment('1 = Email and 2 = SMS and 3 = Audio and 4 = Audio + SMS');
             $table->bigInteger('type')->nullable();
             $table->bigInteger('campaign_id')->nullable();
@@ -26,6 +27,7 @@ class CreateCampaignReportsTable extends Migration
             $table->string('toContact')->nullable();
             $table->string('fromNumber')->nullable();
             $table->string('fromContact')->nullable();
+            $table->text('subject')->nullable();
             $table->text('body')->nullable();
             $table->text('mediaurl')->nullable();
             $table->string('error_message')->nullable();
