@@ -162,7 +162,8 @@ Organizations
                                     <b>Status: </b>
                                     {!! Form::select('status[]',['Undelivered' => 'Undelivered','Delivered' =>
                                     'Delivered','Incoming' =>
-                                    'Incoming'],null,['class' =>'form-control
+                                    'Incoming','sent' =>
+                                    'sent'],null,['class' =>'form-control
                                     selectpicker','multiple'=>'multiple','data-live-search'=>'true', 'id'=>'status'] )
                                     !!}
                                     <span>|</span>
@@ -194,7 +195,7 @@ Organizations
                                     {{-- <th><b><input type="checkbox"></b></th> --}}
                                     <td>{{ $value->status }} </td>
                                     <td><span
-                                            class="{{$value->campaign_type == 1 ? ('badge badge-success') : ($value->campaign_type == 2 ? 'badge badge-danger' : 'badge badge-warning')}}">{{$value->campaign_type == 1 ? ('Email') : ($value->campaign_type == 2 ? 'SMS' : 'Audio') }}</span>
+                                            class="{{$value->campaign->campaign_type == 1 ? ('badge badge-success') : ($value->campaign->campaign_type == 2 ? 'badge badge-danger' : 'badge badge-warning')}}">{{$value->campaign->campaign_type == 1 ? 'Email' : ($value->campaign->campaign_type == 2 ? 'SMS' : 'Audio') }}</span>
                                     </td>
                                     <td> {{ $value->direction }} </td>
                                     <td> {{ $value->date_sent }} </td>

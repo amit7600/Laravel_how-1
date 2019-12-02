@@ -9,10 +9,10 @@ use App\Group;
 use App\Layout;
 use App\Map;
 use App\Taxonomy;
+use App\User;
 use DB;
 use Illuminate\Http\Request;
 use Session;
-use App\User;
 
 class CampaignController extends Controller
 {
@@ -384,7 +384,7 @@ class CampaignController extends Controller
         $campaign_data = $campaign_report->get();
 
         $response = $campaign_data->where('direction', 'Inbound-api')->count();
-        $delivered = $campaign_data->where('status', 'Delivered')->count();
+        $delivered = $campaign_data->where('status', '!=', 'Incoming')->count();
         $campaign = Campaign::whereId($id)->first();
         $user = User::whereId($campaign->user_id)->first();
 
