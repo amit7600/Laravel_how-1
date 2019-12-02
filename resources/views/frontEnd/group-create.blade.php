@@ -62,23 +62,6 @@ Group Edit
                         <input class="form-control selectpicker"  type="text" id="group_name" name="group_name" value="">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label sel-label-org pl-4">Group Type: </label>
-                    <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
-                        <select class="form-control selectpicker" data-live-search="true" id="group_type" name="group_type">
-                            @foreach($group_type_list as $key => $group_type)
-                                <option value="{{$group_type}}">{{$group_type}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label sel-label-org pl-4">Group Email: </label>
-                    <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
-                        <input class="form-control selectpicker"  type="text" id="group_email" name="group_email" value="">    
-                    </div>
-                </div>
-               
                 <div class="form-group"> 
                     <div class="col-md-12">
                         <button type="submit" class="btn btn-primary btn-rounded" id="save-group-btn"><i class="fa fa-save"></i>Save</button>

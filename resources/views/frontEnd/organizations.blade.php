@@ -223,7 +223,7 @@ button[data-id="borough"] {
                                 <th class="default-inactive">Facebook</th>
                                 <th class="default-inactive">Internet Access</th>
                                 <th class="default-inactive">Comments</th>  
-                                <th class="default-active">Tag</th>                         
+                                <th class="default-inactive">Tag</th>                         
                             </tr>
                         </thead>
                     </table>

@@ -89,6 +89,20 @@ table#tbl-group-profile-members {
 							{{$group->group_message_last_sent}}
                         </h4>
                     </div>
+                    <div class="pt-10 pb-10 pl-0 btn-download">
+                        <form method="GET" action="/group/{{$group->group_recordid}}/tagging" id="group_tagging">
+                            <div class="row m-0" id="tagging-div">
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$group->group_tag}}" />
+                                </div> 
+                                <div class="col-md-2">  
+                                    <button type="submit" class="btn btn-secondary btn-tag-save">
+                                        <i class="fas fa-save"></i>
+                                    </button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div> 
             <div class="col-md-4 property">
@@ -98,13 +112,14 @@ table#tbl-group-profile-members {
                     <a href="#" class="btn btn-info "><i class="fa fa-fw fa-envelope"></i>Send a Message</a>
 				</div>
 				<div class="card">
-					<div id="map" style="width:initial;margin-top: 0;height: 50vh;"></div>					
+					<div id="map" style="width:initial;margin-top: 0;height: 30vh;"></div>					
                 </div>
             </div>
             <div class="col-md-8 pt-15 pb-15 pl-30 pl-30">
-                <button class="btn btn-danger remove-td" id="remove-members-group-btn" value="{{$group->group_recordid}}" data-toggle="modal" data-target=".bs-remove-modal-lg"><i class="fa fa-fw fa-remove"></i>Remove</button>
                 <div class="card">
                     <div class="card-block">
+                        <h3>Members</h3>
+                        <button class="btn btn-danger remove-td" id="remove-members-group-btn" value="{{$group->group_recordid}}" data-toggle="modal" data-target=".bs-remove-modal-lg"><i class="fa fa-fw fa-remove"></i>Remove</button>
                         <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-group-profile-members">
                             <thead>
                                 <tr>
@@ -149,6 +164,7 @@ table#tbl-group-profile-members {
             <div class="col-md-4 pt-15 pb-15 pl-30 pl-30">
                <div class="card">
                     <div class="card-block">
+                        <h3>Campaigns</h3>
                         <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-group-profile-campagins">
                             <thead>
                                 <tr>
@@ -191,7 +207,8 @@ table#tbl-group-profile-members {
 
 @endsection
 @section('customScript')
-
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
 <script>
     var dataTable;
@@ -268,6 +285,15 @@ table#tbl-group-profile-members {
             }
         });
         
+    });
+
+    $(document).ready(function() {   
+        $('#tokenfield').tokenfield({
+        autocomplete: {
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
     });
 
     $(document).ready(function() {

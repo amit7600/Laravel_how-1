@@ -761,6 +761,7 @@ class OrganizationController extends Controller
         return redirect('organization/'.$id);
         
     }
+    
     public function update(Request $request, $id)
     {
         $organization = Organization::find($id);
