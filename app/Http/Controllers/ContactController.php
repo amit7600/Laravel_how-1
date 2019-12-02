@@ -1321,6 +1321,7 @@ class ContactController extends Controller
         $contact->contact_pronouns = $request->contact_pronouns;       
         $contact->contact_personal_email = $request->contact_personal_email;
         $contact->contact_email = $request->contact_email; 
+        $contact->contact_title = $request->contact_title; 
 
         $contact_languages_spoken_list = $request->contact_languages_spoken;
         $contact_languages_spoken_info = '';
