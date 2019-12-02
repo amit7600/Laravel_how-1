@@ -226,40 +226,29 @@ class MapController extends Controller
             // $request_url = '/v1/address.json?houseNumber=314&street=west 100 st&borough=manhattan&app_id=abc123&app_key=def456';
             $request_url = 'https://api.cityofnewyork.us/geoclient/v1/address.json?houseNumber='.$house_number.'&street='.$street.' st&borough='.$borough.'&app_id='.$app_id.'&app_key='.$app_key;
 
-            // var_dump($request_url);
+            var_dump($request_url);
 
-            $json = file_get_contents($request_url);
-            $obj = json_decode($json);
-            var_dump($obj);
+            // $json = file_get_contents($request_url);
+            // $obj = json_decode($json);
+            // var_dump($obj);
 
-            // $ch = curl_init();
-            // curl_setopt($ch, CURLOPT_URL, 'https://api.cityofnewyork.us/geoclient/v1/address.json?houseNumber=30-61&street=87th st&borough=Queens&app_id=b985eb41&app_key=9e7522143dca2c6347306d73882b6e3f' );
+            $options = array(
+                CURLOPT_RETURNTRANSFER => true,   // return web page
+                CURLOPT_HEADER         => false,  // don't return headers
+                CURLOPT_FOLLOWLOCATION => true,   // follow redirects
+                CURLOPT_MAXREDIRS      => 10,     // stop after 10 redirects
+                CURLOPT_ENCODING       => "",     // handle compressed
+                CURLOPT_AUTOREFERER    => true,   // set referrer on redirect
+                CURLOPT_CONNECTTIMEOUT => 120,    // time-out on connect
+                CURLOPT_TIMEOUT        => 120,    // time-out on response
+            ); 
 
-            // curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-            // // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            // //     'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            // //     'accept-encoding: gzip, deflate, br',
-            // //     'accept-language: en-US,en;q=0.9',
-            // //     'cache-control: max-age=0',
-            // //     'content-length: 205',
-            // //     'Content-Type: application/x-www-form-urlencoded',
-            // //     'cookie:JSESSIONID=60A2AF9288C2D9712A3DB1D18FFE48DC.ims_64; amlbcookie=03; atidvisitor=%7B%22name%22%3A%22atidvisitor%22%2C%22val%22%3A%7B%22vrn%22%3A%22-592419-%22%7D%2C%22options%22%3A%7B%22path%22%3A%22%2F%22%2C%22session%22%3A15724800%2C%22end%22%3A15724800%7D%7D; AMAuthCookie=AQIC5wM2LY4SfcyWBWJN6gLWTBPLmFEW4dqk9DS4ndKQcoA.*AAJTSQACMDIAAlNLABM4NDU3NzQ4NzgzNDYyNzM4OTg5AAJTMQACMDM.*',
-            // //     'origin: https://ims.wsecure.schneider-electric.com',
-            // //     'referer: https://ims.wsecure.schneider-electric.com/opensso/UI/Login?errorMessage=auth.failed&errorMessage=auth.failed',
-            // //     'upgrade-insecure-requests: 1',
-            // //     'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36'
-            // // ));
-            // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 7);
-            // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            // curl_setopt($ch, CURLOPT_HEADER, false);
-            // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            //         "Content-Type: application/json"
-            //     ));
-            // $data = json_decode(curl_exec($ch));
-            // curl_close($ch);
-            // var_dump($data);
+            $ch = curl_init($request_url);
+            curl_setopt_array($ch, $options);
+            $content  = curl_exec($ch);
+            curl_close($ch);
+            var_dump($content);
+            
             exit;
         }
     }
