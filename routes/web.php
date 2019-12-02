@@ -191,6 +191,7 @@ Route::group(['middleware' => ['web', 'auth', 'permission']], function () {
     Route::resource('map', 'MapController');
     Route::get('/scan_ungeocoded_location', 'MapController@scan_ungeocoded_location');
     Route::get('/apply_geocode', 'MapController@apply_geocode');
+    Route::get('/apply_enrich', 'MapController@apply_enrich');
 
     Route::get('/import', ['uses' => 'PagesController@import']);
     Route::get('/export', ['uses' => 'PagesController@export']);

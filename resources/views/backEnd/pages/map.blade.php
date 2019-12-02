@@ -147,15 +147,9 @@ Map Settings
                   <label class="control-label col-md-6 col-sm-6 col-xs-12" for="email">Output Status of Geocoding
                   </label>
                   <div class="col-md-4 col-sm-4 col-xs-12">
-                    @if ($recently_geocoded_numbers != 0)
                     <h5 id="recent_geocoded_number" style="color: blue; font-style: italic;">
-                      {{$recently_geocoded_numbers}} locations have just been geocoded.
-                    </h5>
-                    @else
-                    <h5 id="recent_geocoded_number" style="color: blue; font-style: italic;">
-                      All valid locations have already been geocoded before.
+                      {{$geocode_status_text}}
                     </h5> 
-                    @endif
                   </div>
                 </div> 
               </div>
@@ -197,7 +191,7 @@ Map Settings
                   </label>
                   <div class="col-md-4 col-sm-4 col-xs-12">
                     <h5 id="invalid_location_numbers" style="color: blue; font-style: italic;">
-                      0
+                      {{$location_count}}
                     </h5>
                   </div>
                 </div> 
@@ -218,15 +212,9 @@ Map Settings
                   <label class="control-label col-md-6 col-sm-6 col-xs-12" for="email">Output status of the enrichment
                   </label>
                   <div class="col-md-4 col-sm-4 col-xs-12">
-                    @if ($recently_enriched_numbers != 0)
-                    <h5 id="recent_enriched_number" style="color: blue; font-style: italic;">
-                      {{$recently_geocoded_numbers}} data have just been enriched.
-                    </h5>
-                    @else
                     <h5 id="recent_enriched_number" style="color: blue; font-style: italic;">
                       All valid locations have already been enriched before.
                     </h5> 
-                    @endif
                   </div>
                 </div> 
               </div>
