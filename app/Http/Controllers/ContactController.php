@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Session;
+use Sentinel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Functions\Airtable;
@@ -13,6 +14,7 @@ use App\Contact;
 use App\Location;
 use App\Group;
 use App\Layout;
+use App\Comment;
 use App\Map;
 use App\CSV;
 use App\Servicecontact;
@@ -1017,6 +1019,41 @@ class ContactController extends Controller
         
     }
 
+    public function add_comment(Request $request, $id) {
+
+        $contact = Contact::find($id);
+        $comment_content = $request->reply_content;
+        $user = Sentinel::getUser();
+        $date_time = date("Y-m-d h:i:sa");
+        $comment = new Comment();
+
+        $comment_recordids = Comment::select("comments_recordid")->distinct()->get();                 
+        $comment_recordid_list = array();
+        foreach ($comment_recordids as $key => $value) {
+            $comment_recordid = $value->comments_recordid;
+            array_push($comment_recordid_list, $comment_recordid);
+        }
+        $comment_recordid_list = array_unique($comment_recordid_list);
+        $new_recordid = Comment::max('comments_recordid') + 1;            
+        if (in_array($new_recordid, $comment_recordid_list)) {
+            $new_recordid = Comment::max('comments_recordid') + 1;
+        }     
+
+        $comment->comments_recordid = $new_recordid;
+        $comment->comments_content = $comment_content;
+        $comment->comments_user = $user->id;
+        $comment->comments_user_firstname = $user->first_name;
+        $comment->comments_user_lastname = $user->last_name;
+        $comment->comments_contact = $id;
+        $comment->comments_datetime = $date_time;
+        $comment->save();
+
+        $comment_list = Comment::where('comments_contact', '=', $id)->get();
+
+        return redirect('contact/'.$id);
+        
+    }
+
     public function update_group(Request $request, $id, $group_name) 
     {   
         
@@ -1050,6 +1087,7 @@ class ContactController extends Controller
     public function contact($id)
     {
         $contact = Contact::where('contact_recordid', '=', $id)->first();
+        $comment_list = Comment::where('comments_contact', '=', $id)->get();
         $locations = Location::with('services', 'address', 'phones')->where('location_contact', '=', $id)->get();
         if (count($locations) == 0) {
             $organization_recordid = $contact->contact_organizations;
@@ -1112,7 +1150,7 @@ class ContactController extends Controller
         $checked_transportations = [];
         $checked_hours= [];
 
-        return view('frontEnd.contact', compact('organization', 'contact', 'locations', 'mailing_address', 'contact_organization_name', 'organization_id',
+        return view('frontEnd.contact', compact('organization', 'contact', 'locations', 'mailing_address', 'contact_organization_name', 'organization_id', 'comment_list',
          'office_phone_number', 'cell_phone_number', 'emergency_phone_number', 'office_fax_phone_number', 'groups', 'group_names', 'contact_group_name_list', 'contact_group_recordid_list',
          'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours'));
     }
