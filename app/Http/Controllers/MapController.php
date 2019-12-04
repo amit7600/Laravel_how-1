@@ -45,14 +45,54 @@ class MapController extends Controller
         $invalid_location_info_count = Location::whereNull('location_name')->count();
 
         $geocode_status_text = '';
+        $enrich_status_text = '';
         if ($ungeocoded_location_numbers == $invalid_location_info_count) {
             $geocode_status_text = 'All valid locations have already been geocoded.';
         }
 
         $location_count = Location::whereNotNull('location_name')->count();
         $unenriched_location_count = Location::whereNotNull('location_name')->whereNull('enrich_flag')->count();
+        if ($unenriched_location_count == 0) {
+            $enrich_status_text = 'All valid locations have already been enriched before.';
+        }
 
-        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'location_count', 'unenriched_location_count', 'geocode_status_text'));
+        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'location_count', 'unenriched_location_count', 'geocode_status_text', 'enrich_status_text'));
+    }
+
+    public function scan_ungeocoded_location(Request $request) {
+        $map = Map::find(1);
+        $geocode_status_text = 'Not Started';
+        $enrich_status_text = '';
+        $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
+        $invalid_location_info_count = Location::whereNull('location_name')->count();
+        if ($ungeocoded_location_numbers == $invalid_location_info_count) {
+            $geocode_status_text = 'All valid locations have already been geocoded.';
+        }
+        $location_count = Location::whereNotNull('location_name')->count();
+        $unenriched_location_count = Location::whereNotNull('location_name')->whereNull('enrich_flag')->count();
+        if ($unenriched_location_count == 0) {
+            $enrich_status_text = 'All valid locations have already been enriched before.';
+        }
+
+        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'geocode_status_text', 'location_count', 'unenriched_location_count', 'enrich_status_text'));
+    }
+
+    public function scan_enrichable_location(Request $request) {
+        $map = Map::find(1);
+        $geocode_status_text = '';
+        $enrich_status_text = 'Not Started';
+        $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
+        $invalid_location_info_count = Location::whereNull('location_name')->count();
+        if ($ungeocoded_location_numbers == $invalid_location_info_count) {
+            $geocode_status_text = 'All valid locations have already been geocoded.';
+        }
+        $location_count = Location::whereNotNull('location_name')->count();
+        $unenriched_location_count = Location::whereNotNull('location_name')->whereNull('enrich_flag')->count();
+        if ($unenriched_location_count == 0) {
+            $enrich_status_text = 'All valid locations have already been enriched before.';
+        }
+
+        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'invalid_location_info_count', 'geocode_status_text', 'location_count', 'unenriched_location_count', 'enrich_status_text'));
     }
 
     /**
@@ -183,14 +223,7 @@ class MapController extends Controller
         $file->move($destination, $fileName);
 
         echo url('/uploads/'. $fileName);
-    }
-
-    public function scan_ungeocoded_location(Request $request) {
-        $map = Map::find(1);
-        $geocoding_status = 'Not Started';
-        $ungeocoded_location_numbers = Location::whereNull('location_latitude')->count();
-        return view('backEnd.pages.map', compact('map', 'ungeocoded_location_numbers', 'geocoding_status'));
-    }
+    }    
 
     public function apply_geocode(Request $request) {
         $ungeocoded_location_info_list = Location::whereNull('location_latitude')->get();
