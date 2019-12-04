@@ -191,7 +191,7 @@ Map Settings
                   </label>
                   <div class="col-md-4 col-sm-4 col-xs-12">
                     <h5 id="invalid_location_numbers" style="color: blue; font-style: italic;">
-                      {{$location_count}}
+                      {{$unenriched_location_count}}
                     </h5>
                   </div>
                 </div> 
