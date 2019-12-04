@@ -28,12 +28,13 @@ class BulkSmsController extends Controller
     {
         try {
             $campaign = Campaign::whereId($id)->first();
+
             if ($campaign && $campaign->campaign_type == 1) {
                 $response = $this->mailController->send_email($campaign);
             } elseif ($campaign && $campaign->campaign_type == 2) {
                 $response = $this->send_sms($campaign);
             } elseif ($campaign && $campaign->campaign_type == 3) {
-                $this->send_audio($campaign);
+                $response = $this->send_audio($campaign);
             } elseif ($campaign && $campaign->campaign_type == 4) {
                 $response = $this->send_sms($campaign);
                 $response = $this->send_audio($campaign);
@@ -133,6 +134,7 @@ class BulkSmsController extends Controller
                             $response = \Curl::to('https://api.twilio.com/' . $response->uri)
                                 ->withOption('USERPWD', $this->sid . ':' . $this->token)
                                 ->get();
+                            dd($response);
                             $data = json_decode($response);
                             DB::beginTransaction();
                             CampaignReport::create([
@@ -151,7 +153,11 @@ class BulkSmsController extends Controller
                             ]);
                             DB::commit();
 
+                        } else {
+                            return 'Phone number not found!';
                         }
+                    } else {
+                        return 'Contact not found!';
                     }
                 }
                 return true;
