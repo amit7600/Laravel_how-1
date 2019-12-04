@@ -181,7 +181,7 @@ Contact
                         a Message</button>
                 </div>
                 <div class="card">
-                    <div id="map" style="width:initial;margin-top: 10px;height: 90vh;"></div>
+                    <div id="map" style="width:initial;margin-top: 10px;height: 39vh;"></div>
                 </div>
             </div>
             <div class="col-md-12 pb-15">
