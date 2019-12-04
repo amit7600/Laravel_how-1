@@ -88,7 +88,7 @@ class ServiceController extends Controller
                 $service->service_alternate_name = isset($record['fields']['id'])?$record['fields']['id']:null;
                 $service->service_alternate_name = isset($record['fields']['Alternate Name'])?$record['fields']['Alternate Name']:null;
                 $service->service_description = isset($record['fields']['Description'])?$record['fields']['Description']:null;
-
+                
                 if(isset($record['fields']['locations'])){
                     $i = 0;
                     foreach ($record['fields']['locations']  as  $value) {
