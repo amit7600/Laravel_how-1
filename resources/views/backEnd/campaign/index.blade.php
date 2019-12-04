@@ -264,7 +264,7 @@ Organizations
                                 </td>
                                 <td>
                                     <span
-                                        class="{{$campaign->campaign_type == 1 ? ('badge badge-success') : ($campaign->campaign_type == 2 ? 'badge badge-danger' : ($campaign->type == 3 ? 'badge badge-warning' : 'badge badge-primary'))}}">{{$campaign->campaign_type == 1 ? ('Email') : ($campaign->campaign_type == 2 ? 'SMS' : ($campaign->type == 3 ?'Audio' : 'sms and audio')) }}</span>
+                                        class="{{$campaign->campaign_type == 1 ? ('badge badge-success') : ($campaign->campaign_type == 2 ? 'badge badge-danger' : ($campaign->type == 3 ? 'badge badge-warning' : 'badge badge-primary'))}}">{{$campaign->campaign_type == 1 ? ('Email') : ($campaign->campaign_type == 2 ? 'SMS' : ($campaign->campaign_type == 3 ?'Audio' : 'sms and audio')) }}</span>
                                 </td>
                                 <td>
                                     @php
