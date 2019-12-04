@@ -71,7 +71,7 @@ class WebhookController extends Controller
             foreach ($attachments as $attachment) {
                 $fname = $attachment->getFilename();
                 $path = '/uploads/receive/' . $fname;
-                $attachment->save(public_path('uploads/receive/'), Parser::ATTACHMENT_DUPLICATE_SUFFIX);
+                $attachment->save(public_path('uploads/receive/'), \Parser::ATTACHMENT_DUPLICATE_SUFFIX);
 
                 array_push($mediaurl, $path);
             }
@@ -80,13 +80,15 @@ class WebhookController extends Controller
 
             $to = $envelope['to'][0];
             $from = $envelope["from"];
-            $subject = $request->input("subject");
+            $subject = $parser->getHeader('subject');
+
             CampaignReport::create([
                 'status' => 'Incoming',
                 'direction' => 'Inbound-api',
                 'toNumber' => $to,
                 'fromNumber' => $from,
                 'type' => '1',
+                'subject' => $subject,
                 'body' => $parser->getMessageBody('text'),
                 'mediaurl' => $imgUrl,
                 'date_sent' => Carbon::now(),
@@ -100,6 +102,7 @@ class WebhookController extends Controller
             \Log::info($th);
             $webhook = new CampaignReport();
             $webhook->error_message = $th->getMessage();
+            $webhook->type = '1';
             $webhook->save();
         }
 

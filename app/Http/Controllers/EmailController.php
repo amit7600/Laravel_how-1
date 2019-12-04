@@ -66,7 +66,12 @@ class EmailController extends Controller
                                 'campaign_id' => $campaign->id,
                             ]);
                             DB::commit();
+                        } else {
+                            return 'Email not found!';
                         }
+
+                    } else {
+                        return 'Email not found!';
 
                     }
                 }
