@@ -305,7 +305,7 @@ button[data-id="contact_zipcode"] {
                             <tr>
                                 <th></th>   
                                 <th style="visibility: hidden;">Open Action</th>
-                                <th style="visibility: hidden;">Delete Action</th>                         
+                                <th class="default-inactive" style="visibility: hidden;">Delete Action</th>                         
                                 <th class="default-inactive">Id</th>
                                 <th class="default-active">First Name</th>
                                 <th class="default-active">Middle Name</th>
@@ -869,17 +869,7 @@ button[data-id="contact_zipcode"] {
 
     $('button#clear-filter-contacts-btn').on('click', function(e) {
         e.preventDefault();
-        $('select#religion').val([]).change();
-        $('select#faith_tradition').val([]).change();
-        $('select#denomination').val([]).change();
-        $('select#judicatory_body').val([]).change();
-        $('select#contact_address').val([]).change();
-        $('select#contact_type').val([]).change();
-        $('select#contact_languages').val([]).change();
-        $('select#contact_borough').val([]).change();
-        $('select#contact_zipcode').val([]).change();
-        $('select#phone').val(['All']).change();
-        $('select#email').val(['All']).change();
+        window.location.reload(true);
     });
 
     var map;
