@@ -89,23 +89,23 @@ table#tbl-group-profile-members {
 							{{$group->group_message_last_sent}}
                         </h4>
                     </div>
-                    <div class="pt-10 pb-10 pl-0 btn-download">
-                        <form method="GET" action="/group/{{$group->group_recordid}}/tagging" id="group_tagging">
-                            <div class="row m-0" id="tagging-div">
-                                <div class="col-md-10">
-                                    <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$group->group_tag}}" />
-                                </div> 
-                                <div class="col-md-2">  
-                                    <button type="submit" class="btn btn-secondary btn-tag-save">
-                                        <i class="fas fa-save"></i>
-                                    </button>
-                                </div> 
-                            </div>
-                        </form>
-                    </div>
                 </div>
             </div> 
             <div class="col-md-4 property">
+                <div class="pt-10 pb-10 pl-0 btn-download">
+                    <form method="GET" action="/group/{{$group->group_recordid}}/tagging" id="group_tagging">
+                        <div class="row m-0" id="tagging-div">
+                            <div class="col-md-10">
+                                <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$group->group_tag}}" />
+                            </div> 
+                            <div class="col-md-2">  
+                                <button type="submit" class="btn btn-secondary btn-tag-save">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                            </div> 
+                        </div>
+                    </form>
+                </div>
 				<div class="pt-10 pb-10 pl-0 btn-download">
                     <a href="/group/{{$group->group_recordid}}/edit" class="btn btn-primary "><i class="fa fa-fw fa-edit"></i>Edit</a>
                     <a href="#" class="btn btn-secondary "><i class="fa fa-fw fa-edit"></i>Add Contact</a>
