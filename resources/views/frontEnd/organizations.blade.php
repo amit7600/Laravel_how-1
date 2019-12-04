@@ -335,12 +335,8 @@ button[data-id="borough"] {
                                 $('input#organization_recordid').val(value);
                             });
 
-                            console.log(check_marks);
-                            if (sessionStorage.getItem('check_marks') == 'true') {
-                                return;
-                            }
-
-                            var locations = response.filtered_locations_list;       
+                            var locations = response.filtered_locations_list;    
+                            console.log(locations);
                             var maplocation = <?php print_r(json_encode($map)) ?>;  
                             if(maplocation.active == 1){
                                 avglat = maplocation.lat;
@@ -365,11 +361,24 @@ button[data-id="borough"] {
                                 center: {lat: parseFloat(latitude), lng: parseFloat(longitude)}
                             });
 
-                            var poly = new google.maps.Polygon({
-                                strokeColor: '#000000',
-                                strokeOpacity: 1.0,
-                                strokeWeight: 3
-                            });
+                            if (sessionStorage.getItem('check_marks') == 'true') {
+                                var poly_coordinate_list = sessionStorage.getItem('poly_coordinate_list');
+                                var point_list = JSON.parse(poly_coordinate_list);
+                                var poly = new google.maps.Polygon({
+                                    paths: point_list,
+                                    strokeColor: '#000000',
+                                    strokeOpacity: 1.0,
+                                    strokeWeight: 3
+                                });
+                                poly.setMap(map);
+                            }
+                            else {
+                                var poly = new google.maps.Polygon({
+                                    strokeColor: '#000000',
+                                    strokeOpacity: 1.0,
+                                    strokeWeight: 3
+                                });
+                            }
 
                             $('#enable-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
@@ -409,11 +418,14 @@ button[data-id="borough"] {
                             }
 
                             var locations_info = locations.map((value) => {
-                                return {
-                                    lat: parseFloat(value.location_latitude),
-                                    lng: parseFloat(value.location_longitude), 
+                                if (value) {
+                                    return {
+                                        lat: parseFloat(value.location_latitude),
+                                        lng: parseFloat(value.location_longitude), 
+                                    }
                                 }
                             })
+                            
                             var markers = locations_info.map(function(location, i) {
                                 return new google.maps.Marker({
                                     position: location
@@ -505,9 +517,20 @@ button[data-id="borough"] {
                                 filter_map = JSON.stringify(filtered_points);
                                 
                                 dataTable.ajax.reload();
-                                sessionStorage.setItem('check_marks', 'true');
+                                sessionStorage.setItem('check_marks', 'true');                               
                                 console.log('=========after filter===========');
-                                console.log(marks);                               
+                                console.log(marks); 
+
+                                var poly_coordinate_list = [];
+                                for(var i = 0; i < marks.length; i ++) {
+                                    var poly_coordinate = {
+                                        lat: marks[i].position.lat(), 
+                                        lng: marks[i].position.lng()
+                                    };
+                                    poly_coordinate_list.push(poly_coordinate);
+                                }
+                                sessionStorage.setItem('poly_coordinate_list', JSON.stringify(poly_coordinate_list)); 
+                                console.log(poly_coordinate_list); 
                             });
 
                             $('#download_pdf').on('click', function(e) {
