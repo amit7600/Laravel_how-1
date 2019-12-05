@@ -190,7 +190,7 @@ Map Settings
                   <label class="control-label col-md-6 col-sm-6 col-xs-12" for="email">Output number of fields without additional NYC data fields
                   </label>
                   <div class="col-md-4 col-sm-4 col-xs-12">
-                    <h5 id="invalid_location_numbers" style="color: blue; font-style: italic;">
+                    <h5 id="unenriched_location_numbers" style="color: blue; font-style: italic;">
                       {{$unenriched_location_count}}
                     </h5>
                   </div>
@@ -213,7 +213,7 @@ Map Settings
                   </label>
                   <div class="col-md-4 col-sm-4 col-xs-12">
                     <h5 id="recent_enriched_number" style="color: blue; font-style: italic;">
-                      All valid locations have already been enriched before.
+                      {{$enrich_status_text}}                      
                     </h5> 
                   </div>
                 </div> 
@@ -229,15 +229,18 @@ Map Settings
 @section('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gmaps.js/0.4.9/gmaps.min.js"></script>
 <script>
+
   $('#scan-btn').on('click', function(e){
     e.preventDefault();
     $("#ungeocoded_location_numbers").css('color', 'forestgreen');
     $("#invalid_location_numbers").css('color', 'forestgreen');
   });
-  // $('#apply-btn').on('click', function(e){
-  //   e.preventDefault();
-  //   $("#recent_geocoded_number").css('color', 'forestgreen');
-  // });
+
+  $('#scan-enrich-btn').on('click', function(e){
+    e.preventDefault();
+    $("#unenriched_location_numbers").css('color', 'forestgreen');
+  });
+
 </script>
 
 @endsection
