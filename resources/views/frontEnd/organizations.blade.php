@@ -336,9 +336,12 @@ button[data-id="borough"] {
                             });
 
                             var locations = response.filtered_locations_list;    
-                            console.log(locations);
+                            
                             var maplocation = <?php print_r(json_encode($map)) ?>;  
+
                             if(maplocation.active == 1){
+                                console.log(maplocation.lat);
+                                console.log(maplocation.long);
                                 avglat = maplocation.lat;
                                 avglng = maplocation.long;
                                 zoom = maplocation.zoom;
@@ -358,7 +361,7 @@ button[data-id="borough"] {
                             }           
                             var map = new google.maps.Map(document.getElementById('map'), {
                                 zoom: zoom,
-                                center: {lat: parseFloat(latitude), lng: parseFloat(longitude)}
+                                center: {lat: parseFloat(avglat), lng: parseFloat(avglng)}
                             });
 
                             if (sessionStorage.getItem('check_marks') == 'true') {
@@ -671,6 +674,8 @@ button[data-id="borough"] {
             var maplocation = <?php print_r(json_encode($map)) ?>;  
 
             if(maplocation.active == 1){
+                console.log(maplocation.lat);
+                console.log(maplocation.long);
                 avglat = maplocation.lat;
                 avglng = maplocation.long;
                 zoom = maplocation.zoom;
@@ -692,7 +697,7 @@ button[data-id="borough"] {
             
             var map = new google.maps.Map(document.getElementById('map'), {
                 zoom: zoom,
-                center: {lat: parseFloat(latitude), lng: parseFloat(longitude)}
+                center: {lat: parseFloat(avglat), lng: parseFloat(avglng)}
             });
             var locations_info = locations.map((value) => {
                 return {
