@@ -11,8 +11,11 @@ Groups
     color: rgba(40,53,147,.9);
     white-space: normal;
 }
-
 button[data-id="type"] {
+    height: 100%;
+    border: 1px solid #ddd;
+}
+button[data-id="tag"] {
     height: 100%;
     border: 1px solid #ddd;
 }
@@ -47,6 +50,18 @@ button[data-id="type"] {
                     </div>
                 </div> 
                 <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4">Tag: </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12" id="tag-div">
+                        <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
+                            <option style="visibility: hidden;" value="">Nothing selected</option>
+                        @foreach($tag_list as $key => $tag)
+                            <option value="{{$tag}}">{{$tag}}</option>
+                        @endforeach
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group row">
                     <label class="control-label sel-label-org pl-4"></label>
                     <div class="col-md-6 col-sm-6 col-xs-12" id="clear-btn-div">
                         <button class="btn btn-success btn-rounded" id="clear-filter-group-btn"><i class="fa fa-refresh"></i> Clear Filters</button>
@@ -67,7 +82,8 @@ button[data-id="type"] {
                             <th class="default-active">Members</th>
                             <th class="default-active">Message Last Sent</th>
                             <th class="default-active">Time Last Sent</th>
-                            <th class="default-active">Total Messages Sent</th>                         
+                            <th class="default-active">Total Messages Sent</th>
+                            <th class="default-inactive">Tag</th>                           
                         </tr>
                     </thead>
                     <tbody>
@@ -86,7 +102,8 @@ button[data-id="type"] {
                             <td>{{$group->group_members}}</td>
                             <td>{{$group->group_message_last_sent}}</td>
                             <td>{{$group->group_last_modified}}</td>
-                            <td>15</td>                            
+                            <td>15</td>
+                            <td>{{$group->group_tag}}</td>                            
                         </tr>
                     @endforeach
                     <tbody>
@@ -138,6 +155,7 @@ button[data-id="type"] {
             ]
         });
     });
+   
     $('select#type').on('change', function() {
         
         var selectedList = $(this).val();
@@ -146,8 +164,18 @@ button[data-id="type"] {
             .column(4)
             .search(search ? search : '', true, false).draw();
     });
-    $('button#clear-filter-group-btn').on('click', function() {
-        $('select#type').val([]).change();     
+    $('select#tag').on('change', function() {
+        
+        var selectedList = $(this).val();
+        $('input#tag_list').val(selectedList);
+        search = selectedList
+        dataTable
+            .column(10)
+            .search(search ? search : '', true, false).draw();
+    });
+    $('button#clear-filter-group-btn').on('click', function(e) {
+        e.preventDefault();
+        window.location.reload(true);  
     });
     $('button.delete-td').on('click', function() {
         var value = $(this).val();
