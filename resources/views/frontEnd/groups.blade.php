@@ -53,7 +53,7 @@ button[data-id="tag"] {
                     <label class="control-label sel-label-org pl-4">Tag: </label>
                     <div class="col-md-6 col-sm-6 col-xs-12" id="tag-div">
                         <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
-                            <option style="visibility: hidden;" value="">Nothing selected</option>
+                            <option style="visibility: hidden; height: 0px;" value="">Nothing selected</option>
                         @foreach($tag_list as $key => $tag)
                             <option value="{{$tag}}">{{$tag}}</option>
                         @endforeach
