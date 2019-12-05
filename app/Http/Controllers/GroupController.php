@@ -25,11 +25,19 @@ class GroupController extends Controller
 
     public function groups()
     {
-        $groups = Group::orderBy('group_recordid')->get();        
+        $groups = Group::orderBy('group_recordid')->get(); 
+        $group_tags = Group::select("group_tag")->distinct()->get();
         $type_list = ['Static', 'Dynamic', 'Previously Messaged']; 
-        $map = Map::find(1);       
+        $map = Map::find(1);    
+        
+        $tag_list = [];
+        foreach ($group_tags as $key => $value) {
+            $tags = explode(", " , trim($value->group_tag));
+            $tag_list = array_merge($tag_list, $tags);
+        }
+        $tag_list = array_unique($tag_list);
 
-        return view('frontEnd.groups', compact('groups', 'type_list', 'map'));        
+        return view('frontEnd.groups', compact('groups', 'type_list', 'map', 'tag_list'));        
     }
 
     public function tagging(Request $request, $id) {
