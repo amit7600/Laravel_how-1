@@ -492,7 +492,7 @@ button[data-id="contact_zipcode"] {
                             }
                             var map = new google.maps.Map(document.getElementById('map'), {
                                 zoom: zoom,
-                                center: {lat: parseFloat(latitude), lng: parseFloat(longitude)}
+                                center: {lat: parseFloat(avglat), lng: parseFloat(avglng)}
                             });
 
                             if (sessionStorage.getItem('check_marks') == 'true') {
@@ -929,7 +929,7 @@ button[data-id="contact_zipcode"] {
        
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: zoom,
-            center: {lat: parseFloat(latitude), lng: parseFloat(longitude)}
+            center: {lat: parseFloat(avglat), lng: parseFloat(avglng)}
         });
         
         var locations_info = locations.map((value) => {
