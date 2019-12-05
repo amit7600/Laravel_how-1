@@ -107,6 +107,22 @@ table#tbl-location-profile-history {
 							<span class="badge bg-red pl-0 organize_font"><b>Comments:</b></span> 
 							{{$facility->location_description}}
                         </h4>
+                        <h4>
+                            <span class="badge bg-red pl-0 organize_font"><b>Latitude:</b></span> 
+                            {{$facility->location_latitude}}
+                        </h4>
+                        <h4>
+                            <span class="badge bg-red pl-0 organize_font"><b>Longitude:</b></span> 
+                            {{$facility->location_longitude}}
+                        </h4>
+                        <h4>
+                            <span class="badge bg-red pl-0 organize_font"><b>City Council District:</b></span> 
+                            {{$facility->location_city_council_district}}
+                        </h4>
+                        <h4>
+                            <span class="badge bg-red pl-0 organize_font"><b>Community District:</b></span> 
+                            {{$facility->location_community_district}}
+                        </h4>
                     </div>
                 </div>
             </div>  
