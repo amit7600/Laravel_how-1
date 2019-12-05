@@ -182,6 +182,8 @@ class LocationController extends Controller
         $filter_zipcode = $request->filter_zipcode;
         $filter_type = $request->filter_type;
         $filter_tag = $request->filter_tag;
+        $filter_city_council_district = $request->filter_city_council_district;
+        $filter_community_district = $request->filter_community_district;
         $filter_map = $request->filter_map;
 
         $facilities = Location::orderBy('location_recordid', 'DESC');
@@ -201,6 +203,8 @@ class LocationController extends Controller
         $filter_borough_list = [];
         $filter_zipcode_list = [];
         $filter_type_list = [];
+        $filter_city_council_district_list = [];
+        $filter_community_district_list = [];
         $filter_map_list = [];
 
         if ($filter_address) {
@@ -214,6 +218,12 @@ class LocationController extends Controller
         }
         if ($filter_type) {
             $filter_type_list = explode('|', $filter_type);            
+        }
+        if ($filter_city_council_district) {
+            $filter_city_council_district_list = explode('|', $filter_city_council_district);            
+        }
+        if ($filter_community_district) {
+            $filter_community_district_list = explode('|', $filter_community_district);            
         }
 
         if ($filter_map) {
@@ -242,6 +252,12 @@ class LocationController extends Controller
 
         if ($filter_type_list) {
             $facilities = $facilities->whereIn('location_type', $filter_type_list);
+        }
+        if ($filter_city_council_district_list) {
+            $facilities = $facilities->whereIn('location_city_council_district', $filter_city_council_district_list);
+        }
+        if ($filter_community_district_list) {
+            $facilities = $facilities->whereIn('location_community_district', $filter_community_district_list);
         }
         if ($filter_tag) {
             $facilities = $facilities->where('location_tag', 'LIKE', '%' . $filter_tag . '%');
@@ -317,6 +333,8 @@ class LocationController extends Controller
             }
             $facility_info[12] = $facility->location_description;
             $facility_info[13] = $facility->location_tag;
+            $facility_info[14] = $facility->location_city_council_district;
+            $facility_info[15] = $facility->location_community_district;
 
             array_push($result, $facility_info);
         }
@@ -458,6 +476,8 @@ class LocationController extends Controller
         $address_zipcodes = Address::select("address_zip_code")->distinct()->get();        
         $locations = Location::with('services', 'address', 'phones')->distinct()->get();
         $location_tags = Location::select("location_tag")->distinct()->get();
+        $location_city_council_districts = Location::select("location_city_council_district")->distinct()->get();
+        $location_community_districts = Location::select("location_community_district")->distinct()->get();
 
         $tag_list = [];
         foreach ($location_tags as $key => $value) {
@@ -465,6 +485,20 @@ class LocationController extends Controller
             $tag_list = array_merge($tag_list, $tags);
         }
         $tag_list = array_unique($tag_list);
+
+        $city_council_district_list = [];
+        foreach ($location_city_council_districts as $key => $value) {
+            $city_council_districts = explode(", " , trim($value->location_city_council_district));
+            $city_council_district_list = array_merge($city_council_district_list, $city_council_districts);
+        }
+        $city_council_district_list = array_unique($city_council_district_list);
+
+        $community_district_list = [];
+        foreach ($location_community_districts as $key => $value) {
+            $community_districts = explode(", " , trim($value->location_community_district));
+            $community_district_list = array_merge($community_district_list, $community_districts);
+        }
+        $community_district_list = array_unique($community_district_list);
 
         $address_address_list = [];
         foreach ($address_addresses as $key => $value) {
@@ -489,7 +523,7 @@ class LocationController extends Controller
        
         $map = Map::find(1);      
 
-        return view('frontEnd.locations', compact('locations',
+        return view('frontEnd.locations', compact('locations', 'city_council_district_list', 'community_district_list',
         'location_types', 'address_address_list', 'address_city_list', 'address_zipcode_list', 'tag_list', 'map'));
     }
 

@@ -55,6 +55,14 @@ button[data-id="tag"] {
     height: 100%;
     border: 1px solid #ddd;
 }
+button[data-id="city_council_district"] {
+    height: 100%;
+    border: 1px solid #ddd;
+}
+button[data-id="community_district"] {
+    height: 100%;
+    border: 1px solid #ddd;
+}
 button[data-id="zipcode"] {
     height: 100%;
     border: 1px solid #ddd;
@@ -130,13 +138,35 @@ button[data-id="address"] {
                             @endforeach
                             </select>
                         </div>
+                    </div> 
+                    <div class="form-group row">
+                        <label class="control-label sel-label-org pl-4">City Council District: </label>
+                        <div class="col-sm-6 col-sm-6 col-xs-12" id="city_council_district-div">
+                            <select class="form-control selectpicker" data-live-search="true" id="city_council_district" name="city_council_district">
+                            @foreach($city_council_district_list as $key => $city_council_district)
+                                <option value="{{$city_council_district}}">{{$city_council_district}}</option>
+                            @endforeach
+                            </select>
+                        </div>
+                    </div>  
+                    <div class="form-group row">
+                        <label class="control-label sel-label-org pl-4">Community District: </label>
+                        <div class="col-sm-6 col-sm-6 col-xs-12" id="city_council_district-div">
+                            <select class="form-control selectpicker" data-live-search="true" id="community_district" name="community_district">
+                            @foreach($community_district_list as $key => $community_district)
+                                <option value="{{$community_district}}">{{$community_district}}</option>
+                            @endforeach
+                            </select>
+                        </div>
                     </div>  
 
                     <input type="hidden" id="address_list" name="address_list"> 
                     <input type="hidden" id="borough_list" name="borough_list">
                     <input type="hidden" id="zipcode_list" name="zipcode_list">
                     <input type="hidden" id="type_list" name="type_list">
-                    <input type="hidden" id="tag_list" name="tag_list">                     
+                    <input type="hidden" id="tag_list" name="tag_list">
+                    <input type="hidden" id="city_council_district_list" name="city_council_district_list">
+                    <input type="hidden" id="community_district_list" name="community_district_list">                      
                     
                     <div class="form-group row">
                         <label class="control-label sel-label-org pl-4"></label>
@@ -195,6 +225,8 @@ button[data-id="address"] {
                                 <th class="default-inactive">Borough</th>
                                 <th class="default-inactive">Comments</th>
                                 <th class="default-inactive">Tag</th>
+                                <th class="default-inactive">City Council District</th>
+                                <th class="default-inactive">Community District</th>
                             </tr>
                         </thead>
                     </table>
@@ -247,7 +279,7 @@ button[data-id="address"] {
             "order": [[ 2, 'desc' ]],
             "buttons": [{
                 extend: 'colvis',
-                columns: [8, 9, 10, 12, 13]
+                columns: [8, 9, 10, 12, 13, 14, 15]
             }],
             "serverSide": true,          
             "searching": true,                   
@@ -264,6 +296,8 @@ button[data-id="address"] {
                     var filter_zipcode = data.columns[10].search.value;
                     var filter_type = data.columns[9].search.value;
                     var filter_tag = data.columns[13].search.value;
+                    var filter_city_council_district = data.columns[14].search.value;
+                    var filter_community_district = data.columns[15].search.value;
                     var check_marks = sessionStorage.getItem('check_marks');
 
                     $.ajaxSetup({
@@ -284,7 +318,9 @@ button[data-id="address"] {
                             filter_borough: filter_borough,
                             filter_zipcode: filter_zipcode,
                             filter_type: filter_type,
-                            filter_tag: filter_tag,                           
+                            filter_tag: filter_tag,
+                            filter_city_council_district: filter_city_council_district,
+                            filter_community_district: filter_community_district,                      
                             filter_map: filter_map
                         },
                         success: function (response) {
@@ -547,6 +583,8 @@ button[data-id="address"] {
         $("#zipcode").selectpicker("");
         $("#type").selectpicker("");
         $("#tag").selectpicker("");
+        $("#city_council_district").selectpicker("");
+        $("#community_district").selectpicker("");
     })
 
     $('select#address').on('change', function() {
@@ -593,6 +631,26 @@ button[data-id="address"] {
  
         dataTable
             .column(13)
+            .search(search ? search : '', true, false).draw();
+    });
+    $('select#city_council_district').on('change', function() {
+        
+        var selectedList = $(this).val();
+        $('input#city_council_district_list').val(selectedList);
+        search = selectedList
+ 
+        dataTable
+            .column(14)
+            .search(search ? search : '', true, false).draw();
+    });
+    $('select#community_district').on('change', function() {
+        
+        var selectedList = $(this).val();
+        $('input#community_district_list').val(selectedList);
+        search = selectedList
+ 
+        dataTable
+            .column(15)
             .search(search ? search : '', true, false).draw();
     });
     $('button#clear-filter-locations-btn').on('click', function(e) {
