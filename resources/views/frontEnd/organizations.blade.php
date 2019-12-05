@@ -335,13 +335,12 @@ button[data-id="borough"] {
                                 $('input#organization_recordid').val(value);
                             });
 
-                            var locations = response.filtered_locations_list;    
+                            var locations = response.filtered_locations_list;  
+                            console.log(response);  
                             
                             var maplocation = <?php print_r(json_encode($map)) ?>;  
 
                             if(maplocation.active == 1){
-                                console.log(maplocation.lat);
-                                console.log(maplocation.long);
                                 avglat = maplocation.lat;
                                 avglng = maplocation.long;
                                 zoom = maplocation.zoom;
@@ -425,15 +424,32 @@ button[data-id="borough"] {
                                     return {
                                         lat: parseFloat(value.location_latitude),
                                         lng: parseFloat(value.location_longitude), 
+                                        location_name: value.location_name,
+                                        location_type: value.location_type
                                     }
                                 }
                             })
                             
                             var markers = locations_info.map(function(location, i) {
-                                return new google.maps.Marker({
-                                    position: location
+                                var position = {
+                                    lat: location.lat,
+                                    lng: location.lng
+                                }
+                                // var contentString = "Location Name: " + location.location_name;
+                                // var infowindow = new google.maps.InfoWindow({
+                                //     content: contentString
+                                // });
+                                var marker = new google.maps.Marker({
+                                    position: position,
+                                    map: map,
+                                    title: location.location_name
                                 });
+                                // google.maps.event.addListener(marker, 'click', function() {
+                                //     infowindow.open(map, marker);
+                                // });
+                                return marker;
                             });
+
                             var markerCluster = new MarkerClusterer(map, markers,
                                 {imagePath: "{{asset('images/m')}}"});
 
@@ -670,12 +686,11 @@ button[data-id="borough"] {
 
     $(document).ready(function(){  
         setTimeout(function(){
-            var locations = <?php print_r(json_encode($locations)) ?>;        
+            var locations = <?php print_r(json_encode($locations)) ?>; 
+            console.log(locations);       
             var maplocation = <?php print_r(json_encode($map)) ?>;  
 
-            if(maplocation.active == 1){
-                console.log(maplocation.lat);
-                console.log(maplocation.long);
+            if(maplocation.active == 1){               
                 avglat = maplocation.lat;
                 avglng = maplocation.long;
                 zoom = maplocation.zoom;
@@ -699,6 +714,7 @@ button[data-id="borough"] {
                 zoom: zoom,
                 center: {lat: parseFloat(avglat), lng: parseFloat(avglng)}
             });
+            
             var locations_info = locations.map((value) => {
                 return {
                     lat: parseFloat(value.location_latitude),

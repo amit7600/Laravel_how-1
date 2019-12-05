@@ -387,14 +387,23 @@ button[data-id="address"] {
                                 if (value) {
                                     return {
                                         lat: parseFloat(value.location_latitude),
-                                        lng: parseFloat(value.location_longitude), 
+                                        lng: parseFloat(value.location_longitude),
+                                        location_name: value.location_name,
+                                        location_type: value.location_type 
                                     }
                                 }
                             })            
                             var markers = locations_info.map(function(location, i) {
-                                return new google.maps.Marker({
-                                    position: location
+                                var position = {
+                                    lat: location.lat,
+                                    lng: location.lng
+                                }
+                                var marker = new google.maps.Marker({
+                                    position: position,
+                                    map: map,
+                                    title: location.location_name
                                 });
+                                return marker;
                             });
                             var markerCluster = new MarkerClusterer(map, markers,
                                 {imagePath: "{{asset('images/m')}}"}
