@@ -341,7 +341,7 @@ button[data-id="borough"] {
                             if(maplocation.active == 1){
                                 avglat = maplocation.lat;
                                 avglng = maplocation.long;
-                                zoom = maplocation.zoom * 15;
+                                zoom = maplocation.zoom;
                             }
                             else
                             {
@@ -673,7 +673,7 @@ button[data-id="borough"] {
             if(maplocation.active == 1){
                 avglat = maplocation.lat;
                 avglng = maplocation.long;
-                zoom = maplocation.zoom * 15;
+                zoom = maplocation.zoom;
             }
             else
             {
