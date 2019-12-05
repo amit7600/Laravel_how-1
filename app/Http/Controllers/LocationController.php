@@ -267,7 +267,7 @@ class LocationController extends Controller
             
         }
 
-        if ($filter_type_list || $filter_address_list || $filter_borough_list || $filter_zipcode_list) {
+        if ($filter_type_list || $filter_address_list || $filter_borough_list || $filter_zipcode_list || $filtered_location_recordid_list) {
             $filtered_locations_list = $facilities->get();
         }
         else {

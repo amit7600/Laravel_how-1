@@ -302,7 +302,8 @@ button[data-id="address"] {
                                 $('input#facility_recordid').val(value);
                             });
 
-                            var locations = response.filtered_locations_list;       
+                            var locations = response.filtered_locations_list;  
+                            console.log(locations);     
                             var maplocation = <?php print_r(json_encode($map)) ?>;
                             if(maplocation.active == 1){
                                 avglat = maplocation.lat;
