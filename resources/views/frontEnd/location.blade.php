@@ -121,7 +121,10 @@ table#tbl-location-profile-history {
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Community District:</b></span> 
-                            {{$facility->location_community_district}}
+                            @php 
+                                $formated_location_community_district = substr_replace(strval($facility->location_community_district), '-', 1, 0);
+                            @endphp
+                            {{$formated_location_community_district}}
                         </h4>
                     </div>
                 </div>
