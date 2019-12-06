@@ -217,6 +217,8 @@ Organizations
                 <div class="col-md-4">
                     <button class="btn btn-danger" data-toggle="modal" data-target="#campaignModal">Connect to
                         Campaign</button>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#groupModal">Connect to
+                        Group</button>
                 </div>
                 <div class="col-sm-12 p-20">
                     <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-message">
@@ -239,13 +241,9 @@ Organizations
                             @if($getCampaignReport)
                             @foreach($getCampaignReport as $key=>$value)
                             <tr>
-                                @if ($value->status == 'Incoming')
                                 <td><b><input type="checkbox" name="checkUncheck[]" id="checkAllAuto"
                                             value="{{ $value->id}}" class="checkAllAuto"></b>
                                 </td>
-                                @else
-                                <td></td>
-                                @endif
                                 <td>{{ $key+1}}</td>
                                 <td><span
                                         class="badge badge-{{$value->type ==1 ? 'success' : ($value->type == 2 ? 'danger' : ($value->type == 3 ?'warning' : 'primary'))}}">{{$value->type ==1 ? 'Email' : ($value->type == 2 ? 'SMS' : ($value->type == 3 ?'Audio' : 'sms and audio'))}}</span>
@@ -255,8 +253,8 @@ Organizations
                                 <td>{{ $value->status}}
                                 </td>
                                 <td>{{$value->body}}</td>
-                                <td>{{$value->toNumber}}</td>
                                 <td>{{$value->fromNumber}}</td>
+                                <td>{{$value->toNumber}}</td>
                                 <td>{{date('d-m-Y h:m:s',strtotime($value->date_sent))}}</td>
                                 <!-- <td>
                                     @if ($value->status == 'Incoming')
@@ -291,6 +289,28 @@ Organizations
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="saveCampaign">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="groupModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Group</h4>
+            </div>
+            <div class="modal-body">
+                <label class="control-label ">Select static group</label>
+                {!! Form::select('selectGroup',$GroupDetail,null,['class'
+                =>'form-control','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveGroup">Save</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -454,13 +474,7 @@ Organizations
 
         
         var campaignId
-        $('select#campaignData').on('change', function() {
-            var id = []
-            const value = $(this).closest('tr').find('input[type="checkbox"]').val()
-            id.push(value)
-            campaignId = $(this).val()
-            connect_campaign(id,campaignId)
-        });
+        var groupId
         $('#saveCampaign').click(function(){
             var id = []
             var checkbox = $('#tbl-message').find('input[type="checkbox"]:checked')
@@ -490,6 +504,41 @@ Organizations
                 },
                 data:{ id, campaignId},
                 success:function(response){
+                    window.location.reload();
+                }
+            })
+        }
+
+        $('#saveGroup').click(function(){
+            var id = []
+            var checkbox = $('#tbl-message').find('input[type="checkbox"]:checked')
+            checkbox.each(function(index,data){
+                id.push(data.value)
+            })
+            groupId = $('#selectGroup').val();
+            if(groupId == ''){
+                alert('Please select campaign first.');
+                return false;
+            }
+            connect_group(id,groupId)
+        });
+        function connect_group(id,groupId){
+            if($.inArray('on', id) != -1){
+                id.splice(id.indexOf('on'),1)
+            }
+            if(id.length == 0){
+                alert('please select any report in table.')
+                return false
+            }
+            $.ajax({
+                method: 'POST',
+                url: '{{route("connect_group")}}',
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                data:{ id, groupId},
+                success:function(response){
+                    alert(response.message)
                     window.location.reload();
                 }
             })

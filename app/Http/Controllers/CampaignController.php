@@ -388,7 +388,11 @@ class CampaignController extends Controller
         $campaign = Campaign::whereId($id)->first();
         $user = User::whereId($campaign->user_id)->first();
 
-        return view('backEnd.campaign.campaign_report', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'campaign_data', 'campaign', 'response', 'delivered', 'file_type', 'user'));
+
+        $GroupDetail = Group::where('group_type', 'Static')->pluck('group_name', 'group_recordid');
+
+
+        return view('backEnd.campaign.campaign_report', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'campaign_data', 'campaign', 'response', 'delivered', 'file_type', 'user','GroupDetail'));
     }
     public function deleteRecipient(Request $request)
     {
