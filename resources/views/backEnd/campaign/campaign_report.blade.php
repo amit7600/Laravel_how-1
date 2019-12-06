@@ -77,150 +77,175 @@ Organizations
     <!-- Page Content Holder -->
     <div class="col-sm-12">
         <h1>Campaign Report</h1>
-        <form>
-            <div class="row">
-                <div class="col-md-3 mt-4"></div>
-                <div class="col-md-3 mt-4">
-                    <div class="card background_gry">
-                        <div class="card-body">
-                            <p class="card-text"><b>Name: {{ $campaign->name }}</b> </p>
-                            <p class="card-text ">
-                                <b>Status:<span class="badge {{$delivered > 0 ? 'badge-success' : 'badge-danger'}} ">
-                                        {{$delivered > 0 ? 'Sent' : 'Draft'}}</span>
-                                </b>
-                            </p>
-                            <p class=" card-text">
-                                <b>Type: </b><span
-                                    class="badge badge-danger">{{$campaign->campaign_type == 1 ? ('Email') : ($campaign->campaign_type == 2 ? 'SMS' : 'Audio') }}</span>
-                            </p>
-                            <p class="card-text"><b>Created Date: {{ $campaign->created_at->format('m/d/Y') }}</b> </p>
-                            <p class="card-text"><b>Send Date: {{ $campaign->created_at->format('m/d/Y') }}</b> </p>
-                            {{-- <p class="card-text"><b>#Recipients: @php
+        <div class="row">
+            <div class="col-md-3 mt-4"></div>
+            <div class="col-md-3 mt-4">
+                <div class="card background_gry">
+                    <div class="card-body">
+                        <p class="card-text"><b>Name: {{ $campaign->name }}</b> </p>
+                        <p class="card-text ">
+                            <b>Status:<span class="badge {{$delivered > 0 ? 'badge-success' : 'badge-danger'}} ">
+                                    {{$delivered > 0 ? 'Sent' : 'Draft'}}</span>
+                            </b>
+                        </p>
+                        <p class=" card-text">
+                            <b>Type: </b><span
+                                class="badge badge-danger">{{$campaign->campaign_type == 1 ? ('Email') : ($campaign->campaign_type == 2 ? 'SMS' : 'Audio') }}</span>
+                        </p>
+                        <p class="card-text"><b>Created Date: {{ $campaign->created_at->format('m/d/Y') }}</b> </p>
+                        <p class="card-text"><b>Send Date: {{ $campaign->created_at->format('m/d/Y') }}</b> </p>
+                        {{-- <p class="card-text"><b>#Recipients: @php
                                                     $recipient = explode(',',$campaign->recipient);
                                                     @endphp
                                                     {{count($recipient)}}
-                            </b> </p> --}}
+                        </b> </p> --}}
 
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 mt-4">
-                    <div class="card background_gry">
-                        <div class="card-body">
-                            <p class="card-text"><b>Sent By: {{$user->first_name . ' '. $user->last_name}} </b> </p>
-                            <p class="card-text"><b>Subject: {{ $campaign->subject }}</b> </p>
-                            <p class="card-text"><b>Body: {{ $campaign->body }}</b> </p>
-                            <p class="card-text" style="display: inline-block; margin-right:20px;"><b>Audio Record:</b>
-                            </p>
-                            <div id="soundTag" style="display:none;"></div>
-                            @if (strstr($campaign->campaign_file,'audio/'))
-                            <div class="btn-group" aria-label="Basic example" role="group">
-                                <button type="button" class="btn btn-icon btn-primary waves-effect waves-classic"
-                                    id="button_play"><i class="icon md-play" aria-hidden="true"></i></button>
-                                <button type="button" class="btn btn-icon btn-primary waves-effect waves-classic"
-                                    id="button_pause"><i class="icon md-pause" aria-hidden="true"></i></button>
-                                <button type="button" class="btn btn-icon btn-primary waves-effect waves-classic"
-                                    id="button_stop"><i class="icon md-stop" aria-hidden="true"></i></button>
-                            </div>
-                            @else
-                            @if ( $campaign->campaign_file != '')
-
-                            <img src="{{ $campaign->campaign_file }}" alt="" style="width: 70%; border-radius: 100%;">
-                            @endif
-                            @endif
-
-
-
-                            <p class="card-text"><b>Last Modified: {{ $campaign->updated_at->format('m/d/Y') }}</b> </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12">
-                    <div class="table-responsive">
-                        <div class="top_data text-center" style="border-bottom:1px solid #ddd;">
-                            <ul>
-                                <li><b>Recipients: @php
-                                        $recipient = explode(',',$campaign->recipient);
-                                        @endphp
-                                        {{count($recipient)}} </b>
-                                    <span>|</span>
-
-                                    <b>Delivered: {{$delivered}} </b>
-                                    <span>|</span>
-                                    <b>Responses: {{$response}} </b>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="top_data text-center mt-4">
-                            <ul>
-                                <li><b>Type: </b>
-                                    {!! Form::select('type[]',['Email' => 'Email','SMS' => 'SMS','Audio' =>
-                                    'Audio','SMS + Audio' =>
-                                    'SMS + Audio'],null,['class' =>'form-control
-                                    selectpicker','multiple'=>'multiple','data-live-search'=>'true', 'id'=>'type'] ) !!}
-                                    <span>|</span>
-                                    <b>Status: </b>
-                                    {!! Form::select('status[]',['Undelivered' => 'Undelivered','Delivered' =>
-                                    'Delivered','Incoming' =>
-                                    'Incoming','sent' =>
-                                    'sent'],null,['class' =>'form-control
-                                    selectpicker','multiple'=>'multiple','data-live-search'=>'true', 'id'=>'status'] )
-                                    !!}
-                                    <span>|</span>
-                                    <b>Direction: </b>
-                                    {!! Form::select('direction',['outbound-api' => 'Outbound Api','Inbound-api' =>
-                                    'Inbound-api'],null,['class'
-                                    =>'form-control','placeholder' => 'Select Direction','id' => 'direction'] ) !!}
-                                </li>
-                            </ul>
-                        </div>
-                        <table class="table" id="tbl-campaignReport">
-                            <thead>
-                                <tr>
-                                    {{-- <th><b><input type="checkbox"></b></th> --}}
-                                    <th><b>Status</b></th>
-                                    <th><b>Type</b></th>
-                                    <th><b>Direction</b></th>
-                                    <th><b>Date Sent</b></th>
-                                    <th><b>To Number</b></th>
-                                    <th><b>To Contact</b></th>
-                                    <th><b>From Number</b></th>
-                                    <th><b>From Contact</b></th>
-                                    <th><b>Message Body</b></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($campaign_data as $key => $value)
-                                <tr style="font-size:14px;">
-                                    {{-- <th><b><input type="checkbox"></b></th> --}}
-                                    <td>{{ $value->status }} </td>
-                                    <td><span
-                                            class="{{$value->campaign->campaign_type == 1 ? ('badge badge-success') : ($value->campaign->campaign_type == 2 ? 'badge badge-danger' : 'badge badge-warning')}}">{{$value->campaign->campaign_type == 1 ? 'Email' : ($value->campaign->campaign_type == 2 ? 'SMS' : 'Audio') }}</span>
-                                    </td>
-                                    <td> {{ $value->direction }} </td>
-                                    <td> {{ $value->date_sent }} </td>
-                                    <td> {{ $value->toNumber }} </td>
-                                    @php
-                                    $contact = \App\Contact::whereId($value->contact_id)->first();
-                                    @endphp
-                                    <td>
-                                        @if ($contact)
-                                        <a href="/contact/{{$contact->contact_recordid}}">{{ $value->toContact }}</a>
-                                        @else
-                                        {{ $value->toContact }}
-                                        @endif
-                                    </td>
-                                    <td> {{ $value->fromNumber }} </td>
-                                    <td> {{ $value->fromContact }} </td>
-                                    <td> {{ $value->body }} </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
-        </form>
+            <div class="col-md-3 mt-4">
+                <div class="card background_gry">
+                    <div class="card-body">
+                        <p class="card-text"><b>Sent By: {{$user->first_name . ' '. $user->last_name}} </b> </p>
+                        <p class="card-text"><b>Subject: {{ $campaign->subject }}</b> </p>
+                        <p class="card-text"><b>Body: {{ $campaign->body }}</b> </p>
+                        <p class="card-text" style="display: inline-block; margin-right:20px;"><b>Audio Record:</b>
+                        </p>
+                        <div id="soundTag" style="display:none;"></div>
+                        @if (strstr($campaign->campaign_file,'audio/'))
+                        <div class="btn-group" aria-label="Basic example" role="group">
+                            <button type="button" class="btn btn-icon btn-primary waves-effect waves-classic"
+                                id="button_play"><i class="icon md-play" aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-icon btn-primary waves-effect waves-classic"
+                                id="button_pause"><i class="icon md-pause" aria-hidden="true"></i></button>
+                            <button type="button" class="btn btn-icon btn-primary waves-effect waves-classic"
+                                id="button_stop"><i class="icon md-stop" aria-hidden="true"></i></button>
+                        </div>
+                        @else
+                        @if ( $campaign->campaign_file != '')
+
+                        <img src="{{ $campaign->campaign_file }}" alt="" style="width: 70%; border-radius: 100%;">
+                        @endif
+                        @endif
+
+
+
+                        <p class="card-text"><b>Last Modified: {{ $campaign->updated_at->format('m/d/Y') }}</b> </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <div class="top_data text-center" style="border-bottom:1px solid #ddd;">
+                        <ul>
+                            <li><b>Recipients: @php
+                                    $recipient = explode(',',$campaign->recipient);
+                                    @endphp
+                                    {{count($recipient)}} </b>
+                                <span>|</span>
+
+                                <b>Delivered: {{$delivered}} </b>
+                                <span>|</span>
+                                <b>Responses: {{$response}} </b>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="top_data text-center mt-4">
+                        <ul>
+                            <li>
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#groupModal">Connect to
+                                    Group</button>
+                                <b>Type: </b>
+                                {!! Form::select('type[]',['Email' => 'Email','SMS' => 'SMS','Audio' =>
+                                'Audio','SMS + Audio' =>
+                                'SMS + Audio'],null,['class' =>'form-control
+                                selectpicker','multiple'=>'multiple','data-live-search'=>'true', 'id'=>'type'] ) !!}
+                                <span>|</span>
+                                <b>Status: </b>
+                                {!! Form::select('status[]',['Undelivered' => 'Undelivered','Delivered' =>
+                                'Delivered','Incoming' =>
+                                'Incoming','sent' =>
+                                'sent'],null,['class' =>'form-control
+                                selectpicker','multiple'=>'multiple','data-live-search'=>'true', 'id'=>'status'] )
+                                !!}
+                                <span>|</span>
+                                <b>Direction: </b>
+                                {!! Form::select('direction',['outbound-api' => 'Outbound Api','Inbound-api' =>
+                                'Inbound-api'],null,['class'
+                                =>'form-control','placeholder' => 'Select Direction','id' => 'direction'] ) !!}
+                            </li>
+                        </ul>
+                    </div>
+                    <table class="table" id="tbl-campaignReport">
+                        <thead>
+                            <tr>
+                                <th><b><input type="checkbox" id="select-all" name="checkall"></b></th>
+                                <th><b>Status</b></th>
+                                <th><b>Type</b></th>
+                                <th><b>Direction</b></th>
+                                <th><b>Date Sent</b></th>
+                                <th><b>To Number</b></th>
+                                <th><b>To Contact</b></th>
+                                <th><b>From Number</b></th>
+                                <th><b>From Contact</b></th>
+                                <th><b>Message Body</b></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($campaign_data as $key => $value)
+                            <tr style="font-size:14px;">
+                                <td><b><input type="checkbox" name="checkUncheck[]" id="checkAllAuto"
+                                            value="{{ $value->id}}" class="checkAllAuto"></b>
+                                </td>
+                                <td>{{ $value->status }} </td>
+                                <td><span
+                                        class="{{$value->campaign->campaign_type == 1 ? ('badge badge-success') : ($value->campaign->campaign_type == 2 ? 'badge badge-danger' : 'badge badge-warning')}}">{{$value->campaign->campaign_type == 1 ? 'Email' : ($value->campaign->campaign_type == 2 ? 'SMS' : 'Audio') }}</span>
+                                </td>
+                                <td> {{ $value->direction }} </td>
+                                <td> {{ $value->date_sent }} </td>
+                                <td> {{ $value->toNumber }} </td>
+                                @php
+                                $contact = \App\Contact::whereId($value->contact_id)->first();
+                                @endphp
+                                <td>
+                                    @if ($contact)
+                                    <a href="/contact/{{$contact->contact_recordid}}">{{ $value->toContact }}</a>
+                                    @else
+                                    {{ $value->toContact }}
+                                    @endif
+                                </td>
+                                <td> {{ $value->fromNumber }} </td>
+                                <td> {{ $value->fromContact }} </td>
+                                <td> {{ $value->body }} </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="groupModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Group</h4>
+            </div>
+            <div class="modal-body">
+                <label class="control-label ">Select static group</label>
+                {!! Form::select('selectGroup',$GroupDetail,null,['class'
+                =>'form-control','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveGroup">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
     </div>
 </div>
 <script>
@@ -281,6 +306,49 @@ Organizations
         $('#button_play').removeClass('disabled');
         $('#button_pause').removeClass('disabled');
     });
+    $(document).on('change','#select-all',function(e){
+            
+        if($(this).is(":checked")) {
+            $('.checkAllAuto').prop('checked',true);
+        }else{
+            $('.checkAllAuto').prop('checked',false);
+        }
+    });
+
+    $('#saveGroup').click(function(){
+            var id = []
+            var checkbox = $('#tbl-campaignReport').find('input[type="checkbox"]:checked')
+            checkbox.each(function(index,data){
+                id.push(data.value)
+            })
+            groupId = $('#selectGroup').val();
+            if(groupId == ''){
+                alert('Please select campaign first.');
+                return false;
+            }
+            connect_group(id,groupId)
+        });
+        function connect_group(id,groupId){
+            if($.inArray('on', id) != -1){
+                id.splice(id.indexOf('on'),1)
+            }
+            if(id.length == 0){
+                alert('please select any report in table.')
+                return false
+            }
+            $.ajax({
+                method: 'POST',
+                url: '{{route("connect_group")}}',
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                data:{ id, groupId},
+                success:function(response){
+                    // alert(response.message)
+                    // window.location.reload();
+                }
+            })
+        }
 </script>
 
 @endsection

@@ -22,6 +22,7 @@ class WebhookController extends Controller
     public function index(Request $request)
     {
         try {
+            \Log::info($request);
             $sms_body = $request->input('Body');
             $from = $request->input('From');
             $full = "From: " . $from . " SMS: " . $sms_body;
