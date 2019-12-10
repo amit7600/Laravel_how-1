@@ -1133,7 +1133,7 @@ class ContactController extends Controller
         $group_names = Group::where('group_type', '=', 'Static')->select("group_name")->distinct()->get();
 
         $contact_group_info = $contact->contact_group;
-        $contact_group_recordid_list = explode(', ', $contact_group_info);
+        $contact_group_recordid_list = explode(',', $contact_group_info);
         $contact_group_name_list = [];
         if ($contact->contact_group) {
             foreach ($contact_group_recordid_list as $key => $contact_group_recordid) {

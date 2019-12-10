@@ -67,9 +67,7 @@ a, a:hover, a:focus {
   background: #a2e9ff;
 }
 
-#sidebar ul.components {
-  /*padding: 20px 0;*/
-}
+
 
 #sidebar ul p {
   color: #fff;
@@ -261,10 +259,7 @@ li.status-side:hover {
     top: 0px;
     overflow-y: hidden;
   }
-  #content.active {
-    /*left: 270px;*/
-    /*width: calc(100% - 270px);*/
-  }
+ 
   /* #sidebarCollapse span {
         display: none;
     } */
@@ -518,9 +513,7 @@ a[aria-expanded="true"]::before {
   .footable-header {
     display: none;
   }
-  #content {
-    /* padding-top: 50px;*/
-  }
+
   .goog-te-gadget-simple .goog-te-menu-value span {
     font-size: 12px !important;
   }
@@ -639,6 +632,9 @@ a[aria-expanded="true"]::before {
 }
 .fd-learn {
   border-right: solid 1px #acacac;
+}
+.table {
+  font-size: 14px;
 }
 .table a {
   color: #424242;
