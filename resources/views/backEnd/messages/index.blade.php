@@ -217,56 +217,64 @@ Organizations
                 <div class="col-md-4">
                     <button class="btn btn-danger" data-toggle="modal" data-target="#campaignModal">Connect to
                         Campaign</button>
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#groupModal">Connect to
+                    <button class="btn btn-primary" onclick="openGroup()">Connect to
                         Group</button>
                 </div>
                 <div class="col-sm-12 p-20">
-                    <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-message">
-                        <thead>
-                            <tr>
-                                <th><b><input type="checkbox" id="select-all" name="checkall"></b></th>
-                                <th>ID</th>
-                                <th class="default-inactive">Type</th>
-                                <th class="default-inactive">Campaign name</th>
-                                <th class="default-active">Direction</th>
-                                <th class="default-active">Status</th>
-                                <th class="default-active">Body</th>
-                                <th class="default-active">From</th>
-                                <th class="default-active">To</th>
-                                <th class="default-inactive">Date Sent</th>
-                                <!-- <th class="default-inactive">Response to (Campaign)</th> -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if($getCampaignReport)
-                            @foreach($getCampaignReport as $key=>$value)
-                            <tr>
-                                <td><b><input type="checkbox" name="checkUncheck[]" id="checkAllAuto"
-                                            value="{{ $value->id}}" class="checkAllAuto"></b>
-                                </td>
-                                <td>{{ $key+1}}</td>
-                                <td><span
-                                        class="badge badge-{{$value->type ==1 ? 'success' : ($value->type == 2 ? 'danger' : ($value->type == 3 ?'warning' : 'primary'))}}">{{$value->type ==1 ? 'Email' : ($value->type == 2 ? 'SMS' : ($value->type == 3 ?'Audio' : 'sms and audio'))}}</span>
-                                </td>
-                                <td>{{$value->campaign != null ? $value->campaign->name : ''}} </td>
-                                <td>{{ $value->direction }}</td>
-                                <td>{{ $value->status}}
-                                </td>
-                                <td>{{$value->body}}</td>
-                                <td>{{$value->fromNumber}}</td>
-                                <td>{{$value->toNumber}}</td>
-                                <td>{{date('d-m-Y h:m:s',strtotime($value->date_sent))}}</td>
-                                <!-- <td>
+                    <div id="error"></div>
+                    <div class="table-responsive">
+                        <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-message">
+                            <thead>
+                                <tr>
+                                    <th><b><input type="checkbox" id="select-all" name="checkall"></b></th>
+                                    <th>ID</th>
+                                    <th class="default-inactive">Type</th>
+                                    <th class="default-inactive">Campaign name</th>
+                                    <th class="default-active">Direction</th>
+                                    <th class="default-active">Status</th>
+                                    <th class="default-active">Body</th>
+                                    <th class="default-active">From</th>
+                                    <th class="default-active">To</th>
+                                    <th class="default-inactive">Date Sent</th>
+                                    <!-- <th class="default-inactive">Response to (Campaign)</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($getCampaignReport)
+                                @foreach($getCampaignReport as $key=>$value)
+                                <tr>
                                     @if ($value->status == 'Incoming')
-                                    {!! Form::select('campaignData',$campaignDetail,$value->campaign_id,['class'
-                                    =>'form-control','id' => 'campaignData','placeholder'=>'Select campaign'])!!}
+                                    <td><b><input type="checkbox" name="checkUncheck[]" id="checkAllAuto"
+                                                value="{{ $value->id}}" class="checkAllAuto"></b>
+                                    </td>
+                                    @else
+                                    <td></td>
                                     @endif
-                                </td> -->
-                            </tr>
-                            @endforeach
-                            @endif
-                        <tbody>
-                    </table>
+
+                                    <td>{{ $key+1}}</td>
+                                    <td><span
+                                            class="badge badge-{{$value->type ==1 ? 'success' : ($value->type == 2 ? 'danger' : ($value->type == 3 ?'warning' : 'primary'))}}">{{$value->type ==1 ? 'Email' : ($value->type == 2 ? 'SMS' : ($value->type == 3 ?'Audio' : 'sms and audio'))}}</span>
+                                    </td>
+                                    <td>{{$value->campaign != null ? $value->campaign->name : ''}} </td>
+                                    <td>{{ $value->direction }}</td>
+                                    <td>{{ $value->status}}
+                                    </td>
+                                    <td>{{$value->body}}</td>
+                                    <td>{{$value->fromNumber}}</td>
+                                    <td>{{$value->toNumber}}</td>
+                                    <td>{{date('d-m-Y h:m:s',strtotime($value->date_sent))}}</td>
+                                    <!-- <td>
+                                        @if ($value->status == 'Incoming')
+                                        {!! Form::select('campaignData',$campaignDetail,$value->campaign_id,['class'
+                                        =>'form-control','id' => 'campaignData','placeholder'=>'Select campaign'])!!}
+                                        @endif
+                                    </td> -->
+                                </tr>
+                                @endforeach
+                                @endif
+                            <tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -296,7 +304,7 @@ Organizations
     </div>
 </div>
 <div id="groupModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
         <div class="modal-content">
@@ -308,6 +316,20 @@ Organizations
                 <label class="control-label ">Select static group</label>
                 {!! Form::select('selectGroup',$GroupDetail,null,['class'
                 =>'form-control','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
+                <div class="table-responsive">
+                    <table class="table table-striped jambo_table bulk_action nowrap datatable" id="group_table">
+                        <thead>
+                            <th><b><input type="checkbox" name="checkall" id="groupAllCheck"></b></th>
+                            <th>Phone</th>
+                            <th class="default-inactive">Email</th>
+                            <th class="default-inactive">Contact Name</th>
+                            <th class="default-active">Contact Organization</th>
+                        </thead>
+                        <tbody id="groupContact">
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="saveGroup">Save</button>
@@ -360,11 +382,19 @@ Organizations
             $('.checkAllAuto').prop('checked',false);
         }
     }); 
+    $(document).on('change','#groupAllCheck',function(e){
+            
+        if($(this).is(":checked")) {
+            $('.groupAllCheck').prop('checked',true);
+        }else{
+            $('.groupAllCheck').prop('checked',false);
+        }
+    });
 
     var dataTable;
     var checked_terms_set;
-    
     $(document).ready(function(){
+        
         //dataTable = $('#tbl-message').DataTable();
         dataTable = $('#tbl-message').DataTable({
             // "processing": true,
@@ -511,10 +541,12 @@ Organizations
 
         $('#saveGroup').click(function(){
             var id = []
-            var checkbox = $('#tbl-message').find('input[type="checkbox"]:checked')
+            var checkbox = $('#groupContact').find('input[type="checkbox"]:checked')
             checkbox.each(function(index,data){
                 id.push(data.value)
             })
+            console.log(id);
+            return false
             groupId = $('#selectGroup').val();
             if(groupId == ''){
                 alert('Please select campaign first.');
@@ -544,5 +576,41 @@ Organizations
             })
         }
     })
+</script>
+<script>
+    function openGroup()
+    {
+        $('#groupContact').empty();
+        $('#error').empty();
+        var id = []
+        var checkbox = $('#tbl-message').find('input[type="checkbox"]:checked')
+        checkbox.each(function(index,data){
+            id.push(data.value)
+        })
+        if($.inArray('on', id) != -1){
+                id.splice(id.indexOf('on'),1)
+            }
+        $.ajax({
+                method: 'POST',
+                url: '{{route("getContact")}}',
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                data:{ id},
+                success:function(response){
+                    
+                    if(response.success){
+                        $('#groupModal').modal('show');
+                        var data = response.data
+                        $.each(data,function(i,v){
+                            $('#groupContact').append('<tr><td><b><input type="checkbox" name="groupCheck[]" value="'+v.id+'" class="groupAllCheck"></b></td><td>'+v.phone+'</td><td>'+v.email+'</td><td>'+v.name+'</td><td>'+v.organization+'</td></tr>')
+                        });
+                    }
+                },
+                error:function(error){
+                    $('#error').append('<div class="alert alert-danger">'+error['responseJSON'].message+'</div>')
+                }
+            })
+    }
 </script>
 @endsection

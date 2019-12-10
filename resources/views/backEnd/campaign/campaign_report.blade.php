@@ -153,7 +153,7 @@ Organizations
                     <div class="top_data text-center mt-4">
                         <ul>
                             <li>
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#groupModal">Connect to
+                                <button class="btn btn-primary" onclick="openGroup()">Connect to
                                     Group</button>
                                 <b>Type: </b>
                                 {!! Form::select('type[]',['Email' => 'Email','SMS' => 'SMS','Audio' =>
@@ -176,6 +176,7 @@ Organizations
                             </li>
                         </ul>
                     </div>
+                    <div id="error"></div>
                     <table class="table" id="tbl-campaignReport">
                         <thead>
                             <tr>
@@ -194,9 +195,13 @@ Organizations
                         <tbody>
                             @foreach ($campaign_data as $key => $value)
                             <tr style="font-size:14px;">
+                                @if ($value->status == 'Incoming')
                                 <td><b><input type="checkbox" name="checkUncheck[]" id="checkAllAuto"
                                             value="{{ $value->id}}" class="checkAllAuto"></b>
                                 </td>
+                                @else
+                                <td></td>
+                                @endif
                                 <td>{{ $value->status }} </td>
                                 <td><span
                                         class="{{$value->campaign->campaign_type == 1 ? ('badge badge-success') : ($value->campaign->campaign_type == 2 ? 'badge badge-danger' : 'badge badge-warning')}}">{{$value->campaign->campaign_type == 1 ? 'Email' : ($value->campaign->campaign_type == 2 ? 'SMS' : 'Audio') }}</span>
@@ -227,7 +232,7 @@ Organizations
     </div>
 </div>
 <div id="groupModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
         <div class="modal-content">
@@ -239,6 +244,20 @@ Organizations
                 <label class="control-label ">Select static group</label>
                 {!! Form::select('selectGroup',$GroupDetail,null,['class'
                 =>'form-control','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
+                <div class="table-responsive">
+                    <table class="table table-striped jambo_table bulk_action nowrap datatable" id="group_table">
+                        <thead>
+                            <th><b><input type="checkbox" name="checkall" id="groupAllCheck"></b></th>
+                            <th>Phone</th>
+                            <th class="default-inactive">Email</th>
+                            <th class="default-inactive">Contact Name</th>
+                            <th class="default-active">Contact Organization</th>
+                        </thead>
+                        <tbody id="groupContact">
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="saveGroup">Save</button>
@@ -250,7 +269,14 @@ Organizations
 </div>
 <script>
     $(document).ready(function(){
-        dataTable = $('#tbl-campaignReport').DataTable();
+        dataTable = $('#tbl-campaignReport').DataTable({
+            "columnDefs": [
+                {
+                    'targets': 0,
+                    'bSortable': false,
+                }
+            ],
+        });
 
         $('select#type').on('change', function() {
             var selectedList = $(this).val();
@@ -281,7 +307,14 @@ Organizations
                 .search(search ? search : '', true, false,false).draw();
         });
     })
-
+  $(document).on('change','#groupAllCheck',function(e){
+            
+        if($(this).is(":checked")) {
+            $('.checkAllAuto').prop('checked',true);
+        }else{
+            $('.checkAllAuto').prop('checked',false);
+        }
+    });
 
 
 
@@ -317,7 +350,7 @@ Organizations
 
     $('#saveGroup').click(function(){
             var id = []
-            var checkbox = $('#tbl-campaignReport').find('input[type="checkbox"]:checked')
+            var checkbox = $('#groupContact').find('input[type="checkbox"]:checked')
             checkbox.each(function(index,data){
                 id.push(data.value)
             })
@@ -344,11 +377,47 @@ Organizations
                 },
                 data:{ id, groupId},
                 success:function(response){
-                    // alert(response.message)
-                    // window.location.reload();
+                    alert(response.message)
+                    window.location.reload();
                 }
             })
         }
+</script>
+<script>
+    function openGroup()
+    {
+        $('#groupContact').empty();
+        $('#error').empty();
+        var id = []
+        var checkbox = $('#tbl-campaignReport').find('input[type="checkbox"]:checked')
+        checkbox.each(function(index,data){
+            id.push(data.value)
+        })
+         if($.inArray('on', id) != -1){
+                id.splice(id.indexOf('on'),1)
+            }
+        $.ajax({
+                method: 'POST',
+                url: '{{route("getContact")}}',
+                headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                data:{ id},
+                success:function(response){
+                    
+                    if(response.success){
+                        $('#groupModal').modal('show');
+                        var data = response.data
+                        $.each(data,function(i,v){
+                            $('#groupContact').append('<tr><td><b><input type="checkbox" name="groupCheck[]" value="'+v.id+'" class="checkAllAuto"></b></td><td>'+v.phone+'</td><td>'+v.email+'</td><td>'+v.name+'</td><td>'+v.organization+'</td></tr>')
+                        });
+                    }
+                },
+                error:function(error){
+                    $('#error').append('<div class="alert alert-danger">'+error['responseJSON'].message+'</div>')
+                }
+            })
+    }
 </script>
 
 @endsection
