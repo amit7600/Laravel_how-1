@@ -8,6 +8,7 @@ use App\Contact;
 use App\Group;
 use App\Layout;
 use App\Map;
+use App\Organization;
 use App\Phone;
 use App\Taxonomy;
 use DB;
@@ -211,73 +212,25 @@ class MessageController extends Controller
     {
         try {
             DB::beginTransaction();
-            $campaignReportId = $request->get('id');
+            $contactId = $request->get('id');
             $groupId = $request->get('groupId');
             if ($request->has('id')) {
-                // $contact = Contact::where
-                $phones = Phone::get();
-
-                $phone_recordid = '';
-                foreach ($campaignReportId as $key => $value) {
-                    $campaignDetail = CampaignReport::whereId($value)->first();
-                    $fromNumberSms = substr($campaignDetail->fromNumber, 2);
-                    // for sms
-                    foreach ($phones as $key => $phone) {
-                        $phone_number = str_replace('-', '', $phone->phone_number);
-                        $phone_number = preg_replace('/[^A-Za-z0-9\-]/', '', $phone_number);
-                        if ($phone_number == $fromNumberSms) {
-                            $phone_recordid = $phone->phone_recordid;
+                foreach ($contactId as $key => $value) {
+                    $contact = Contact::whereId($value)->first();
+                    if ($contact) {
+                        $groups = $contact->contact_group != null ? explode(',', $contact->contact_group) : [];
+                        $checkValue = in_array($groupId, $groups);
+                        if ($checkValue == false) {
+                            array_push($groups, $groupId);
                         }
-                    }
-                    // for email
-                    if ($campaignDetail->type == 1) {
-                        $emailContact = Contact::where('contact_email', $campaignDetail->fromNumber)->first();
-                        if ($emailContact) {
-                            $groups = $emailContact->contact_group != null ? explode(',', $emailContact->contact_group) : [];
-
-                            $checkValue = in_array($groupId, $groups);
-                            // dd($checkValue);
-                            if ($checkValue == false) {
-                                array_push($groups, $groupId);
-                            } else {
-                                return response()->json([
-                                    'message' => 'Group already exist!',
-                                    'success' => true,
-                                ], 200);
-                            }
-
-                            $groupData = implode(',', $groups);
-                            Contact::whereId($emailContact->id)->update([
-                                'contact_group' => $groupData,
-                            ]);
-
-                        }
+                        $groupData = implode(', ', $groups);
+                        Contact::whereId($contact->id)->update([
+                            'contact_group' => $groupData,
+                        ]);
                     }
                 }
 
             }
-            // for incoming sms only
-            if ($phone_recordid != null) {
-
-                $contact = Contact::where('contact_cell_phones', $phone_recordid)->first();
-                if ($contact) {
-                    $groups = $contact->contact_group != null ? explode(',', $contact->contact_group) : [];
-                    $checkValue = in_array($groupId, $groups);
-                    if ($checkValue == false) {
-                        array_push($groups, $groupId);
-                    } else {
-                        return response()->json([
-                            'message' => 'Group already exist!',
-                            'success' => true,
-                        ], 200);
-                    }
-                    $groupData = implode(',', $groups);
-                    Contact::whereId($contact->id)->update([
-                        'contact_group' => $groupData,
-                    ]);
-                }
-            }
-
             DB::commit();
             return response()->json([
                 'message' => 'Group added successfully!',
@@ -292,5 +245,149 @@ class MessageController extends Controller
             ], 200);
 
         }
+    }
+    public function getContact(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $campaignReportId = $request->get('id');
+
+            $phone_recordid = [];
+            $contacts = [];
+            if ($request->has('id')) {
+                // $contact = Contact::where
+                $phones = Phone::get();
+
+                foreach ($campaignReportId as $key => $value) {
+                    $campaignDetail = CampaignReport::whereId($value)->first();
+
+                    $fromNumberSms = substr($campaignDetail->fromNumber, 2);
+                    // for sms
+                    $temp = [];
+                    if ($campaignDetail->type == 2) {
+                        foreach ($phones as $key => $phone) {
+                            $phone_number = str_replace('-', '', $phone->phone_number);
+                            $phone_number = preg_replace('/[^A-Za-z0-9\-]/', '', $phone_number);
+                            if ($phone_number == $fromNumberSms || strpos($phone_number, $fromNumberSms)) {
+                                array_push($temp, 1);
+                                $checkValue = in_array($phone->phone_recordid, $phone_recordid);
+                                if ($checkValue == false) {
+                                    array_push($phone_recordid, $phone->phone_recordid);
+                                }
+                            }
+                        }
+                        if (count($temp) == 0 || $temp == null) {
+
+                            $phoneId = $this->addContact($campaignDetail->fromNumber, '');
+                            array_push($phone_recordid, $phoneId);
+
+                        }
+
+                        // for email
+                    }
+                    if ($campaignDetail->type == 1) {
+                        $emailContact = Contact::where('contact_email', $campaignDetail->fromNumber)->get();
+                        if (count($emailContact) > 0) {
+                            foreach ($emailContact as $key => $contact) {
+                                array_push($contacts, $contact);
+                            }
+                        } else {
+                            $contactId = $this->addContact('', $campaignDetail->fromNumber);
+                            $contact = Contact::where('contact_cell_phones', strval($contactId))->first();
+
+                            array_push($contacts, $contact);
+                        }
+
+                    }
+                }
+            }
+
+            // sleep(10);
+            $allContact = [];
+            // push phone number data
+            foreach ($phone_recordid as $key => $value) {
+                $contact = Contact::where('contact_cell_phones', strval($value))->first();
+                // dd($contact);
+                array_push($allContact, $contact);
+            }
+            //  push email contact data
+            foreach ($contacts as $key => $contact) {
+                $checkValue = in_array($contact, $allContact);
+                if ($checkValue == false) {
+                    array_push($allContact, $contact);
+                }
+            }
+            // get require data
+            $finalArray = [];
+            foreach ($allContact as $key => $data) {
+                $phoneData = Phone::where('phone_recordid', $data->contact_cell_phones)->first();
+                $organizationData = Organization::where('organization_recordid', $data->contact_organizations)->first();
+                $id = $data->id;
+                $name = $data->contact_first_name . ' ' . $data->contact_last_name;
+                $email = $data->contact_email != null ? $data->contact_email : '';
+                $phone = $phoneData ? $phoneData->phone_number : '';
+                $organization = $organizationData ? $organizationData->organization_name : '';
+
+                array_push($finalArray, array('id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 'organization' => $organization));
+            }
+            return response()->json([
+                'data' => $finalArray,
+                'success' => true,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            dd($th);
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+
+        }
+    }
+    public function addContact($phone_number, $email)
+    {
+        $phone_recordids = Phone::select("phone_recordid")->distinct()->get();
+        $phone_recordid_list = array();
+        foreach ($phone_recordids as $key => $value) {
+            $phoneId = $value->phone_recordid;
+            array_push($phone_recordid_list, $phoneId);
+        }
+        $phone_recordid_list = array_unique($phone_recordid_list);
+
+        $new_recordid = Phone::max('phone_recordid') + 1;
+        if (in_array($new_recordid, $phone_recordid_list)) {
+            $new_recordid = Phone::max('phone_recordid') + 1;
+        }
+        $newPhone = Phone::create([
+            'phone_recordid' => $new_recordid,
+            'phone_number' => $phone_number,
+            'phone_type' => "cell phone",
+        ]);
+        DB::commit();
+
+// save contact
+        $contact_recordids = Contact::select("contact_recordid")->distinct()->get();
+        $contact_recordid_list = array();
+        foreach ($contact_recordids as $key => $value) {
+            $contact_recordid = $value->contact_recordid;
+            array_push($contact_recordid_list, $contact_recordid);
+        }
+        $contact_recordid_list = array_unique($contact_recordid_list);
+
+        $contact_recordid = Contact::max('contact_recordid') + 1;
+        if (in_array($contact_recordid, $contact_recordid_list)) {
+            $contact_recordid = Contact::max('contact_recordid') + 1;
+        }
+
+        $contact = Contact::create([
+            'contact_recordid' => $contact_recordid,
+            'contact_cell_phones' => $new_recordid,
+            'contact_email' => $email,
+            'flag' => 'generated contact',
+        ]);
+        DB::commit();
+
+        return $new_recordid;
+
     }
 }

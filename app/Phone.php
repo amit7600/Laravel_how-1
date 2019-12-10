@@ -9,8 +9,12 @@ class Phone extends Model
     protected $table = 'phones';
 
     protected $primaryKey = 'phone_recordid';
-    
-	public $timestamps = false;
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'phone_recordid', 'phone_number', 'phone_type',
+    ];
 
     public function locations()
     {

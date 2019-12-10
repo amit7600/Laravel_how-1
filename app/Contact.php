@@ -9,8 +9,12 @@ class Contact extends Model
     protected $table = 'contacts';
 
     protected $primaryKey = 'contact_recordid';
-    
+
     public $timestamps = false;
+
+    protected $fillable = [
+        'contact_recordid', 'contact_cell_phones', 'contact_email', 'flag',
+    ];
 
     public function organization()
     {
@@ -30,7 +34,7 @@ class Contact extends Model
     public function service()
     {
 
-        $this->primaryKey='contact_recordid';
+        $this->primaryKey = 'contact_recordid';
 
         return $this->belongsToMany('App\Service', 'service_contact', 'contact_recordid', 'service_recordid');
     }

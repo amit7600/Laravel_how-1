@@ -118,6 +118,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/message/recieved', 'MessageController@messages_recieved');
     Route::post('connect_compaign', 'MessageController@connect_compaign')->name('connect_compaign');
     Route::post('connect_group', 'MessageController@connect_group')->name('connect_group');
+    Route::post('getContact', 'MessageController@getContact')->name('getContact');
 });
 
 Route::resource('login_register_edit', 'EditLoginRegisterController');
