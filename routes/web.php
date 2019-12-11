@@ -119,6 +119,12 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('connect_compaign', 'MessageController@connect_compaign')->name('connect_compaign');
     Route::post('connect_group', 'MessageController@connect_group')->name('connect_group');
     Route::post('getContact', 'MessageController@getContact')->name('getContact');
+    Route::get('messagesSetting', 'MessageController@messagesSetting')->name('messagesSetting');
+    Route::post('saveMessageCredential', 'MessageController@saveMessageCredential')->name('saveMessageCredential');
+
+    Route::post('/checkSendgrid', 'HomeController@checkSendgrid')->name('checkSendgrid');
+    Route::post('/checkTwillio', 'HomeController@checkTwillio')->name('checkTwillio');
+
 });
 
 Route::resource('login_register_edit', 'EditLoginRegisterController');
@@ -217,5 +223,7 @@ Route::group(['middleware' => ['web', 'auth', 'permission']], function () {
     Route::post('/contact_delete_filter', 'ContactController@delete_contact');
     Route::post('/group_delete_filter', 'GroupController@delete_group');
     Route::post('/group_remove_members', 'GroupController@group_remove_members');
+
+    // new d9
 
 });

@@ -214,6 +214,38 @@ class MessageController extends Controller
             DB::beginTransaction();
             $contactId = $request->get('id');
             $groupId = $request->get('groupId');
+            $phone_recordid = [];
+            if ($request->has('newContactData')) {
+                $campaignId = $request->get('newContactData');
+                foreach ($campaignId as $key => $value) {
+                    $campaignDetail = CampaignReport::whereId($value)->first();
+                    if ($campaignDetail->type == 1) {
+                        $phoneId = $this->addContact('', $campaignDetail->fromNumber);
+                        array_push($phone_recordid, $phoneId);
+
+                    } elseif ($campaignDetail->type == 2) {
+                        $phoneId = $this->addContact($campaignDetail->fromNumber, '');
+                        array_push($phone_recordid, $phoneId);
+                    }
+                }
+                foreach ($phone_recordid as $key => $phoneId) {
+                    $contact = Contact::where('contact_cell_phones', strval($phoneId))->first();
+                    if ($contact) {
+                        $groups = $contact->contact_group != null ? explode(',', $contact->contact_group) : [];
+                        $checkValue = in_array($groupId, $groups);
+                        if ($checkValue == false) {
+                            array_push($groups, $groupId);
+                        }
+                        $groupData = implode(', ', $groups);
+                        Contact::whereId($contact->id)->update([
+                            'contact_group' => $groupData,
+                        ]);
+                    }
+
+                }
+
+            }
+
             if ($request->has('id')) {
                 foreach ($contactId as $key => $value) {
                     $contact = Contact::whereId($value)->first();
@@ -239,10 +271,11 @@ class MessageController extends Controller
 
         } catch (\Throwable $th) {
             //throw $th;
+            // dd($th);
             return response()->json([
                 'message' => $th->getMessage(),
-                'success' => true,
-            ], 200);
+                'success' => false,
+            ], 500);
 
         }
     }
@@ -257,7 +290,7 @@ class MessageController extends Controller
             if ($request->has('id')) {
                 // $contact = Contact::where
                 $phones = Phone::get();
-
+                $newRecordId = [];
                 foreach ($campaignReportId as $key => $value) {
                     $campaignDetail = CampaignReport::whereId($value)->first();
 
@@ -277,10 +310,7 @@ class MessageController extends Controller
                             }
                         }
                         if (count($temp) == 0 || $temp == null) {
-
-                            $phoneId = $this->addContact($campaignDetail->fromNumber, '');
-                            array_push($phone_recordid, $phoneId);
-
+                            array_push($newRecordId, $campaignDetail->id);
                         }
 
                         // for email
@@ -292,10 +322,9 @@ class MessageController extends Controller
                                 array_push($contacts, $contact);
                             }
                         } else {
-                            $contactId = $this->addContact('', $campaignDetail->fromNumber);
-                            $contact = Contact::where('contact_cell_phones', strval($contactId))->first();
-
-                            array_push($contacts, $contact);
+                            // $contactId = $this->addContact('', $campaignDetail->fromNumber);
+                            // $contact = Contact::where('contact_cell_phones', strval($contactId))->first();
+                            array_push($newRecordId, $campaignDetail->id);
                         }
 
                     }
@@ -332,6 +361,7 @@ class MessageController extends Controller
             }
             return response()->json([
                 'data' => $finalArray,
+                'campaignId' => $newRecordId,
                 'success' => true,
             ], 200);
 
@@ -365,7 +395,7 @@ class MessageController extends Controller
         ]);
         DB::commit();
 
-// save contact
+        // save contact
         $contact_recordids = Contact::select("contact_recordid")->distinct()->get();
         $contact_recordid_list = array();
         foreach ($contact_recordids as $key => $value) {
@@ -389,5 +419,61 @@ class MessageController extends Controller
 
         return $new_recordid;
 
+    }
+    public function messagesSetting()
+    {
+
+        return view('backEnd.messages.messageSetting');
+
+    }
+    public function saveMessageCredential(Request $request)
+    {
+        try {
+
+            $envFile = app()->environmentFilePath();
+            $str = file_get_contents($envFile);
+
+            $values = [
+                "TWILIO_SID" => $request->get('database'),
+                "TWILIO_TOKEN" => $request->get('username'),
+                "TWILIO_FROM" => $request->get('password'),
+                "SENDGRID_API_KEY" => $request->get('password'),
+            ];
+
+            if (count($values) > 0) {
+                foreach ($values as $envKey => $envValue) {
+
+                    $str .= "\n"; // In case the searched variable is in the last line without \n
+                    $keyPosition = strpos($str, "{$envKey}=");
+                    $endOfLinePosition = strpos($str, "\n", $keyPosition);
+                    $oldLine = substr($str, $keyPosition, $endOfLinePosition - $keyPosition);
+
+                    // If key does not exist, add it
+                    if (!$keyPosition || !$endOfLinePosition || !$oldLine) {
+                        $str .= "{$envKey}={$envValue}\n";
+                    } else {
+                        $str = str_replace($oldLine, "{$envKey}={$envValue}", $str);
+                    }
+
+                }
+            }
+
+            $str = substr($str, 0, -1);
+            if (!file_put_contents($envFile, $str)) {
+                return false;
+            }
+
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+
+    }
+    public function clearCache()
+    {
+        \Artisan::call('config:cache');
+        \Artisan::call('config:clear');
+        \Artisan::call('view:clear');
+        \Artisan::call('route:clear');
+        \Artisan::call('cache:clear');
     }
 }

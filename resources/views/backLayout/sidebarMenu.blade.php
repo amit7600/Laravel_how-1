@@ -1,4 +1,3 @@
-
 <div class="left_col scroll-view">
   <div class="navbar nav_title" style="border: 0;">
     <a href="{{url('dashboard')}}" class="site_title"><span>{{$layout->site_name}}</span></a>
@@ -7,7 +6,7 @@
   <div class="clearfix"></div>
 
   <!-- menu profile quick info -->
-<!--   <div class="profile">
+  <!--   <div class="profile">
     <div class="profile_pic">
       <a href="{{url('dashboard')}}" class="site_title"><i class="fa fa-paw"></i> <span>NYC Services</span></a>
     </div>
@@ -42,9 +41,10 @@
             <li><a href="/layout_edit">Appearance</a></li>
             <li><a href="/map">Map</a></li>
             <li><a href="/meta_filter">Meta Filter</a></li>
+            <li><a href="{{route('messagesSetting')}}">Setting</a></li>
           </ul>
         </li>
-        <li><a href="/analytics"><i class="fa fa-line-chart"></i> Analytics</a>      
+        <li><a href="/analytics"><i class="fa fa-line-chart"></i> Analytics</a>
         <li><a><i class="fa fa-database"></i> Datasync <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="/import">Import</a></li>
@@ -66,35 +66,35 @@
             <li><a href="/tb_details">Details</a></li>
             <li><a href="/tb_service_area">Service Area</a></li>
           </ul>
-        </li>            
+        </li>
       </ul>
     </div>
     <div class="menu_section">
       <h3>System</h3>
       <ul class="nav side-menu">
-      @if (Sentinel::getUser()->hasAnyAccess(['user.*']))
+        @if (Sentinel::getUser()->hasAnyAccess(['user.*']))
         <li><a><i class="fa fa-users"></i> Users <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="{{route('user.index')}}">All users</a></li>
             <li><a href="{{route('user.create')}}">New user</a></li>
           </ul>
         </li>
-      @endif
-      @if (Sentinel::getUser()->hasAnyAccess(['role.*']))
+        @endif
+        @if (Sentinel::getUser()->hasAnyAccess(['role.*']))
         <li><a><i class="fa fa-cog"></i> Roles <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="{{route('role.index')}}">All Roles</a></li>
             <li><a href="{{route('role.create')}}">New Role</a></li>
           </ul>
         </li>
-      @endif
-      <li><a><i class="fa fa-list"></i> Log Viewer <span class="fa fa-chevron-down"></span></a>
-        <ul class="nav child_menu">
-          <li><a href="/log-viewer"> Dashboard</a></li>
-          <li><a href="/log-viewer/logs"> Logs</a></li>
-        </ul>
-      </li>
-      <li><a href="/logout"><i class="fa fa-sign-out red"></i> Logout</a></li>
+        @endif
+        <li><a><i class="fa fa-list"></i> Log Viewer <span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+            <li><a href="/log-viewer"> Dashboard</a></li>
+            <li><a href="/log-viewer/logs"> Logs</a></li>
+          </ul>
+        </li>
+        <li><a href="/logout"><i class="fa fa-sign-out red"></i> Logout</a></li>
         <!-- <li><a><i class="fa fa-edit"></i> Forms <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="form.html">General Form</a></li>
@@ -188,7 +188,7 @@
   <!-- /sidebar menu -->
 
   <!-- /menu footer buttons -->
-<!--   <div class="sidebar-footer hidden-small">
+  <!--   <div class="sidebar-footer hidden-small">
     <a data-toggle="tooltip" data-placement="top" title="Settings">
       <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
     </a>
