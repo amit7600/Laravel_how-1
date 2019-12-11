@@ -70,7 +70,8 @@ Organizations
     h1 {
         text-align: center;
     }
-    .jconfirm-box-container{
+
+    .jconfirm-box-container {
         margin-left: 35% !important;
     }
 </style>
@@ -129,8 +130,9 @@ Organizations
                                 <tr id="id_{{ $value->id}}">
                                     <td>{{ $value->contact_first_name}} {{ $value->contact_middle_name}}
                                         {{ $value->contact_last_name}}</td>
-                                    <td>{{ $value->organization->organization_name}}</td>
-                                    <td>{{ $value->group->group_name}}</td>
+                                    <td>{{ $value->contact_organizations != null ?  $value->organization->organization_name : ''}}
+                                    </td>
+                                    <td>{{ $value->contact_group != null ? $value->group->group_name : ''}}</td>
                                     <td><button type="button" class="btn btn-danger"
                                             onclick="deleteCampaign('{{ $value->id }}')">Remove</button></td>
                                 </tr>

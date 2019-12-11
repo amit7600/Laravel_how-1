@@ -286,14 +286,24 @@ class CampaignController extends Controller
 
             $groupTemp = Group::get();
             $recipient = [];
+            $contacts = Contact::get();
+            $groupIdArray = [];
             foreach ($groupName as $key => $id) {
                 foreach ($groupTemp as $value) {
                     if ($value->id == $id) {
-                        $groupContactList = $value->contact;
-                        foreach ($groupContactList as $key => $valuenew) {
-                            $groupContact[] = $valuenew;
-                            $recipient[] = $valuenew->id;
+                        // $groupContactList = $value->contact;
+                        // dd($value);
+                        foreach ($contacts as $key => $contact) {
+                            $groupIdArray = $contact->contact_group != null ? explode(',', $contact->contact_group) : [];
+                            if (in_array($value->group_recordid, $groupIdArray)) {
+                                $groupContact[] = $contact;
+                                $recipient[] = $contact->id;
+                            }
                         }
+                        // foreach ($groupContactList as $key => $valuenew) {
+                        //     $groupContact[] = $valuenew;
+                        //     $recipient[] = $valuenew->id;
+                        // }
                     }
                 }
             }
@@ -388,11 +398,9 @@ class CampaignController extends Controller
         $campaign = Campaign::whereId($id)->first();
         $user = User::whereId($campaign->user_id)->first();
 
-
         $GroupDetail = Group::where('group_type', 'Static')->pluck('group_name', 'group_recordid');
 
-
-        return view('backEnd.campaign.campaign_report', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'campaign_data', 'campaign', 'response', 'delivered', 'file_type', 'user','GroupDetail'));
+        return view('backEnd.campaign.campaign_report', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'campaign_data', 'campaign', 'response', 'delivered', 'file_type', 'user', 'GroupDetail'));
     }
     public function deleteRecipient(Request $request)
     {

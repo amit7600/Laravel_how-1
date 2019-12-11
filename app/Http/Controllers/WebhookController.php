@@ -82,8 +82,14 @@ class WebhookController extends Controller
             $to = $envelope['to'][0];
             $from = $envelope["from"];
             $subject = $parser->getHeader('subject');
-
+            $campaignId = '';
+            if (strpos($subject, 'Re:') == 0) {
+                $campaignSubject = ltrim($subject, 'Re: ');
+                $campaignDetail = CampaignReport::where('subject', strval($campaignSubject))->where('toNumber', strval($from))->first();
+                $campaignId = $campaignDetail->id;
+            }
             CampaignReport::create([
+                'campaign_id' => $campaignId,
                 'status' => 'Incoming',
                 'direction' => 'Inbound-api',
                 'toNumber' => $to,
