@@ -77,7 +77,9 @@ class BulkSmsController extends Controller
                             $response = \Curl::to('https://api.twilio.com/' . $response->uri)
                                 ->withOption('USERPWD', $this->sid . ':' . $this->token)
                                 ->get();
+
                             $data = json_decode($response);
+                            \Log::info($response);
                             DB::beginTransaction();
                             CampaignReport::create([
                                 'user_id' => Sentinel::check()->id,
