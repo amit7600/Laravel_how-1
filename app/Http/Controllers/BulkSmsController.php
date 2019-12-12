@@ -48,7 +48,6 @@ class BulkSmsController extends Controller
 
         } catch (\Throwable $th) {
             //throw $th;d
-            dd($th);
             return redirect()->to('/campaigns')->with('error', $th->getMessage());
 
         }
@@ -136,7 +135,6 @@ class BulkSmsController extends Controller
                             $response = \Curl::to('https://api.twilio.com/' . $response->uri)
                                 ->withOption('USERPWD', $this->sid . ':' . $this->token)
                                 ->get();
-                            dd($response);
                             $data = json_decode($response);
                             DB::beginTransaction();
                             CampaignReport::create([

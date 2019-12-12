@@ -1,6 +1,6 @@
 @extends('backLayout.app')
 @section('title')
-Appearance
+Campaigns
 @stop
 <style>
     .color-pick {
@@ -9,7 +9,16 @@ Appearance
 </style>
 @section('content')
 <div class="row">
+    <div id='loading' style="display:none;">
+        <img src="/images/loader.gif" />
+    </div>
     <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top:25px;">
+        @if ($message = Session::get('success'))
+        <div class="alert alert-success alert-block">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>{{ $message }}</strong>
+        </div>
+        @endif
         {!! Form::open(['route' => 'saveMessageCredential', 'class' => 'form-horizontal form-label-left']) !!}
         <div class="x_panel">
             <div class="x_title" style="margin-bottom:30px;">
@@ -18,32 +27,43 @@ Appearance
             <div class="form-group">
                 <div class="row">
                     <label class="control-label sel-label-org pl-4 col-md-3"><b>Twillio SID:</b> </label>
-                    <div class="col-md-5 col-sm-6 col-xs-12 organization-details-div">
-                        <input class="form-control selectpicker" type="text" value="" name="twillioSid" id="twillioSid">
+                    <div class="col-md-5 col-sm-6 col-xs-12 ">
+                        <input class="form-control " type="text" value="{{$twillioSid}}" name="twillioSid"
+                            id="twillioSid" required>
+                        @if( $errors->first('twillioSid'))
+                        <div class="alert alert-danger">{{ $errors->first('twillioSid') }}</div>
+                        @endif
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
                     <label class="control-label sel-label-org pl-4 col-md-3"><b>Twillio Key:</b> </label>
-                    <div class="col-md-5 col-sm-6 col-xs-12 organization-details-div">
-                        <input class="form-control selectpicker" type="text" value="" name="twillioKey" id="twillioKey">
+                    <div class="col-md-5 col-sm-6 col-xs-12 ">
+                        <input class="form-control" type="text" value="{{$twillioKey}}" name="twillioKey"
+                            id="twillioKey" required>
+                        @if( $errors->first('twillioKey'))
+                        <div class="alert alert-danger">{{ $errors->first('twillioKey') }}</div>
+                        @endif
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
                     <label class="control-label sel-label-org pl-4 col-md-3"><b>Twillio Number:</b> </label>
-                    <div class="col-md-5 col-sm-6 col-xs-12 organization-details-div">
-                        <input class="form-control selectpicker" type="text" value="" name="twillioNumber"
-                            id="twillioNumber">
+                    <div class="col-md-5 col-sm-6 col-xs-12 ">
+                        <input class="form-control" type="text" value="{{$twllioNumber}}" name="twillioNumber"
+                            id="twillioNumber" required>
+                        @if( $errors->first('twillioNumber'))
+                        <div class="alert alert-danger">{{ $errors->first('twillioNumber') }}</div>
+                        @endif
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
                     <label class="control-label sel-label-org pl-4 col-md-3"></label>
-                    <div class="col-md-5 col-sm-6 col-xs-12 organization-details-div">
+                    <div class="col-md-5 col-sm-6 col-xs-12 ">
                         <button type="button" class="btn btn-primary" onclick="checkTwillio()">Check</button>
                     </div>
                 </div>
@@ -54,15 +74,19 @@ Appearance
             <div class="form-group">
                 <div class="row">
                     <label class="control-label sel-label-org pl-4 col-md-3"><b>SendGrid Api key:</b> </label>
-                    <div class="col-md-5 col-sm-6 col-xs-12 organization-details-div">
-                        <input class="form-control selectpicker" type="text" value="" name="sendgridApiKey">
+                    <div class="col-md-5 col-sm-6 col-xs-12 ">
+                        <input class="form-control" type="text" value="{{$sendgridKey}}" name="sendgridApiKey"
+                            id="sendgridApiKey" required>
+                        @if( $errors->first('sendgridApiKey'))
+                        <div class="alert alert-danger">{{ $errors->first('sendgridApiKey') }}</div>
+                        @endif
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="row">
                     <label class="control-label sel-label-org pl-4 col-md-3"></label>
-                    <div class="col-md-5 col-sm-6 col-xs-12 organization-details-div">
+                    <div class="col-md-5 col-sm-6 col-xs-12 ">
                         <button type="button" class="btn btn-primary" onclick="checkSendgrid()">Check</button>
                     </div>
                 </div>
@@ -104,6 +128,7 @@ Appearance
 @section('scripts')
 <script>
     function checkTwillio(){
+            $('#loading').show();
             let twillioKey = $('#twillioKey').val();
             let twillioSid = $('#twillioSid').val();
             let twillioNumber = $('#twillioNumber').val();
@@ -116,14 +141,19 @@ Appearance
                 },
                 data:{ twillioKey,twillioSid,twillioNumber },
                 success:function(response){
+                    $('#loading').hide();
                     $('#message').empty();
+                    $('#addClass').removeClass('bg-danger');
+                    $('#addClass').removeClass('bg-success');
                     $('#addClass').addClass('bg-success');
                     $('#message').append('<h4 style="color:#fff;">'+response.message+'</h4>')
                     $('#alertModal').modal('show');
                 },
                 error:function(error){
-                    console.log(error)
+                    $('#loading').hide();
                     $('#message').empty();
+                    $('#addClass').removeClass('bg-danger');
+                    $('#addClass').removeClass('bg-success');   
                     $('#addClass').addClass('bg-danger');
                     $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
                     $('#alertModal').modal('show');
@@ -132,6 +162,7 @@ Appearance
             })
         }
     function checkSendgrid(){
+        $('#loading').show();
         let sendgridApiKey = $('#sendgridApiKey').val();
         
         $.ajax({
@@ -142,10 +173,22 @@ Appearance
             },
             data:{ sendgridApiKey },
             success:function(response){
-
+                $('#loading').hide();
+                $('#message').empty();
+                $('#addClass').removeClass('bg-danger');
+                $('#addClass').removeClass('bg-success');
+                $('#addClass').addClass('bg-success');
+                $('#message').append('<h4 style="color:#fff;">'+response.message+'</h4>')
+                $('#alertModal').modal('show');
             },
-            error:function(response){
-                
+            error:function(error){
+                $('#loading').hide();
+                $('#message').empty();
+                $('#addClass').removeClass('bg-danger');
+                $('#addClass').removeClass('bg-success');
+                $('#addClass').addClass('bg-danger');
+                $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
+                $('#alertModal').modal('show');
             }
 
         })
