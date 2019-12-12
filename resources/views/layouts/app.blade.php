@@ -3,20 +3,24 @@
 @include('layouts.style')
 @include('layouts.header')
 
-    <!-- page content -->
-    <div class="page container-fluid pl-0 pr-0">
-	    @yield('content')
-	<div class="overlay"></div>   
-	
+<!-- page content -->
+<div class="page container-fluid pl-0 pr-0">
+	<div id='loading' style="display:none;">
+		<img src="/images/loader.gif" />
 	</div>
-	@include('layouts.footer')
-	<!-- /page content -->
+	@yield('content')
+	<div class="overlay"></div>
+
+</div>
+@include('layouts.footer')
+<!-- /page content -->
 
 
 @include('layouts.script')
 @if(config('app.env') != 'local')
-    @include('layouts.analytics')
+@include('layouts.analytics')
 @endif
 @yield('customScript')
 </body>
+
 </html>

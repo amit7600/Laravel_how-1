@@ -17,3 +17,16 @@
 .site_title{
   font-size: 20px;
 }
+#loading{
+    position: fixed;
+    z-index: 1;
+    width: 82%;
+    text-align: center;
+    top: 0;
+    background: #fff;
+    height: 100%;
+    padding-top: 21%;
+}
+#loading img {
+  width: 7%;
+}

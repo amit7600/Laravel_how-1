@@ -41,7 +41,7 @@
             <li><a href="/layout_edit">Appearance</a></li>
             <li><a href="/map">Map</a></li>
             <li><a href="/meta_filter">Meta Filter</a></li>
-            <li><a href="{{route('messagesSetting')}}">Setting</a></li>
+            <li><a href="{{route('messagesSetting')}}">Campaigns</a></li>
           </ul>
         </li>
         <li><a href="/analytics"><i class="fa fa-line-chart"></i> Analytics</a>

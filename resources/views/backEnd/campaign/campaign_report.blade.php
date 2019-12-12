@@ -235,26 +235,32 @@ Organizations
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-header bg_header">
                 <h4 class="modal-title">Group</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <label class="control-label ">Select static group</label>
-                {!! Form::select('selectGroup',$GroupDetail,null,['class'
-                =>'form-control','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
-                <div class="table-responsive" id="groupTable" style="display:none;">
-                    <div class="table-responsive">
-                        <table class="table table-striped jambo_table bulk_action nowrap datatable" id="group_table">
-                            <thead>
-                                <th><b><input type="checkbox" name="checkall" id="groupAllCheck"></b></th>
-                                <th>Phone</th>
-                                <th class="default-inactive">Email</th>
-                                <th class="default-inactive">Contact Name</th>
-                                <th class="default-active">Contact Organization</th>
-                            </thead>
-                            <tbody id="groupContact"></tbody>
-                        </table>
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-info" data-toggle="modal" data-target="#createGroup">Create group</button>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-3"><b>Select static group</b></label>
+                    {!! Form::select('selectGroup',$GroupDetail,null,['class'
+                    =>'form-control col-md-6','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
+                    <div class="table-responsive" id="groupTable" style="display:none;">
+                        <div class="table-responsive">
+                            <table class="table table-striped jambo_table bulk_action nowrap datatable"
+                                id="group_table">
+                                <thead>
+                                    <th><b><input type="checkbox" name="checkall" id="groupAllCheck"></b></th>
+                                    <th>Phone</th>
+                                    <th class="default-inactive">Email</th>
+                                    <th class="default-inactive">Contact Name</th>
+                                    <th class="default-active">Contact Organization</th>
+                                </thead>
+                                <tbody id="groupContact"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -263,13 +269,42 @@ Organizations
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
+
+    </div>
+</div>
+<div class="modal fade" id="createGroup" tabindex="-1" role="dialog" aria-labelledby="createGroupLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg_header">
+                <h5 class="modal-title" id="createGroupLabel">Create Group</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label sel-label-org pl-4"><b>Group Name</b></label>
+                        <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
+                            <input class="form-control selectpicker" type="text" id="group_name" name="group_name"
+                                value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="createGroup()">Save changes</button>
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal fade " id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered " role="document">
         <div class="modal-content" id="addClass">
-            <div class="modal-header">
+            <div class="modal-header ">
                 <h3 class="modal-title" id="exampleModalLongTitle" style="color:#fff">Alert</h3>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -430,16 +465,18 @@ Organizations
             checkbox.each(function(index,data){
                 id.push(data.value)
             })
-            if(id.length == 0){
-                $('#message').empty();
-                $('#addClass').addClass('bg-danger');
-                $('#message').append('<h4 style="color:#fff;">Please select any report first!</h4>')
-                $('#alertModal').modal('show');
-                return false;
-            }
             if($.inArray('on', id) != -1){
-                    id.splice(id.indexOf('on'),1)
-                }
+                id.splice(id.indexOf('on'),1)
+            }
+            // if(id.length == 0){
+            //     $('#message').empty();
+            //     $('#addClass').addClass('bg-danger');
+            //     $('#message').append('<h4 style="color:#fff;">Please select any report first!</h4>')
+            //     $('#alertModal').modal('show');
+            //     return false;
+            // }
+            
+            $('#loading').show();
             $.ajax({
                     method: 'POST',
                     url: '{{route("getContact")}}',
@@ -475,6 +512,30 @@ Organizations
                     }
                 })
         }
+        function createGroup(){
+        let group_name = $('#group_name').val();
+        $('#loading').show();
+        $.ajax({
+            method: 'POST',
+            url: '{{route("create_group")}}',
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            },
+            data:{ group_name },
+            success:function(response){
+                $('#loading').hide();
+                $('#createGroup').modal('hide');
+            },
+            error:function(error){
+                $('#createGroup').modal('hide');
+                $('#loading').hide();
+                $('#message').empty();
+                $('#addClass').addClass('bg-danger');
+                $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
+                $('#alertModal').modal('show');
+            }
+        })
+    }
 </script>
 
 @endsection

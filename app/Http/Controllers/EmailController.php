@@ -48,13 +48,19 @@ class EmailController extends Controller
                             }
                             $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
                             $response = $sendgrid->send($email);
+
+                            $error = '';
+                            if ($response->statusCode() == 401) {
+                                $error = json_decode($response->body());
+                            }
+
                             DB::beginTransaction();
                             CampaignReport::create([
                                 'user_id' => Sentinel::check()->id,
                                 'type' => $campaign->campaign_type,
                                 'status' => $response->statusCode() == 202 ? 'Delivered' : 'Undelivered',
                                 'date_sent' => Carbon::now(),
-                                'error_message' => $response->statusCode(),
+                                'error_message' => $error != '' ? $error->errors[0]->message : '',
                                 'toContact' => $contact->contact_first_name,
                                 'fromNumber' => env('MAIL_FROM_ADDRESS'),
                                 'toNumber' => $contact_email,
@@ -66,6 +72,10 @@ class EmailController extends Controller
                                 'campaign_id' => $campaign->id,
                             ]);
                             DB::commit();
+                            if ($response->statusCode() == 401) {
+                                return $error->errors[0]->message;
+                            }
+
                         } else {
                             return 'Email not found!';
                         }

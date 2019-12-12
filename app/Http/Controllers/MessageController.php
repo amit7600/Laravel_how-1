@@ -271,7 +271,6 @@ class MessageController extends Controller
 
         } catch (\Throwable $th) {
             //throw $th;
-            // dd($th);
             return response()->json([
                 'message' => $th->getMessage(),
                 'success' => false,
@@ -287,10 +286,10 @@ class MessageController extends Controller
 
             $phone_recordid = [];
             $contacts = [];
+            $newRecordId = [];
             if ($request->has('id')) {
                 // $contact = Contact::where
                 $phones = Phone::get();
-                $newRecordId = [];
                 foreach ($campaignReportId as $key => $value) {
                     $campaignDetail = CampaignReport::whereId($value)->first();
 
@@ -336,7 +335,7 @@ class MessageController extends Controller
             // push phone number data
             foreach ($phone_recordid as $key => $value) {
                 $contact = Contact::where('contact_cell_phones', strval($value))->first();
-                // dd($contact);
+              
                 array_push($allContact, $contact);
             }
             //  push email contact data
@@ -366,7 +365,6 @@ class MessageController extends Controller
             ], 200);
 
         } catch (\Throwable $th) {
-            dd($th);
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
@@ -422,22 +420,33 @@ class MessageController extends Controller
     }
     public function messagesSetting()
     {
+        $twillioSid = env('TWILIO_SID');
+        $twillioKey = env('TWILIO_TOKEN');
+        $twllioNumber = env('TWILIO_FROM');
+        $sendgridKey = env('SENDGRID_API_KEY');
 
-        return view('backEnd.messages.messageSetting');
+        return view('backEnd.messages.messageSetting', compact('twillioSid', 'twillioKey', 'twllioNumber', 'sendgridKey'));
 
     }
     public function saveMessageCredential(Request $request)
     {
+        $this->validate($request, [
+            'twillioSid' => 'required',
+            'twillioKey' => 'required',
+            'twillioNumber' => 'required',
+            'sendgridApiKey' => 'required',
+        ]);
+
         try {
 
             $envFile = app()->environmentFilePath();
             $str = file_get_contents($envFile);
-
             $values = [
-                "TWILIO_SID" => $request->get('database'),
-                "TWILIO_TOKEN" => $request->get('username'),
-                "TWILIO_FROM" => $request->get('password'),
-                "SENDGRID_API_KEY" => $request->get('password'),
+                "TWILIO_SID" => $request->get('twillioSid'),
+                "TWILIO_TOKEN" => $request->get('twillioKey'),
+                "TWILIO_FROM" => $request->get('twillioNumber'),
+                "SENDGRID_API_KEY" => $request->get('sendgridApiKey'),
+                "MAIL_PASSWORD" => $request->get('sendgridApiKey'),
             ];
 
             if (count($values) > 0) {
@@ -462,18 +471,64 @@ class MessageController extends Controller
             if (!file_put_contents($envFile, $str)) {
                 return false;
             }
+            $this->clearCache();
+
+            return redirect()->back()->with('success', 'Credential store successfully!');
 
         } catch (\Throwable $th) {
-            dd($th);
+            return redirect()->back()->with('error', 'Something went wrong in input!');
+
         }
 
     }
     public function clearCache()
     {
-        \Artisan::call('config:cache');
-        \Artisan::call('config:clear');
+        // \Artisan::call('config:cache');
         \Artisan::call('view:clear');
         \Artisan::call('route:clear');
         \Artisan::call('cache:clear');
+        \Artisan::call('config:clear');
+    }
+    public function create_group(Request $request)
+    {
+        try {
+            $group = new Group;
+            $group->group_name = $request->group_name;
+            // $group->group_type = $request->group_type;
+            // $group->group_emails = $request->group_email;
+            $group->group_last_modified = date("Y-m-d h:i:sa");
+            $group->group_created_at = date("Y-m-d h:i:sa");
+            $group->group_members = '0';
+
+            $group_recordids = Group::select("group_recordid")->distinct()->get();
+            $group_recordid_list = array();
+            foreach ($group_recordids as $key => $value) {
+                $group_recordid = $value->group_recordid;
+                array_push($group_recordid_list, $group_recordid);
+            }
+            $group_recordid_list = array_unique($group_recordid_list);
+
+            $new_recordid = Group::max('group_recordid') + 1;
+            if (in_array($new_recordid, $group_recordid_list)) {
+                $new_recordid = Group::max('group_recordid') + 1;
+            }
+            $group->group_recordid = $new_recordid;
+
+            $group->save();
+
+            return response()->json([
+                'message' => 'Group created successfully!',
+                'success' => true,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json([
+                'message' => $th->getMessage(),
+                'success' => false,
+            ], 500);
+
+        }
+
     }
 }

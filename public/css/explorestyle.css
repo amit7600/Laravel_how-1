@@ -67,8 +67,6 @@ a, a:hover, a:focus {
   background: #a2e9ff;
 }
 
-
-
 #sidebar ul p {
   color: #fff;
   padding: 10px;
@@ -259,7 +257,7 @@ li.status-side:hover {
     top: 0px;
     overflow-y: hidden;
   }
- 
+
   /* #sidebarCollapse span {
         display: none;
     } */
@@ -1143,6 +1141,19 @@ table.dataTable thead th,
 table.dataTable thead td {
   padding: 10px 11px;
 }
+#loading {
+  position: fixed;
+  z-index: 2;
+  width: 100%;
+  text-align: center;
+  top: 0;
+  background: #ffffffa6;
+  height: 100%;
+  padding-top: 21%;
+}
+#loading img {
+  width: 7%;
+}
 
 @media (max-width: 1028px) {
   .browse_category .col-sm-8 {
@@ -1208,4 +1219,11 @@ table.dataTable thead td {
   .browse_category .card .card-link + .card-link {
     width: 89%;
   }
+}
+.bg_header {
+  background: #3f51b5;
+}
+.bg_header .modal-title,
+.bg_header .close {
+  color: #fff;
 }
