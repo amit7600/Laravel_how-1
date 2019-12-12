@@ -6,121 +6,137 @@ Group Profile
 <link rel="stylesheet" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
 
 <style type="text/css">
-.table a{
-    text-decoration:none !important;
-    color: rgba(40,53,147,.9);
-    white-space: normal;
-}
-.footable.breakpoint > tbody > tr > td > span.footable-toggle{
-    position: absolute;
-    right: 25px;
-    font-size: 25px;
-    color: #000000;
-}
-.ui-menu .ui-menu-item .ui-state-active {
-    padding-left: 0 !important;
-}
-ul#ui-id-1 {
-    width: 260px !important;
-}
-#tbl-group-profile-contact {
-    width: 100% !important;
-}
-#map{
-    position: relative !important;
-    z-index: 0 !important;
-}
-@media (max-width: 768px) {
-    .property{
-        padding-left: 30px !important;
+    .table a {
+        text-decoration: none !important;
+        color: rgba(40, 53, 147, .9);
+        white-space: normal;
     }
-    #map{
-        display: block !important;
+
+    .footable.breakpoint>tbody>tr>td>span.footable-toggle {
+        position: absolute;
+        right: 25px;
+        font-size: 25px;
+        color: #000000;
+    }
+
+    .ui-menu .ui-menu-item .ui-state-active {
+        padding-left: 0 !important;
+    }
+
+    ul#ui-id-1 {
+        width: 260px !important;
+    }
+
+    #tbl-group-profile-contact {
         width: 100% !important;
     }
-}
-.morecontent span {
-  display: none;
 
-}
-.morelink{
-  color: #428bca;
-}
-table#tbl-group-profile-members {
-    width: 100% !important;
-    display: block;
-    border-bottom: 0px;
-}
-#tbl-group-profile-members_wrapper {
-    overflow-x: scroll;
-}
+    #map {
+        position: relative !important;
+        z-index: 0 !important;
+    }
+
+    @media (max-width: 768px) {
+        .property {
+            padding-left: 30px !important;
+        }
+
+        #map {
+            display: block !important;
+            width: 100% !important;
+        }
+    }
+
+    .morecontent span {
+        display: none;
+
+    }
+
+    .morelink {
+        color: #428bca;
+    }
+
+    table#tbl-group-profile-members {
+        width: 100% !important;
+        display: block;
+        border-bottom: 0px;
+    }
+
+    #tbl-group-profile-members_wrapper {
+        overflow-x: scroll;
+    }
 </style>
 
 @section('content')
 <div class="wrapper">
     <!-- Page Content Holder -->
     <div id="content" class="container">
-		<div class="row m-0">
-        	<div class="col-md-8 pt-15 pb-15 pl-30">
+        <div class="row m-0">
+            <div class="col-md-8 pt-15 pb-15 pl-30">
                 <div class="card">
                     <div class="card-block">
                         <h4 class="card-title">
-							<a href="">{{$group->group_name}}
-							</a>
+                            <a href="">{{$group->group_name}}
+                            </a>
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Group Type:</b></span> 
-							{{$group->group_type}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Group Type:</b></span>
+                            {{$group->group_type}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Created:</b></span> 
-							{{$group_date_created}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Created:</b></span>
+                            {{$group_date_created}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Group Email:</b></span> 
-							{{$group->group_emails}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Group Email:</b></span>
+                            {{$group->group_emails}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Group Messages:</b></span> 
-							{{$group->group_messages}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Group Messages:</b></span>
+                            {{$group->group_messages}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Last Sent:</b></span> 
-							{{$group->group_message_last_sent}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Last Sent:</b></span>
+                            {{$group->group_message_last_sent}}
                         </h4>
                     </div>
                 </div>
-            </div> 
+            </div>
             <div class="col-md-4 property">
                 <div class="pt-10 pb-10 pl-0 btn-download">
                     <form method="GET" action="/group/{{$group->group_recordid}}/tagging" id="group_tagging">
                         <div class="row m-0" id="tagging-div">
                             <div class="col-md-10">
-                                <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$group->group_tag}}" />
-                            </div> 
-                            <div class="col-md-2">  
+                                <input type="text" class="form-control" id="tokenfield" name="tokenfield"
+                                    value="{{$group->group_tag}}" />
+                            </div>
+                            <div class="col-md-2">
                                 <button type="submit" class="btn btn-secondary btn-tag-save">
                                     <i class="fas fa-save"></i>
                                 </button>
-                            </div> 
+                            </div>
                         </div>
                     </form>
                 </div>
-				<div class="pt-10 pb-10 pl-0 btn-download">
-                    <a href="/group/{{$group->group_recordid}}/edit" class="btn btn-primary "><i class="fa fa-fw fa-edit"></i>Edit</a>
+                <div class="pt-10 pb-10 pl-0 btn-download">
+                    <a href="/group/{{$group->group_recordid}}/edit" class="btn btn-primary "><i
+                            class="fa fa-fw fa-edit"></i>Edit</a>
                     <a href="#" class="btn btn-secondary "><i class="fa fa-fw fa-edit"></i>Add Contact</a>
                     <a href="#" class="btn btn-info "><i class="fa fa-fw fa-envelope"></i>Send a Message</a>
-				</div>
-				<div class="card">
-					<div id="map" style="width:initial;margin-top: 0;height: 30vh;"></div>					
+                </div>
+                <div class="card">
+                    <div id="map" style="width:initial;margin-top: 0;height: 30vh;"></div>
                 </div>
             </div>
             <div class="col-md-8 pt-15 pb-15 pl-30 pl-30">
                 <div class="card">
                     <div class="card-block">
                         <h3>Members</h3>
-                        <button class="btn btn-danger remove-td" id="remove-members-group-btn" value="{{$group->group_recordid}}" data-toggle="modal" data-target=".bs-remove-modal-lg"><i class="fa fa-fw fa-remove"></i>Remove</button>
-                        <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-group-profile-members">
+                        <button class="btn btn-danger remove-td" id="remove-members-group-btn"
+                            value="{{$group->group_recordid}}" data-toggle="modal" data-target=".bs-remove-modal-lg"><i
+                                class="fa fa-fw fa-remove"></i>Remove</button>
+                        <table class="table table-striped jambo_table bulk_action nowrap"
+                            id="tbl-group-profile-members">
                             <thead>
                                 <tr>
                                     <th class="default-active"></th>
@@ -130,42 +146,49 @@ table#tbl-group-profile-members {
                                     <th class="default-inactive">Middle Name</th>
                                     <th class="default-active">Last Name</th>
                                     <th class="default-active">Type</th>
-                                    <th class="default-inactive">Religious Title</th>                                   
+                                    <th class="default-inactive">Religious Title</th>
                                     <th class="default-active" style="width: 30%;">Organization</th>
-                                    <th class="default-inactive">Religion</th>                                   
-                                    <th class="default-inactive">Borough</th>   
+                                    <th class="default-inactive">Religion</th>
+                                    <th class="default-inactive">Borough</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach($contacts as $key => $contact)
+                                @if (count($contacts) > 0)
+                                @foreach($contacts as $key => $contact)
                                 <tr>
                                     <td></td>
                                     <td>
-                                        <a class="btn btn-primary open-td" href="/contact/{{$contact->contact_recordid}}" style="color: white;">Open</a>
+                                        <a class="btn btn-primary open-td"
+                                            href="/contact/{{$contact->contact_recordid}}"
+                                            style="color: white;">Open</a>
                                     </td>
                                     <td>{{$contact->contact_recordid}}</td>
                                     <td>{{$contact->contact_first_name}}</td>
                                     <td>{{$contact->contact_middle_name}}</td>
                                     <td>{{$contact->contact_last_name}}</td>
-                                    <td>{{$contact->contact_type}}</td>                                    
+                                    <td>{{$contact->contact_type}}</td>
                                     <td>{{$contact->contact_religious_title}}</td>
                                     <td>
-                                        <a id="contact_organization_link" style="color: #3949ab; text-decoration: underline;" href="/organization/{{$contact->organization_recordid}}">{{$contact->organization_name}}</a>
-                                    </td> 
-                                    <td>{{$contact->organization_religion}}</td>                                 
-                                    <td>{{$contact->address_city}}</td>                                    
+                                        <a id="contact_organization_link"
+                                            style="color: #3949ab; text-decoration: underline;"
+                                            href="/organization/{{$contact->organization_recordid}}">{{$contact->organization_name}}</a>
+                                    </td>
+                                    <td>{{$contact->organization_religion}}</td>
+                                    <td>{{$contact->address_city}}</td>
                                 </tr>
-                            @endforeach
+                                @endforeach
+                                @endif
                             <tbody>
                         </table>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 pt-15 pb-15 pl-30 pl-30">
-               <div class="card">
+                <div class="card">
                     <div class="card-block">
                         <h3>Campaigns</h3>
-                        <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-group-profile-campagins">
+                        <table class="table table-striped jambo_table bulk_action nowrap"
+                            id="tbl-group-profile-campagins">
                             <thead>
                                 <tr>
                                     <th class="default-active"></th>
@@ -184,7 +207,8 @@ table#tbl-group-profile-members {
                         <form action="/group_remove_members" method="POST" id="group_remove_members">
                             {!! Form::token() !!}
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                <button type="button" class="close" data-dismiss="modal"><span
+                                        aria-hidden="true">×</span>
                                 </button>
                                 <h4 class="modal-title" id="myModalLabel">Remove contacts from Group</h4>
                             </div>
@@ -207,8 +231,10 @@ table#tbl-group-profile-members {
 
 @endsection
 @section('customScript')
-<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>
-<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js">
+</script>
+<script type="text/javascript"
+    src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
 <script>
     var dataTable;
@@ -353,11 +379,7 @@ table#tbl-group-profile-members {
     });
 
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap"
-  async defer>
+<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap" async
+    defer>
 </script>
 @endsection
-
-
-
-

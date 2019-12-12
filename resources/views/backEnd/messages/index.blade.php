@@ -289,7 +289,7 @@ Organizations
 
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg_header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Campaign</h4>
             </div>
@@ -308,29 +308,34 @@ Organizations
 </div>
 <div id="groupModal" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
-
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-header bg_header">
                 <h4 class="modal-title">Group</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <label class="control-label ">Select static group</label>
-                {!! Form::select('selectGroup',$GroupDetail,null,['class'
-                =>'form-control','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
-                <div class="table-responsive" id="groupTable" style="display:none;">
-                    <div class="table-responsive">
-                        <table class="table table-striped jambo_table bulk_action nowrap datatable" id="group_table">
-                            <thead>
-                                <th><b><input type="checkbox" name="checkall" id="groupAllCheck"></b></th>
-                                <th>Phone</th>
-                                <th class="default-inactive">Email</th>
-                                <th class="default-inactive">Contact Name</th>
-                                <th class="default-active">Contact Organization</th>
-                            </thead>
-                            <tbody id="groupContact"></tbody>
-                        </table>
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-info" data-toggle="modal" data-target="#createGroup">Create group</button>
+                </div>
+                <div class="row">
+                    <label class="control-label col-md-3"><b>Select static group</b></label>
+                    {!! Form::select('selectGroup',$GroupDetail,null,['class'
+                    =>'form-control col-md-6','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
+                    <div class="table-responsive" id="groupTable" style="display:none;">
+                        <div class="table-responsive">
+                            <table class="table table-striped jambo_table bulk_action nowrap datatable"
+                                id="group_table">
+                                <thead>
+                                    <th><b><input type="checkbox" name="checkall" id="groupAllCheck"></b></th>
+                                    <th>Phone</th>
+                                    <th class="default-inactive">Email</th>
+                                    <th class="default-inactive">Contact Name</th>
+                                    <th class="default-active">Contact Organization</th>
+                                </thead>
+                                <tbody id="groupContact"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -340,6 +345,34 @@ Organizations
             </div>
         </div>
 
+    </div>
+</div>
+<div class="modal fade" id="createGroup" tabindex="-1" role="dialog" aria-labelledby="createGroupLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg_header">
+                <h5 class="modal-title" id="createGroupLabel">Create Group</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label sel-label-org pl-4"><b>Group Name</b></label>
+                        <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
+                            <input class="form-control selectpicker" type="text" id="group_name" name="group_name"
+                                value="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="createGroup()">Save changes</button>
+            </div>
+        </div>
     </div>
 </div>
 <div class="modal fade " id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalTitle"
@@ -543,6 +576,7 @@ Organizations
             connect_campaign(id,campaignId)
         })
         function connect_campaign(id,campaignId){
+            
             if($.inArray('on', id) != -1){
                 id.splice(id.indexOf('on'),1)
             }
@@ -550,6 +584,7 @@ Organizations
                 alert('please select any report in table.')
                 return false
             }
+            $('#loading').show();
             $.ajax({
                 method: 'POST',
                 url: '{{route("connect_compaign")}}',
@@ -558,7 +593,16 @@ Organizations
                 },
                 data:{ id, campaignId},
                 success:function(response){
+                    $('#loading').hide();
                     window.location.reload();
+                },
+                error:function(error){
+                    $('#loading').hide();
+                    $('#message').empty();
+                    $('#addClass').addClass('bg-danger');
+                    $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
+                    $('#alertModal').modal('show');
+
                 }
             })
         }
@@ -587,9 +631,11 @@ Organizations
             connect_group(id,groupId)
         });
         function connect_group(id,groupId){
+            
             if($.inArray('on', id) != -1){
                 id.splice(id.indexOf('on'),1)
             }
+            $('#loading').show();
             $.ajax({
                 method: 'POST',
                 url: '{{route("connect_group")}}',
@@ -598,6 +644,7 @@ Organizations
                 },
                 data:{ id, groupId,newContactData},
                 success:function(response){
+                    $('#loading').hide();
                     $('#message').empty();
                     $('#addClass').addClass('bg-success');
                     $('#message').append('<h4 style="color:#fff;">'+response.message+'</h4>')
@@ -608,65 +655,100 @@ Organizations
                     
                 },
                 error:function(error){
-                $('#error').append('<div class="alert alert-danger">'+error['responseJSON'].message+'</div>')
+                    $('#loading').hide();
+                    $('#message').empty();
+                    $('#addClass').addClass('bg-danger');
+                    $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
+                    $('#alertModal').modal('show');
                 }
             })
         } 
 })
-    function openGroup()
-        {
-            $('#groupContact').empty();
-            $('#error').empty();
-            var id = []
-            var checkbox = $('#tbl-message').find('input[type="checkbox"]:checked')
-            checkbox.each(function(index,data){
-                id.push(data.value)
-            })
-            if(id.length == 0){
+    function openGroup(){
+        $('#groupContact').empty();
+        $('#error').empty();
+        var id = []
+        var checkbox = $('#tbl-message').find('input[type="checkbox"]:checked')
+        checkbox.each(function(index,data){
+            id.push(data.value)
+        })
+        if($.inArray('on', id) != -1){
+            id.splice(id.indexOf('on'),1)
+        }
+        if(id.length == 0){
+            $('#message').empty();
+            $('#addClass').addClass('bg-danger');
+            $('#message').append('<h4 style="color:#fff;">Please select any report first!</h4>')
+            $('#alertModal').modal('show');
+            return false;
+        }
+        
+        $('#loading').show();
+        $.ajax({
+            method: 'POST',
+            url: '{{route("getContact")}}',
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            },
+            data:{ id },
+            success:function(response){
+                $('#loading').hide();
+                $('#groupTable').hide();
+                newContactData = [];
+                if(response.success){
+                    var data = response.data
+                    const campaignId = response.campaignId
+                    const dataLength = parseInt(id.length) - parseInt(campaignId.length)
+                    // for store new contact data 
+                    $.each(campaignId,function(index,value){
+                        newContactData.push(value)
+                    });
+                    // for append contact details 
+                    $.each(data,function(i,v){
+                        $('#groupContact').append('<tr><td><b><input type="checkbox" name="groupCheck[]" value="'+v.id+'" class="groupAllCheck"></b></td><td>'+v.phone+'</td><td>'+v.email+'</td><td>'+v.name+'</td><td>'+v.organization+'</td></tr>')
+                    });
+                    if(data.length != 0 && data.length != id.length ){
+                        $('#groupTable').show();
+                    }else{
+                        $('#groupContact').find('input[type="checkbox"]').prop('checked',true);
+                    }
+                        $('#groupModal').modal('show');
+                }
+            },
+            error:function(error){
+                $('#loading').hide();
                 $('#message').empty();
                 $('#addClass').addClass('bg-danger');
-                $('#message').append('<h4 style="color:#fff;">Please select any report first!</h4>')
+                $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
                 $('#alertModal').modal('show');
-                return false;
             }
-            if($.inArray('on', id) != -1){
-                    id.splice(id.indexOf('on'),1)
-                }
-            $.ajax({
-                    method: 'POST',
-                    url: '{{route("getContact")}}',
-                    headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                    },
-                    data:{ id },
-                    success:function(response){
-                        $('#groupTable').hide();
-                        newContactData = [];
-                        if(response.success){
-                            var data = response.data
-                            const campaignId = response.campaignId
-                            const dataLength = parseInt(id.length) - parseInt(campaignId.length)
-                            // for store new contact data 
-                            $.each(campaignId,function(index,value){
-                                newContactData.push(value)
-                            });
-                            // for append contact details 
-                            $.each(data,function(i,v){
-                                $('#groupContact').append('<tr><td><b><input type="checkbox" name="groupCheck[]" value="'+v.id+'" class="groupAllCheck"></b></td><td>'+v.phone+'</td><td>'+v.email+'</td><td>'+v.name+'</td><td>'+v.organization+'</td></tr>')
-                            });
-                            if(data.length != 0 && data.length != id.length ){
-                                $('#groupTable').show();
-                            }else{
-                                $('#groupContact').find('input[type="checkbox"]').prop('checked',true);
-                            }
-                                $('#groupModal').modal('show');
-                        }
-                    },
-                    error:function(error){
-                        $('#error').append('<div class="alert alert-danger">'+error['responseJSON'].message+'</div>')
-                    }
-                })
-        }
+        })
+    }
+
+    function createGroup(){
+        let group_name = $('#group_name').val();
+        $('#loading').show();
+        $.ajax({
+            method: 'POST',
+            url: '{{route("create_group")}}',
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            },
+            data:{ group_name },
+            success:function(response){
+                $('#createGroup').modal('hide');
+                $('#loading').hide();
+            },
+            error:function(error){
+                $('#createGroup').modal('hide');
+                $('#loading').hide();
+                $('#message').empty();
+                $('#addClass').addClass('bg-danger');
+                $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
+                $('#alertModal').modal('show');
+            }
+        })
+    }
     
 </script>
 @endsection
