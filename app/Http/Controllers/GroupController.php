@@ -66,8 +66,7 @@ class GroupController extends Controller
                 $location_info = Location::with('services', 'address', 'phones')->where('location_contact', '=', $group_contact_recordid)->get();
                 array_push($locations, $location_info);
             }
-        }
-        if ($group_type == 'Dynamic') {
+        } elseif ($group_type == 'Dynamic') {
 
             $group_filters = $group->group_filters;
             $filters = json_decode($group_filters);
@@ -129,6 +128,22 @@ class GroupController extends Controller
 
             $locations = [];
             foreach ($contacts as $key => $value) {
+                $group_contact_recordid = $value->contact_recordid;
+                $location_info = Location::with('services', 'address', 'phones')->where('location_contact', '=', $group_contact_recordid)->get();
+                array_push($locations, $location_info);
+            }
+
+        } else {
+            $contacts = Contact::orderBy('contact_recordid')
+                ->where('contact_group', 'LIKE', '%' . $group->group_recordid . '%')
+                ->join('organizations', 'organizations.organization_recordid', '=', 'contacts.contact_organizations')
+                ->join('locations', 'locations.location_recordid', '=', 'organizations.organization_locations')
+                ->join('address', 'address.address_recordid', '=', 'locations.location_address')
+                ->get();
+            $group_members_list = Contact::orderBy('contact_recordid')->where('contacts.contact_group', '=', $id)->select('contact_recordid')->get();
+
+            $locations = [];
+            foreach ($group_members_list as $key => $value) {
                 $group_contact_recordid = $value->contact_recordid;
                 $location_info = Location::with('services', 'address', 'phones')->where('location_contact', '=', $group_contact_recordid)->get();
                 array_push($locations, $location_info);
@@ -204,8 +219,8 @@ class GroupController extends Controller
     {
         $group = new Group;
         $group->group_name = $request->group_name;
-        // $group->group_type = $request->group_type;
-        // $group->group_emails = $request->group_email;
+        $group->group_type = $request->group_type;
+        $group->group_emails = $request->group_email;
         $group->group_last_modified = date("Y-m-d h:i:sa");
         $group->group_created_at = date("Y-m-d h:i:sa");
         $group->group_members = '0';
