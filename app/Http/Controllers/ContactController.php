@@ -1403,7 +1403,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_cell_phones;
-            $phone->phone_type = "cell phone";
+            // $phone->phone_type = "cell phone";
             $contact->contact_cell_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1421,7 +1421,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_office_phones;
-            $phone->phone_type = "office phone";
+            // $phone->phone_type = "office phone";
             $contact->contact_office_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1439,7 +1439,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_emergency_phones;
-            $phone->phone_type = "emergency phone";
+            // $phone->phone_type = "emergency phone";
             $contact->contact_emergency_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1457,7 +1457,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_office_fax_phones;
-            $phone->phone_type = "office fax";
+            // $phone->phone_type = "office fax";
             $contact->contact_office_fax_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1582,7 +1582,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_cell_phones;
-            $phone->phone_type = "cell phone";
+            // $phone->phone_type = "cell phone";
             $contact->contact_cell_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1600,7 +1600,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_office_phones;
-            $phone->phone_type = "office phone";
+            // $phone->phone_type = "office phone";
             $contact->contact_office_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1618,7 +1618,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_emergency_phones;
-            $phone->phone_type = "emergency phone";
+            // $phone->phone_type = "emergency phone";
             $contact->contact_emergency_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1636,7 +1636,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_office_fax_phones;
-            $phone->phone_type = "office fax";
+            // $phone->phone_type = "office fax";
             $contact->contact_office_fax_phones = $phone->phone_recordid;
             $phone->save();
         }
