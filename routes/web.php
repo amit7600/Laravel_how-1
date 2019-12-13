@@ -124,6 +124,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 
     Route::post('/checkSendgrid', 'HomeController@checkSendgrid')->name('checkSendgrid');
     Route::post('/checkTwillio', 'HomeController@checkTwillio')->name('checkTwillio');
+    Route::post('/create_group', 'MessageController@create_group')->name('create_group');
 
 });
 

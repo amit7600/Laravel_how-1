@@ -292,7 +292,6 @@ class CampaignController extends Controller
                 foreach ($groupTemp as $value) {
                     if ($value->id == $id) {
                         // $groupContactList = $value->contact;
-                        // dd($value);
                         foreach ($contacts as $key => $contact) {
                             $groupIdArray = $contact->contact_group != null ? explode(',', $contact->contact_group) : [];
                             if (in_array($value->group_recordid, $groupIdArray)) {

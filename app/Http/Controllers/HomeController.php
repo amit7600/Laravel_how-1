@@ -149,4 +149,37 @@ class HomeController extends Controller
 
         }
     }
+    public function checkSendgrid(Request $request)
+    {
+        try {
+            $key = $request->get('sendgridApiKey');
+            $email = new \SendGrid\Mail\Mail();
+            $email->setFrom('example@example.com', 'test');
+            $email->setSubject('test');
+            $email->addTo('example@example.com', 'test');
+            $email->addContent("text/plain", 'test');
+
+            $sendgrid = new \SendGrid($key);
+            $response = $sendgrid->send($email);
+
+            if ($response->statusCode() == 202) {
+                return response()->json([
+                    'message' => 'Your sendgrid key is verified!',
+                    'success' => true,
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Your sendgrid key is not valid!',
+                    'success' => false,
+                ], 500);
+            }
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+                'success' => false,
+            ], 500);
+
+        }
+    }
 }

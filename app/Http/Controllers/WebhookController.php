@@ -40,6 +40,7 @@ class WebhookController extends Controller
             $webhook->type = $type;
             $webhook->date_sent = Carbon::now();
             $webhook->save();
+
             // $response = new Twiml();
             // $response->message('Thanks for your message.');
             // return response($response, 200)->header('Content-Type', 'application/xml');
