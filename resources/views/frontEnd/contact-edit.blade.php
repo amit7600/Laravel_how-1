@@ -177,7 +177,7 @@ Contact Edit
                 <div class="form-group">
                     <label class="control-label sel-label-org pl-4">Cell Phone: </label>
                     <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
-                        <input class="form-control selectpicker"  type="text" id="contact_office_phones" name="contact_cell_phones" value="{{$cell_phone_number}}">    
+                        <input class="form-control selectpicker"  type="text" id="contact_cell_phones" name="contact_cell_phones" value="{{$cell_phone_number}}">    
                     </div>
                 </div>
                 <div class="form-group">
