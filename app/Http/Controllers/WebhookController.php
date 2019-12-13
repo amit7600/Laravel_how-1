@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpMimeMailParser\Parser;
 use Twilio\Rest\Client;
-use Twilio\Twiml;
 
 class WebhookController extends Controller
 {
@@ -22,7 +21,6 @@ class WebhookController extends Controller
     public function index(Request $request)
     {
         try {
-            \Log::info($request);
             $sms_body = $request->input('Body');
             $from = $request->input('From');
             $full = "From: " . $from . " SMS: " . $sms_body;
@@ -49,9 +47,9 @@ class WebhookController extends Controller
             $webhook = new CampaignReport();
             $webhook->error_message = $th->getMessage();
             $webhook->save();
-            $response = new Twiml();
-            $response->message($th->getMessage());
-            return response($response, 200)->header('Content-Type', 'application/xml');
+            // $response = new Twiml();
+            // $response->message($th->getMessage());
+            // return response($response, 200)->header('Content-Type', 'application/xml');
 
             // return response($th->getMessage(), 500);
         }
