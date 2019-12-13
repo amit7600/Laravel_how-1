@@ -259,11 +259,19 @@ class MessageController extends Controller
                         Contact::whereId($contact->id)->update([
                             'contact_group' => $groupData,
                         ]);
+                        DB::commit();
+
                     }
                 }
 
             }
+            $group_contact_list = Contact::where('contact_group', 'LIKE', '%' . $groupId . '%')->get();
+
+            Group::where('group_recordid', $groupId)->update([
+                'group_members' => count($group_contact_list),
+            ]);
             DB::commit();
+
             return response()->json([
                 'message' => 'Group added successfully!',
                 'success' => true,
@@ -335,7 +343,7 @@ class MessageController extends Controller
             // push phone number data
             foreach ($phone_recordid as $key => $value) {
                 $contact = Contact::where('contact_cell_phones', strval($value))->first();
-              
+
                 array_push($allContact, $contact);
             }
             //  push email contact data
@@ -411,7 +419,7 @@ class MessageController extends Controller
             'contact_recordid' => $contact_recordid,
             'contact_cell_phones' => $new_recordid,
             'contact_email' => $email,
-            'flag' => 'generated contact',
+            'contact_tag' => 'generated contact',
         ]);
         DB::commit();
 
@@ -494,7 +502,7 @@ class MessageController extends Controller
         try {
             $group = new Group;
             $group->group_name = $request->group_name;
-            // $group->group_type = $request->group_type;
+            $group->group_type = $request->group_type;
             // $group->group_emails = $request->group_email;
             $group->group_last_modified = date("Y-m-d h:i:sa");
             $group->group_created_at = date("Y-m-d h:i:sa");
@@ -518,6 +526,7 @@ class MessageController extends Controller
 
             return response()->json([
                 'message' => 'Group created successfully!',
+                'data' => $new_recordid,
                 'success' => true,
             ], 200);
 

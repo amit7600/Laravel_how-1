@@ -124,9 +124,6 @@ Organizations
                             href="{{url('/message/recieved')}}">Incoming</a></li>
                 </ul>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{route('messagesSetting')}}">Setting</a>
-            </li>
         </ul>
     </div>
     <div class="col-md-10">
@@ -364,6 +361,16 @@ Organizations
                         <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
                             <input class="form-control selectpicker" type="text" id="group_name" name="group_name"
                                 value="">
+                            <span id="groupNameError" style="color:red;display:none;"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label sel-label-org pl-4"><b>Group Name</b></label>
+                        <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
+                            {!! Form::select('group_type',['Static' => 'static','Dynamic' =>
+                            'dynamic'],'Static',['class'=> 'form-control','id' => 'group_type']) !!}
                         </div>
                     </div>
                 </div>
@@ -599,6 +606,8 @@ Organizations
                 error:function(error){
                     $('#loading').hide();
                     $('#message').empty();
+                    $('#addClass').removeClass('bg-danger');
+                    $('#addClass').removeClass('bg-success');
                     $('#addClass').addClass('bg-danger');
                     $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
                     $('#alertModal').modal('show');
@@ -615,6 +624,8 @@ Organizations
             })
             if((newContactData.length == 0 && id.length == 0)){
                 $('#message').empty();
+                $('#addClass').removeClass('bg-danger');
+                $('#addClass').removeClass('bg-success');
                 $('#addClass').addClass('bg-danger');
                 $('#message').append('<h4 style="color:#fff;">Please select any contact first.</h4>')
                 $('#alertModal').modal('show');
@@ -623,6 +634,8 @@ Organizations
             groupId = $('#selectGroup').val();
             if(groupId == ''){
                 $('#message').empty();
+                $('#addClass').removeClass('bg-danger');
+                $('#addClass').removeClass('bg-success');
                 $('#addClass').addClass('bg-danger');
                 $('#message').append('<h4 style="color:#fff;">Please select Group first.</h4>')
                 $('#alertModal').modal('show');
@@ -646,6 +659,8 @@ Organizations
                 success:function(response){
                     $('#loading').hide();
                     $('#message').empty();
+                    $('#addClass').removeClass('bg-danger');
+                    $('#addClass').removeClass('bg-success');
                     $('#addClass').addClass('bg-success');
                     $('#message').append('<h4 style="color:#fff;">'+response.message+'</h4>')
                     $('#alertModal').modal('show');
@@ -657,6 +672,8 @@ Organizations
                 error:function(error){
                     $('#loading').hide();
                     $('#message').empty();
+                    $('#addClass').removeClass('bg-danger');
+                    $('#addClass').removeClass('bg-success');
                     $('#addClass').addClass('bg-danger');
                     $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
                     $('#alertModal').modal('show');
@@ -677,6 +694,8 @@ Organizations
         }
         if(id.length == 0){
             $('#message').empty();
+            $('#addClass').removeClass('bg-danger');
+            $('#addClass').removeClass('bg-success');
             $('#addClass').addClass('bg-danger');
             $('#message').append('<h4 style="color:#fff;">Please select any report first!</h4>')
             $('#alertModal').modal('show');
@@ -727,6 +746,18 @@ Organizations
 
     function createGroup(){
         let group_name = $('#group_name').val();
+        let group_type = $('#group_type').val();
+        $('#groupNameError').hide();
+        if(group_name == ''){
+            $('#groupNameError').show();
+            $('#groupNameError').empty();
+            $('#addClass').removeClass('bg-danger');
+            $('#addClass').removeClass('bg-success');
+            $('#group_name').addClass('alert-danger');
+            $('#groupNameError').append('Group name field is required!');
+            return false;
+        }
+        $('#group_name').removeClass('alert-danger');
         $('#loading').show();
         $.ajax({
             method: 'POST',
@@ -734,15 +765,18 @@ Organizations
             headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
             },
-            data:{ group_name },
+            data:{ group_name,group_type },
             success:function(response){
                 $('#createGroup').modal('hide');
                 $('#loading').hide();
+                $('#selectGroup').append('<option selected="selected" value="'+response.data+'">'+group_name+'</option>')
             },
             error:function(error){
                 $('#createGroup').modal('hide');
                 $('#loading').hide();
                 $('#message').empty();
+                $('#addClass').removeClass('bg-danger');
+                $('#addClass').removeClass('bg-success');
                 $('#addClass').addClass('bg-danger');
                 $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
                 $('#alertModal').modal('show');
