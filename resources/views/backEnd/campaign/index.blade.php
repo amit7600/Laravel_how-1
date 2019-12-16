@@ -238,7 +238,7 @@ Organizations
                             @php
                             $delivered = 0;
                             foreach($campaign->report as $value){
-                            if ($value->status == 'Delivered' || $value->status == 'sent') {
+                            if (strcasecmp($value->status , 'Delivered') == 0 || $value->status == 'sent') {
                             $delivered += 1;
                             }
                             }

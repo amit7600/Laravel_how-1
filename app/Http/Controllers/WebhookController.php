@@ -24,9 +24,13 @@ class WebhookController extends Controller
             $sms_body = $request->input('Body');
             $from = $request->input('From');
             $full = "From: " . $from . " SMS: " . $sms_body;
+            $campaignDetail = CampaignReport::where('toNumber', $from)->orderBy('id', 'desc')->first();
             $webhook = new CampaignReport();
             $webhook->body = $sms_body;
             $webhook->status = 'Incoming';
+            if ($campaignDetail != null) {
+                $webhook->campaign_id = $campaignDetail->campaign_id;
+            }
             $webhook->direction = 'Inbound-api';
             $webhook->toNumber = $request->input('To');
             $webhook->fromNumber = $request->input('From');
@@ -44,7 +48,9 @@ class WebhookController extends Controller
             // return response($response, 200)->header('Content-Type', 'application/xml');
 
         } catch (\Throwable $th) {
+            \Log::info($th);
             $webhook = new CampaignReport();
+            $webhook->type = '2';
             $webhook->error_message = $th->getMessage();
             $webhook->save();
             // $response = new Twiml();
