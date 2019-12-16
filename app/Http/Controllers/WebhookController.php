@@ -88,10 +88,12 @@ class WebhookController extends Controller
             $from = $envelope["from"];
             $subject = $parser->getHeader('subject');
             $campaignId = '';
+            \Log::info(strpos($subject, 'Re:'));
             if (strpos($subject, 'Re:') == 0) {
                 $campaignSubject = ltrim($subject, 'Re: ');
                 $campaignDetail = CampaignReport::where('subject', strval($campaignSubject))->where('toNumber', strval($from))->first();
-                $campaignId = $campaignDetail->id;
+                \Log::info($campaignDetail);
+                $campaignId = $campaignDetail->campaign_id;
             }
             CampaignReport::create([
                 'campaign_id' => $campaignId,
