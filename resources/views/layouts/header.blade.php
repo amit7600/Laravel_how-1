@@ -48,21 +48,22 @@
 						<a class="nav-link waves-effect waves-light waves-round" href="/groups">Groups</a>
 					</li>
 					<li class="nav-item responsive_menu">
+						<a class="nav-link waves-effect waves-light waves-round" href="/campaigns">Campaigns</a>
+					</li>
+					<li class="nav-item responsive_menu">
 						<div class="dropdown">
 							<button class="dropbtn">(+)</button>
 							<div class="dropdown-content">
-								<a href="/organization_create">Add Organization</a>
-								<a href="/contact_create">Add Contact</a>
-								<a href="/facility_create">Add Facility</a>
-								<a href="/group_create">Add Group</a>
+								<a href="/organization_create">New Organization</a>
+								<a href="/contact_create">New Contact</a>
+								<a href="/facility_create">New Facility</a>
+								<a href="/group_create">New Group</a>
+								<a href="/campaigns/create">New Campaign</a>
 							</div>
 						</div>
 					</li>
 					<li class="nav-item responsive_menu">
 						<a class="nav-link waves-effect waves-light waves-round" href="/messages">Messages</a>
-					</li>
-					<li class="nav-item responsive_menu">
-						<a class="nav-link waves-effect waves-light waves-round" href="/campaigns">Campaigns</a>
 					</li>
 					<li class="nav-item responsive_menu">
 						<a class="nav-link waves-effect waves-light waves-round" href="/dashboard">My Account</a>

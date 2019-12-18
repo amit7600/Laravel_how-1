@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Campaign;
 use App\CampaignReport;
+use App\Contact;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpMimeMailParser\Parser;
@@ -24,10 +26,32 @@ class WebhookController extends Controller
             $sms_body = $request->input('Body');
             $from = $request->input('From');
             $full = "From: " . $from . " SMS: " . $sms_body;
+            $fromContact = '';
+            $toContact = 'HowCalm';
+            $contact_id = '';
             $campaignDetail = CampaignReport::where('toNumber', $from)->orderBy('id', 'desc')->first();
+            if ($campaignDetail) {
+                $campaignId = $campaignDetail->campaign_id;
+                $campaign = Campaign::whereId($campaignDetail->campaign_id)->first();
+
+                $contactId = $campaign ? explode(',', $campaign->recipient) : [];
+
+                foreach ($contactId as $key => $value) {
+                    $contact = Contact::whereId($value)->where('contact_email', $from)->first();
+                    if ($contact) {
+                        $fromContact = $contact->contact_first_name;
+                        $contact_id = $contact->id;
+                    }
+                }
+            }
+
             $webhook = new CampaignReport();
             $webhook->body = $sms_body;
             $webhook->status = 'Incoming';
+            $webhook->fromContact = $fromContact;
+            $webhook->toContact = $toContact;
+            $webhook->contact_id = $contact_id;
+
             if ($campaignDetail != null) {
                 $webhook->campaign_id = $campaignDetail->campaign_id;
             }
@@ -88,12 +112,28 @@ class WebhookController extends Controller
             $from = $envelope["from"];
             $subject = $parser->getHeader('subject');
             $campaignId = '';
-            \Log::info(strpos($subject, 'Re:'));
+            $fromContact = '';
+            $toContact = 'HowCalm';
+            $contact_id = '';
+
             if (strpos($subject, 'Re:') == 0) {
                 $campaignSubject = ltrim($subject, 'Re: ');
                 $campaignDetail = CampaignReport::where('subject', strval($campaignSubject))->where('toNumber', strval($from))->first();
-                \Log::info($campaignDetail);
-                $campaignId = $campaignDetail->campaign_id;
+                if ($campaignDetail) {
+                    $campaignId = $campaignDetail->campaign_id;
+                    $campaign = Campaign::whereId($campaignDetail->campaign_id)->first();
+
+                    $contactId = $campaign ? explode(',', $campaign->recipient) : [];
+
+                    foreach ($contactId as $key => $value) {
+                        $contact = Contact::whereId($value)->where('contact_email', $from)->first();
+                        if ($contact) {
+                            $fromContact = $contact->contact_first_name;
+                            $contact_id = $contact->id;
+                        }
+                    }
+                }
+
             }
             CampaignReport::create([
                 'campaign_id' => $campaignId,
@@ -101,6 +141,9 @@ class WebhookController extends Controller
                 'direction' => 'Inbound-api',
                 'toNumber' => $to,
                 'fromNumber' => $from,
+                'fromContact' => $fromContact,
+                'toContact' => $toContact,
+                'contact_id' => $contact_id,
                 'type' => '1',
                 'subject' => $subject,
                 'body' => $parser->getMessageBody('text'),

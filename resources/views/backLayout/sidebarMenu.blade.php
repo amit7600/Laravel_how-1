@@ -44,7 +44,16 @@
             <li><a href="{{route('messagesSetting')}}">Campaigns</a></li>
           </ul>
         </li>
-        <li><a href="/analytics"><i class="fa fa-line-chart"></i> Analytics</a>
+        <li><a><i class="fa fa-table"></i> Texonomies <span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
+            <li><a href="#">Religions</a></li>
+            <li><a href="#">Languages</a></li>
+            <li><a href="#">Organization type</a></li>
+            <li><a href="#">Contact type</a></li>
+            <li><a href="#">Facility type</a></li>
+          </ul>
+        </li>
+        {{-- <li><a href="/analytics"><i class="fa fa-line-chart"></i> Analytics</a> --}}
         <li><a><i class="fa fa-database"></i> Datasync <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="/import">Import</a></li>
@@ -53,7 +62,7 @@
           </ul>
         </li>
         </li>
-        <li><a><i class="fa fa-table"></i> Tables <span class="fa fa-chevron-down"></span></a>
+        {{-- <li><a><i class="fa fa-table"></i> Tables <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             <li><a href="/tb_services">Services</a></li>
             <li><a href="/tb_locations">Locations</a></li>
@@ -66,7 +75,7 @@
             <li><a href="/tb_details">Details</a></li>
             <li><a href="/tb_service_area">Service Area</a></li>
           </ul>
-        </li>
+        </li> --}}
       </ul>
     </div>
     <div class="menu_section">

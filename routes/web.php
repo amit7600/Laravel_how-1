@@ -125,7 +125,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/checkSendgrid', 'HomeController@checkSendgrid')->name('checkSendgrid');
     Route::post('/checkTwillio', 'HomeController@checkTwillio')->name('checkTwillio');
     Route::post('/create_group', 'MessageController@create_group')->name('create_group');
-
+    Route::get('download_attachment/{id}', 'CampaignController@download_attachment');
 });
 
 Route::resource('login_register_edit', 'EditLoginRegisterController');

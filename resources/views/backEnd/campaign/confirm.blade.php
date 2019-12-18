@@ -132,7 +132,17 @@ Organizations
                                         {{ $value->contact_last_name}}</td>
                                     <td>{{ $value->contact_organizations != null ?  $value->organization->organization_name : ''}}
                                     </td>
-                                    <td>{{ $value->contact_group != null ? $value->group->group_name : ''}}</td>
+                                    @php
+                                    $groupsId = $value->contact_group != null ? explode(',',$value->contact_group) : [];
+                                    $groupName = [];
+                                    foreach ($groupsId as $key => $groupId) {
+                                    $group = \DB::table('groups')->where('group_recordid',$groupId)->first();
+                                    if($group){
+                                    array_push($groupName,$group->group_name);
+                                    }
+                                    }
+                                    @endphp
+                                    <td>{{ $groupName != null ? implode(',',$groupName) : ''}}</td>
                                     <td><button type="button" class="btn btn-danger"
                                             onclick="deleteCampaign('{{ $value->id }}')">Remove</button></td>
                                 </tr>

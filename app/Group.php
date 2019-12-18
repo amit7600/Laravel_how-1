@@ -10,7 +10,7 @@ class Group extends Model
     protected $primaryKey = 'group_recordid';
     public $timestamps = false;
 
-    protected $fillable = ['group_members'];
+    protected $fillable = ['group_members', 'group_tag'];
 
     public function contact()
     {
