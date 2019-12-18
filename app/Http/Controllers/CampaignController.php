@@ -165,7 +165,7 @@ class CampaignController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Some thing went wrong')->withInput();
+            return redirect()->back()->with('error', 'Something went wrong')->withInput();
         }
 
     }
@@ -265,6 +265,8 @@ class CampaignController extends Controller
             if ($request->sending_type == 2) {
                 $sending_status = 'pending';
             }
+            $groupBeforeUpdate = Campaign::whereId($id)->first();
+
             $insertCam = Campaign::where('id', $id)->update([
                 'name' => $request->get('name'),
                 'user_id' => '1',
@@ -282,10 +284,33 @@ class CampaignController extends Controller
             $campaignConfirm = Campaign::whereId($id)->first();
 
             //Get Latest Campaign Confirm
-            $groupName = explode(',', $campaignConfirm->group_id);
+            $groupNameAfterUpdate = explode(',', $campaignConfirm->group_id);
+            $groupBeforeUpdate = explode(',', $groupBeforeUpdate->group_id);
 
-            $groupTemp = Group::get();
+            $groupName = [];
             $recipient = [];
+            foreach ($groupBeforeUpdate as $key => $GroupIdBefore) {
+                foreach ($groupNameAfterUpdate as $key => $groupIdAfter) {
+                    if ($groupIdAfter != $GroupIdBefore) {
+                        array_push($groupName, $groupIdAfter);
+                    }
+                }
+                $groupIdExist = in_array($GroupIdBefore, $groupNameAfterUpdate);
+                if ($groupIdExist) {
+                    $recipientsDetail = $campaignConfirm->recipient != null ? explode(',', $campaignConfirm->recipient) : [];
+                    foreach ($recipientsDetail as $key => $recipientDetail) {
+                        $GroupData = Group::whereId($GroupIdBefore)->first();
+                        if ($GroupData) {
+                            $contactsDetail = Contact::whereId($recipientDetail)->where('contact_group', 'LIKE', '%' . $GroupData->group_recordid . '%')->get();
+                            if (count($contactsDetail) > 0) {
+                                array_push($recipient, $recipientDetail);
+                            }
+                        }
+                    }
+                }
+            }
+            $groupTemp = Group::get();
+
             $contacts = Contact::get();
             $groupIdArray = [];
             foreach ($groupName as $key => $id) {
@@ -296,7 +321,11 @@ class CampaignController extends Controller
                             $groupIdArray = $contact->contact_group != null ? explode(',', $contact->contact_group) : [];
                             if (in_array($value->group_recordid, $groupIdArray)) {
                                 $groupContact[] = $contact;
-                                $recipient[] = $contact->id;
+                                $recipientExist = in_array($contact->id, $recipient);
+                                if ($recipientExist == false) {
+                                    $recipient[] = $contact->id;
+                                }
+
                             }
                         }
                         // foreach ($groupContactList as $key => $valuenew) {
@@ -317,8 +346,8 @@ class CampaignController extends Controller
                 return redirect()->to('confirm/' . $campaignConfirm->id);
             }
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollBack();
-
             return redirect()->back()->with('error', 'Something went wrong')->withInput();
         }
     }
@@ -473,6 +502,19 @@ class CampaignController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+    public function download_attachment($id)
+    {
+        try {
+            $campaign = Campaign::whereId($id)->first();
+            if ($campaign) {
+                $file = public_path($campaign->campaign_file);
+                return response()->download($file);
+
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 

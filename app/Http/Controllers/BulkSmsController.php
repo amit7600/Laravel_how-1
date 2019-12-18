@@ -147,7 +147,6 @@ class BulkSmsController extends Controller
                                 'toContact' => $contact->contact_first_name,
                                 'fromNumber' => $data->from,
                                 'fromContact' => 'HowCalm',
-                                'fromContact' => 'HowCalm',
                                 'body' => $data->body,
                                 'campaign_id' => $campaign->id,
                             ]);

@@ -11,6 +11,7 @@ use App\Map;
 use App\Organization;
 use App\Phone;
 use App\Taxonomy;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Sentinel;
@@ -214,6 +215,7 @@ class MessageController extends Controller
             DB::beginTransaction();
             $contactId = $request->get('id');
             $groupId = $request->get('groupId');
+            $group_tag = $request->get('tokenfield');
             $phone_recordid = [];
             if ($request->has('newContactData')) {
                 $campaignId = $request->get('newContactData');
@@ -269,6 +271,7 @@ class MessageController extends Controller
 
             Group::where('group_recordid', $groupId)->update([
                 'group_members' => count($group_contact_list),
+                'group_tag' => $group_tag,
             ]);
             DB::commit();
 
@@ -503,9 +506,10 @@ class MessageController extends Controller
             $group = new Group;
             $group->group_name = $request->group_name;
             $group->group_type = $request->group_type;
+            $group->group_tag = $request->createGroupToken;
             // $group->group_emails = $request->group_email;
-            $group->group_last_modified = date("Y-m-d h:i:sa");
-            $group->group_created_at = date("Y-m-d h:i:sa");
+            $group->group_last_modified = Carbon::now();
+            $group->group_created_at = Carbon::now();
             $group->group_members = '0';
 
             $group_recordids = Group::select("group_recordid")->distinct()->get();
