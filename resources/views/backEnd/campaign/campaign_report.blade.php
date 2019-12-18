@@ -109,10 +109,22 @@ Organizations
                         <p class="card-text"><b>Sent By: {{$user->first_name . ' '. $user->last_name}} </b> </p>
                         <p class="card-text"><b>Subject: {{ $campaign->subject }}</b> </p>
                         <p class="card-text"><b>Body: {{ $campaign->body }}</b> </p>
-                        <p class="card-text" style="display: inline-block; margin-right:20px;"><b>Audio Record:</b>
+                        <p class="card-text" style="display: inline-block; margin-right:20px;">
+                            <b>{!! $campaign->campaign_type == 1 ? '<a href="/download_attachment/'.$campaign->id.'"
+                                    target="_blank">Attachment</a>' :
+                                'Audio Record:'
+                                !!}</b>
                         </p>
                         <div id="soundTag" style="display:none;"></div>
-                        @if (strstr($campaign->campaign_file,'audio/'))
+                        @php
+                        $filename = public_path($campaign->campaign_file);
+                        $file_type = \File::extension($filename);
+                        @endphp
+                        @if ($campaign->campaign_type == 1)
+
+                        @else
+                        @if (strstr($campaign->campaign_file,'audio/') || $file_type == 'mp3' || $file_type == 'mpeg' ||
+                        $file_type == 'mpga' || $file_type == 'wav' || $file_type == 'aac')
                         <div class="btn-group" aria-label="Basic example" role="group">
                             <button type="button" class="btn btn-icon btn-primary waves-effect waves-classic"
                                 id="button_play"><i class="icon md-play" aria-hidden="true"></i></button>
@@ -125,6 +137,7 @@ Organizations
                         @if ( $campaign->campaign_file != '')
 
                         <img src="{{ $campaign->campaign_file }}" alt="" style="width: 70%; border-radius: 100%;">
+                        @endif
                         @endif
                         @endif
 
@@ -210,17 +223,25 @@ Organizations
                                 <td> {{ $value->date_sent }} </td>
                                 <td> {{ $value->toNumber }} </td>
                                 @php
+                                print_r($value->contact_id);
                                 $contact = \App\Contact::whereId($value->contact_id)->first();
                                 @endphp
                                 <td>
-                                    @if ($contact)
+                                    @if ($contact && $value->toContact != 'HowCalm')
                                     <a href="/contact/{{$contact->contact_recordid}}">{{ $value->toContact }}</a>
                                     @else
                                     {{ $value->toContact }}
                                     @endif
                                 </td>
                                 <td> {{ $value->fromNumber }} </td>
-                                <td> {{ $value->fromContact }} </td>
+                                <td>
+                                    @if ($contact && $value->fromContact != 'HowCalm')
+                                    <a href="/contact/{{$contact->contact_recordid}}">{{ $value->fromContact }}</a>
+                                    @else
+                                    {{ $value->fromContact }}
+                                    @endif
+
+                                </td>
                                 <td> {{ $value->body }} </td>
                             </tr>
                             @endforeach

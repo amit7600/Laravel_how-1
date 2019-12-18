@@ -319,7 +319,13 @@ Organizations
                     <label class="control-label col-md-3"><b>Select static group</b></label>
                     {!! Form::select('selectGroup',$GroupDetail,null,['class'
                     =>'form-control col-md-6','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
-                    <div class="table-responsive" id="groupTable" style="display:none;">
+                </div>
+                <div class="row mt-4">
+                    <label class="control-label col-md-3"><b>Group tag</b></label>
+                    <div class="col-md-6 p-0">
+                        <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="">
+                    </div>
+                    <div class="table-responsive mt-4" id="groupTable" style="display:none;">
                         <div class="table-responsive">
                             <table class="table table-striped jambo_table bulk_action nowrap datatable"
                                 id="group_table">
@@ -374,6 +380,15 @@ Organizations
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label sel-label-org pl-4"><b>Group tag</b></label>
+                        <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
+                            <input type="text" class="form-control" id="createGroupToken" name="createGroupToken"
+                                value="" />
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -404,10 +419,33 @@ Organizations
 
 @endsection
 @section('customScript')
-
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js">
+</script>
+<script type="text/javascript"
+    src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
 <script type="text/javascript"
     src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
 <script src="{{asset('js/markerclusterer.js')}}"></script>
+<script>
+    $(document).ready(function() {   
+        $('#tokenfield').tokenfield({
+        autocomplete: {
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {   
+        $('#createGroupToken').tokenfield({
+        autocomplete: {
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
+    });
+</script>
 <script type="text/javascript">
     $(function () {
         $('#startDate').datetimepicker({ 
@@ -619,6 +657,7 @@ Organizations
         $('#saveGroup').click(function(){
             var id = []
             var checkbox = $('#groupContact').find('input[type="checkbox"]:checked')
+            let tokenfield = $('#tokenfield').val();
             checkbox.each(function(index,data){
                 id.push(data.value)
             })
@@ -641,10 +680,9 @@ Organizations
                 $('#alertModal').modal('show');
                 return false;
             }
-            connect_group(id,groupId)
+            connect_group(id,groupId,tokenfield)
         });
-        function connect_group(id,groupId){
-            
+        function connect_group(id,groupId,tokenfield){
             if($.inArray('on', id) != -1){
                 id.splice(id.indexOf('on'),1)
             }
@@ -655,7 +693,7 @@ Organizations
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
-                data:{ id, groupId,newContactData},
+                data:{ id, groupId,tokenfield},
                 success:function(response){
                     $('#loading').hide();
                     $('#message').empty();
@@ -747,6 +785,8 @@ Organizations
     function createGroup(){
         let group_name = $('#group_name').val();
         let group_type = $('#group_type').val();
+        let createGroupToken = $('#createGroupToken').val();
+        
         $('#groupNameError').hide();
         if(group_name == ''){
             $('#groupNameError').show();
@@ -765,11 +805,15 @@ Organizations
             headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
             },
-            data:{ group_name,group_type },
+            data:{ group_name,group_type,createGroupToken },
             success:function(response){
                 $('#createGroup').modal('hide');
                 $('#loading').hide();
                 $('#selectGroup').append('<option selected="selected" value="'+response.data+'">'+group_name+'</option>')
+                let tags = createGroupToken.split(',');
+                $.each(tags,function(i,v){
+                    $('.tokenfield').append('<div class="token"><span class="token-label" style="max-width: 507.984px;">'+v+'</span><a href="#" class="close"tabindex="-1">×</a></div>')
+                });
             },
             error:function(error){
                 $('#createGroup').modal('hide');
