@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Campaign;
 use App\Contact;
 use App\Group;
 use App\Location;
@@ -156,7 +157,11 @@ class GroupController extends Controller
         $group_date_created_info = Group::where('group_recordid', '=', $id)->select('group_created_at')->first();
         $group_date_created = $group_date_created_info['group_created_at'];
 
-        return view('frontEnd.group', compact('group', 'map', 'locations', 'contacts', 'group_date_created'));
+        // this section for get campaign
+
+        $campaigns = Campaign::where('group_id', 'LIKE', '%' . $group->id . '%')->get();
+
+        return view('frontEnd.group', compact('group', 'map', 'locations', 'contacts', 'group_date_created', 'campaigns'));
 
     }
 

@@ -120,9 +120,7 @@ Organizations
                         $filename = public_path($campaign->campaign_file);
                         $file_type = \File::extension($filename);
                         @endphp
-                        @if ($campaign->campaign_type == 1)
-
-                        @else
+                        @if ($campaign->campaign_type != 1)
                         @if (strstr($campaign->campaign_file,'audio/') || $file_type == 'mp3' || $file_type == 'mpeg' ||
                         $file_type == 'mpga' || $file_type == 'wav' || $file_type == 'aac')
                         <div class="btn-group" aria-label="Basic example" role="group">

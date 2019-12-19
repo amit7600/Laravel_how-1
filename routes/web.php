@@ -126,6 +126,9 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/checkTwillio', 'HomeController@checkTwillio')->name('checkTwillio');
     Route::post('/create_group', 'MessageController@create_group')->name('create_group');
     Route::get('download_attachment/{id}', 'CampaignController@download_attachment');
+
+    Route::post('send_message/{id}', 'BulkSmsController@send_message')->name('send_message');
+    Route::post('group_message/{id}', 'BulkSmsController@group_message')->name('group_message');
 });
 
 Route::resource('login_register_edit', 'EditLoginRegisterController');
@@ -228,3 +231,5 @@ Route::group(['middleware' => ['web', 'auth', 'permission']], function () {
     // new d9
 
 });
+Route::resource('religions', 'backend\ReligionsController');
+Route::resource('organizationTypes', 'backend\organizationTypeController');

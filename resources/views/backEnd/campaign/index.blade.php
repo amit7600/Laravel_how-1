@@ -108,7 +108,7 @@ Organizations
                 <a class="nav-link" href="#">Campaigns</a>
                 <ul class="nav flex-column">
                     <li><a class="{{Request::segment(1) == 'campaigns' ? 'nav-link active' : 'nav-link'}}"
-                            href="{{route('campaigns.index')}}">View All</a></li>
+                            href="{{route('campaigns.index')}}">View Campaigns</a></li>
                     <li><a class="nav-link" href="{{route('campaigns.create')}}">Create a Campaign</a></li>
                 </ul>
             </li>

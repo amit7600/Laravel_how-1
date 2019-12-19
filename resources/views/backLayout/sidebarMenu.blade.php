@@ -46,9 +46,9 @@
         </li>
         <li><a><i class="fa fa-table"></i> Texonomies <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
-            <li><a href="#">Religions</a></li>
+            <li><a href="/religions">Religions</a></li>
             <li><a href="#">Languages</a></li>
-            <li><a href="#">Organization type</a></li>
+            <li><a href="/organizationTypes">Organization type</a></li>
             <li><a href="#">Contact type</a></li>
             <li><a href="#">Facility type</a></li>
           </ul>
