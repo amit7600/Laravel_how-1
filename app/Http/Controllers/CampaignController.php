@@ -39,7 +39,7 @@ class CampaignController extends Controller
 
         // Here Get List of group [Start]
         $groupList = Group::pluck('group_name', 'group_name');
-        $campaigns = Campaign::get();
+        $campaigns = Campaign::orderBy('id', 'desc')->get();
         $groups = Group::get();
 
         // Here Get List of group [Start]
@@ -232,13 +232,13 @@ class CampaignController extends Controller
             'group_id' => 'required',
 
         ]);
-        if ($request->get('campaign_type') != 2) {
-            if ($request->get('campaign_type') == 3) {
-                $this->validate($request, [
-                    'audio_campaign_file' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac',
-                ]);
-            }
-        }
+        // if ($request->get('campaign_type') != 2) {
+        //     if ($request->get('campaign_type') == 3) {
+        //         $this->validate($request, [
+        //             'audio_campaign_file' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac',
+        //         ]);
+        //     }
+        // }
 
         try {
             DB::beginTransaction();
@@ -249,7 +249,8 @@ class CampaignController extends Controller
                 $campaignImg = $request->file('attechment_campaign_file');
                 $imagePath = $this->upload($request->file('attechment_campaign_file'), 'attachment');
             } else {
-                $imagePath = '';
+                $campaign = Campaign::whereId($id)->first();
+                $imagePath = $campaign->campaign_file;
             }
 
             $seesionData = Session::get('imagePath');

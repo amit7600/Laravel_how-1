@@ -1156,11 +1156,11 @@ class ContactController extends Controller
         $checked_hours = [];
 
         // this section for message table in contact
-        $contacts = CampaignReport::where('contact_id', $contact->id)->where('status','Delivered')->get();
+        $contacts = CampaignReport::where('contact_id', $contact->id)->where('status', 'Delivered')->get();
 
         return view('frontEnd.contact', compact('organization', 'contact', 'locations', 'mailing_address', 'contact_organization_name', 'organization_id', 'comment_list',
             'office_phone_number', 'cell_phone_number', 'emergency_phone_number', 'office_fax_phone_number', 'groups', 'group_names', 'contact_group_name_list', 'contact_group_recordid_list',
-            'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours','contacts'));
+            'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'contacts'));
     }
 
     /**
@@ -1409,6 +1409,7 @@ class ContactController extends Controller
         }
 
         $contact_office_phones = $request->contact_office_phones;
+
         $office_phone = Phone::where('phone_number', '=', $contact_office_phones)->first();
         if ($office_phone != null) {
             $office_phone_id = $office_phone["phone_recordid"];
@@ -1586,23 +1587,25 @@ class ContactController extends Controller
             $contact->contact_cell_phones = $phone->phone_recordid;
             $phone->save();
         }
-
-        $contact_office_phones = $request->contact_office_phones;
-        $office_phone = Phone::where('phone_number', '=', $contact_office_phones)->first();
-        if ($office_phone != null) {
-            $office_phone_id = $office_phone["phone_recordid"];
-            $contact->contact_office_phones = $office_phone_id;
-        } else {
-            $phone = new Phone;
-            $new_recordid = Phone::max('phone_recordid') + 1;
-            if (in_array($new_recordid, $phone_recordid_list)) {
+        if ($request->has('contact_office_phones')) {
+            $contact_office_phones = $request->contact_office_phones;
+            $office_phone = Phone::where('phone_number', '=', $contact_office_phones)->where('phone_type','office phone')->first();
+            if ($office_phone != null) {
+                $office_phone_id = $office_phone["phone_recordid"];
+                $contact->contact_office_phones = $office_phone_id;
+            } else {
+                $phone = new Phone;
                 $new_recordid = Phone::max('phone_recordid') + 1;
+                if (in_array($new_recordid, $phone_recordid_list)) {
+                    $new_recordid = Phone::max('phone_recordid') + 1;
+                }
+                $phone->phone_recordid = $new_recordid;
+                $phone->phone_number = $contact_office_phones;
+                $phone->phone_type = "office phone";
+                $contact->contact_office_phones = $phone->phone_recordid;
+                $phone->save();
             }
-            $phone->phone_recordid = $new_recordid;
-            $phone->phone_number = $contact_office_phones;
-            // $phone->phone_type = "office phone";
-            $contact->contact_office_phones = $phone->phone_recordid;
-            $phone->save();
+
         }
 
         $contact_emergency_phones = $request->contact_emergency_phones;

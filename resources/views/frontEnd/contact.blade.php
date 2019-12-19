@@ -73,6 +73,18 @@ Contact
 </style>
 
 @section('content')
+@if (session()->has('error'))
+<div class="alert alert-danger alert-dismissable custom-success-box" style="margin: 15px;">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong> {{ session()->get('error') }} </strong>
+</div>
+@endif
+@if (session()->has('success'))
+<div class="alert alert-success alert-dismissable custom-success-box" style="margin: 15px;">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong> {{ session()->get('success') }} </strong>
+</div>
+@endif
 <div class="wrapper">
     <!-- Page Content Holder -->
     <div id="content" class="container">
@@ -177,7 +189,7 @@ Contact
                         </div>
                     </div>
                     <button class="btn btn-secondary message-td" value="{{$contact->contact_recordid}}"
-                        data-toggle="modal" data-target=".bs-message-modal-lg"><i class="fa fa-fw fa-envelope"></i> Send
+                        data-toggle="modal" data-target="#sendMessage"><i class="fa fa-fw fa-envelope"></i> Send
                         a Message</button>
                 </div>
                 <div class="card">
@@ -212,12 +224,18 @@ Contact
                                                 class="badge badge-{{$value->type ==1 ? 'success' : ($value->type == 2 ? 'danger' : ($value->type == 3 ?'warning' : 'primary'))}}">{{$value->type ==1 ? 'Email' : ($value->type == 2 ? 'SMS' : ($value->type == 3 ?'Audio' : 'sms and audio'))}}</span>
                                         </td>
                                         <td> {{ $value->status }} </td>
-                                        <td><a href="/campaign_report/{{$value->campaign->id}}"
-                                                target="_blank">{{ $value->campaign->name }}</a></td>
+                                        <td>
+                                            @if ($value->campaign_id != '')
+                                            <a href="/campaign_report/{{ $value->campaign->id }}"
+                                                target="_blank">{{ $value->campaign->name }}</a>
+                                            @else
+                                            ''
+                                            @endif
+                                        </td>
                                         <td> {{ $value->subject }} </td>
                                         <td> {{ $value->body }} </td>
                                         <td>
-                                            @if ($value->campaign->campaign_file != null)
+                                            @if ($value->campaign_id != '' &&$value->campaign->campaign_file != null)
                                             <a href="{{url($value->campaign->campaign_file)}}" target="_blank">See
                                                 Attachment</a>
                                             @endif
@@ -295,29 +313,39 @@ Contact
 
 
 
-            <div class="modal fade bs-message-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal fade bs-message-modal-lg" id="sendMessage" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
-                        <form action="/send_message" method="POST" id="send_message_form">
-                            {!! Form::token() !!}
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span
-                                        aria-hidden="true">×</span>
-                                </button>
-                                <h2 class="modal-title" id="myModalLabel" style="color: #3949ab;">Send Message</h2>
+                        {!! Form::open(['route' => array('send_message',$contact->id)]) !!}
+                        {!! csrf_field() !!}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                            </button>
+                            <h2 class="modal-title" id="myModalLabel" style="color: #3949ab;">Send Message</h2>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="contact_message_textarea"><b> Message Type</b></label>
+                                {!! Form::select('message_type',['sms' => 'SMS','email' => 'E-mail'],null,['class' =>
+                                'form-control','placeholder' => 'Select message type','onchange' =>
+                                'messageType(this)']) !!}
                             </div>
-                            <div class="modal-body">
-                                <input type="hidden" id="contact_recordid" name="contact_recordid">
-                                <div class="form-group">
-                                    <label for="contact_message_textarea">Message Content</label>
-                                    <textarea class="form-control" id="contact_message_textarea" rows="5"></textarea>
-                                </div>
+                            <div class="form-group" style="display:none;" id="subject">
+                                <label for="contact_message_textarea"><b>subject</b></label>
+                                {!! Form::text('subject',null,['class' => 'form-control','placeholder' => 'Subject'])
+                                !!}
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-secondary btn-send">Send</button>
+                            <div class="form-group">
+                                <label for="contact_message_textarea"><b>Message Content</b></label>
+                                <textarea class="form-control" id="contact_message_textarea" name="message_body"
+                                    rows="5" placeholder="Message body"></textarea>
                             </div>
-                        </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-secondary btn-send">Send</button>
+                        </div>
+                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
@@ -329,6 +357,16 @@ Contact
 </script>
 <script type="text/javascript"
     src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
+<script>
+    function messageType(e){
+            let value = e.value;
+            if(value == 'email'){
+                $('#subject').show();
+            }else{
+                $('#subject').hide();
+            }
+        }
+</script>
 
 <script>
     var dataTable;
