@@ -18,7 +18,6 @@ class CreateCampaignReportsTable extends Migration
             $table->bigInteger('user_id')->nullable();
             $table->bigInteger('contact_id')->nullable();
             $table->enum('type', [1, 2, 3, 4])->nullable()->comment('1 = Email and 2 = SMS and 3 = Audio and 4 = Audio + SMS');
-            $table->bigInteger('type')->nullable();
             $table->bigInteger('campaign_id')->nullable();
             $table->string('status')->nullable();
             $table->dateTime('date_sent')->nullable();
