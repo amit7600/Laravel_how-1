@@ -179,6 +179,9 @@ class BulkSmsController extends Controller
     }
     public function send_message(Request $request, $id)
     {
+        $this->validate($request, [
+            'message_type' => 'required',
+        ]);
         try {
             $type = $request->get('message_type');
             $body = $request->get('message_body');
@@ -260,6 +263,10 @@ class BulkSmsController extends Controller
     }
     public function group_message(Request $request, $id)
     {
+        $this->validate($request, [
+            'message_type' => 'required',
+        ]);
+
         try {
             $type = $request->get('message_type');
             $body = $request->get('message_body');
@@ -295,7 +302,6 @@ class BulkSmsController extends Controller
                         'toContact' => $contact->contact_first_name,
                         'fromNumber' => $data->from,
                         'fromContact' => 'HowCalm',
-                        'contact_id' => $contact->id,
                         'body' => $body,
                     ]);
                     DB::commit();
@@ -348,6 +354,201 @@ class BulkSmsController extends Controller
         } catch (\Throwable $th) {
             dd($th);
             return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+    public function sendMultipleMessage(Request $request)
+    {
+        if ($request->get('sending_method') == 'contact') {
+            $this->validate($request, [
+                'contacts' => 'required',
+            ]);
+
+        } elseif ($request->get('sending_method') == 'group') {
+            $this->validate($request, [
+                'groups' => 'required',
+            ]);
+        }
+        try {
+            $type = $request->get('sending_type');
+            $contacts = $request->get('contacts');
+            $groups = $request->get('groups');
+            $sending_method = $request->get('sending_method');
+            $subject = $request->get('subject');
+            $body = $request->get('body');
+
+            if ($type == 'sms') {
+                if ($sending_method == 'contact') {
+                    foreach ($contacts as $key => $value) {
+                        $phone = Phone::where('phone_recordid', $value)->first();
+                        $contactData = Contact::where('contact_cell_phones', $value)->first();
+                        $contact = $phone->phone_number;
+                        if ($phone && $contact != '') {
+                            $response = $this->client->messages->create(
+                                $contact,
+                                [
+                                    'from' => env('TWILIO_FROM'),
+                                    'body' => $body,
+                                ]
+                            );
+                            $response = \Curl::to('https://api.twilio.com/' . $response->uri)
+                                ->withOption('USERPWD', $this->sid . ':' . $this->token)
+                                ->get();
+
+                            $data = json_decode($response);
+
+                            DB::beginTransaction();
+                            CampaignReport::create([
+                                'user_id' => Sentinel::check()->id,
+                                'type' => '2',
+                                'status' => $data->status,
+                                'contact_id' => $contactData->id,
+                                'date_sent' => Carbon::now(),
+                                'direction' => $data->direction,
+                                'toNumber' => $data->to,
+                                'toContact' => $contactData->contact_first_name,
+                                'fromNumber' => $data->from,
+                                'fromContact' => 'HowCalm',
+                                'body' => $body,
+                            ]);
+                            DB::commit();
+
+                        }
+                    }
+                } else {
+                    foreach ($groups as $key => $group) {
+                        $findContacts = Contact::where('contact_group', 'LIKE', '%' . $group . '%')->get();
+                        if (count($findContacts) > 0) {
+                            foreach ($findContacts as $key => $contact) {
+                                $response = $this->client->messages->create(
+                                    $contact->cellphone->phone_number,
+                                    [
+                                        'from' => env('TWILIO_FROM'),
+                                        'body' => $body,
+                                    ]
+                                );
+                                $response = \Curl::to('https://api.twilio.com/' . $response->uri)
+                                    ->withOption('USERPWD', $this->sid . ':' . $this->token)
+                                    ->get();
+
+                                $data = json_decode($response);
+                                DB::beginTransaction();
+                                CampaignReport::create([
+                                    'user_id' => Sentinel::check()->id,
+                                    'type' => '2',
+                                    'status' => $data->status,
+                                    'contact_id' => $contact->id,
+                                    'date_sent' => Carbon::now(),
+                                    'direction' => $data->direction,
+                                    'toNumber' => $data->to,
+                                    'toContact' => $contact->contact_first_name,
+                                    'fromNumber' => $data->from,
+                                    'fromContact' => 'HowCalm',
+                                    'body' => $body,
+                                ]);
+                                DB::commit();
+
+                            }
+                        }
+                    }
+
+                }
+                return redirect()->back()->with('success', 'SMS sent successfully!');
+            } else {
+                if ($sending_method == 'contact') {
+                    foreach ($contacts as $key => $value) {
+
+                        $contact = Contact::where('contact_cell_phones', $value)->first();
+                        $contact_email = $contact->contact_email;
+                        if ($contact && $contact_email != null) {
+                            $from = env('MAIL_FROM_ADDRESS');
+                            $name = env('MAIL_FROM_NAME');
+                            $email = new \SendGrid\Mail\Mail();
+                            $email->setFrom($from, $name);
+                            $email->setSubject($subject);
+                            $email->addTo($contact_email, $contact->contact_first_name);
+                            $email->addContent("text/plain", $body);
+                            $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+
+                            $response = $sendgrid->send($email);
+
+                            $error = '';
+                            if ($response->statusCode() == 401) {
+                                $error = json_decode($response->body());
+                            }
+                            DB::beginTransaction();
+                            CampaignReport::create([
+                                'user_id' => Sentinel::check()->id,
+                                'type' => '1',
+                                'status' => $response->statusCode() == 202 ? 'Delivered' : 'Undelivered',
+                                'date_sent' => Carbon::now(),
+                                'error_message' => $error != '' ? $error->errors[0]->message : '',
+                                'toContact' => $contact->contact_first_name,
+                                'fromNumber' => env('MAIL_FROM_ADDRESS'),
+                                'toNumber' => $contact_email,
+                                'direction' => 'outbound-api',
+                                'fromContact' => 'HowCalm',
+                                'contact_id' => $contact->id,
+                                'subject' => $subject,
+                                'body' => $body,
+                            ]);
+                            DB::commit();
+
+                        }
+                    }
+                } else {
+                    foreach ($groups as $key => $group) {
+                        $findContacts = Contact::where('contact_group', 'LIKE', '%' . $group . '%')->get();
+                        if (count($findContacts) > 0) {
+                            foreach ($findContacts as $key => $contact) {
+                                $contact_email = $contact->contact_email;
+
+                                if ($contact && $contact_email != null) {
+                                    $from = env('MAIL_FROM_ADDRESS');
+                                    $name = env('MAIL_FROM_NAME');
+                                    $email = new \SendGrid\Mail\Mail();
+                                    $email->setFrom($from, $name);
+                                    $email->setSubject($subject);
+                                    $email->addTo($contact_email, $contact->contact_first_name);
+                                    $email->addContent("text/plain", $body);
+                                    $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+
+                                    $response = $sendgrid->send($email);
+
+                                    $error = '';
+                                    if ($response->statusCode() == 401) {
+                                        $error = json_decode($response->body());
+                                    }
+                                    DB::beginTransaction();
+                                    CampaignReport::create([
+                                        'user_id' => Sentinel::check()->id,
+                                        'type' => '1',
+                                        'status' => $response->statusCode() == 202 ? 'Delivered' : 'Undelivered',
+                                        'date_sent' => Carbon::now(),
+                                        'error_message' => $error != '' ? $error->errors[0]->message : '',
+                                        'toContact' => $contact->contact_first_name,
+                                        'fromNumber' => env('MAIL_FROM_ADDRESS'),
+                                        'toNumber' => $contact_email,
+                                        'direction' => 'outbound-api',
+                                        'fromContact' => 'HowCalm',
+                                        'contact_id' => $contact->id,
+                                        'subject' => $subject,
+                                        'body' => $body,
+                                    ]);
+                                    DB::commit();
+
+                                }
+                            }
+                        }
+                    }
+
+                }
+                return redirect()->back()->with('success', 'Email sent successfully!');
+
+            }
+
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+
         }
     }
 

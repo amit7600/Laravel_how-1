@@ -175,11 +175,57 @@ Organizations
         {!! Form::close() !!}
     </div>
 </div>
+<!-- Modal -->
+<div id="contact" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
 
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Contact</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th><b>Contact name</b></th>
+                                <th><b>Email</b></th>
+                                <th><b>Phone</b></th>
+                                <th><b>Organization</b></th>
+                                <th><b>Action</b></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                {{-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> --}}
+            </div>
+        </div>
+
+
+    </div>
+</div>
 @endsection
 @section('customScript')
 <script src="{{asset('js/markerclusterer.js')}}"></script>
-
+<script>
+    $(document).ready(function(){
+        var blankContact = '<?php echo json_encode($blankContact) ?>'
+        var contact = JSON.parse(blankContact);
+        if(contact.length > 0){
+            $('#contact').modal('show');
+            $.each(contact,function(i,v){
+                $('#tbody').append('<tr><td>'+v.name+'</td><td>'+ v.email +'</td><td>'+v.phone+'</td><td>'+v.organization+'</td><td><button class="btn btn-info btn-sm">add info</button></td></tr>');
+            })
+        }
+    })
+</script>
 <script type="text/javascript">
     function deleteCampaign(id){
         var token = $('meta[name="_token"]').attr('content');

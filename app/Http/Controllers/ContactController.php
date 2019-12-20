@@ -1158,7 +1158,7 @@ class ContactController extends Controller
         // this section for message table in contact
         $contacts = CampaignReport::where('contact_id', $contact->id)->where('status', 'Delivered')->get();
 
-        return view('frontEnd.contact', compact('organization', 'contact', 'locations', 'mailing_address', 'contact_organization_name', 'organization_id', 'comment_list',
+        return view('frontEnd.contact', compact('contact', 'locations', 'mailing_address', 'contact_organization_name', 'organization_id', 'comment_list',
             'office_phone_number', 'cell_phone_number', 'emergency_phone_number', 'office_fax_phone_number', 'groups', 'group_names', 'contact_group_name_list', 'contact_group_recordid_list',
             'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'contacts'));
     }
@@ -1280,7 +1280,7 @@ class ContactController extends Controller
 
         $map = Map::find(1);
         return view('frontEnd.contact-edit', compact('contact', 'contact_organization_name', 'contact_pronoun_list',
-            'map', 'organization_name_list', 'organization_type_list', 'contact_languages', 'contact_first_name',
+            'map', 'organization_name_list', 'organization_type_list', 'contact_languages',
             'office_phone_number', 'cell_phone_number', 'emergency_phone_number', 'office_fax_phone_number',
             'mailing_address', 'contact_types'));
     }

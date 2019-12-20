@@ -544,4 +544,51 @@ class MessageController extends Controller
         }
 
     }
+    public function getGroupTag(Request $request)
+    {
+        try {
+            $groupRecordId = $request->get('groupRecordId');
+            $group = Group::where('group_recordid', $groupRecordId)->first();
+            $group_tag = $group ? $group->group_tag : '';
+
+            return response()->json([
+                'data' => $group_tag,
+                'success' => true,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+                'success' => false,
+            ], 500);
+
+        }
+    }
+    public function createMessage()
+    {
+        try {
+            $home = Layout::find(1);
+            $map = Map::find(1);
+            $taxonomies = Taxonomy::where('taxonomy_parent_name', '=', null)->orderBy('taxonomy_name', 'asc')->get();
+            $parent_taxonomy = [];
+            $child_taxonomy = [];
+            $checked_organizations = [];
+            $checked_insurances = [];
+            $checked_ages = [];
+            $checked_languages = [];
+            $checked_settings = [];
+            $checked_culturals = [];
+            $checked_transportations = [];
+            $checked_hours = [];
+
+            $contactDetail = Phone::orderBy('id', 'desc')->pluck('phone_number', 'phone_recordid');
+            $gorupDetail = Group::pluck('group_name', 'group_recordid');
+
+            return view('backEnd.messages.createMessage', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'gorupDetail', 'contactDetail'));
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', $th->getMesage());
+        }
+    }
 }

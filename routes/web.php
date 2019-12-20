@@ -126,9 +126,12 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/checkTwillio', 'HomeController@checkTwillio')->name('checkTwillio');
     Route::post('/create_group', 'MessageController@create_group')->name('create_group');
     Route::get('download_attachment/{id}', 'CampaignController@download_attachment');
+    Route::get('createMessage', 'MessageController@createMessage')->name('createMessage');
 
     Route::post('send_message/{id}', 'BulkSmsController@send_message')->name('send_message');
     Route::post('group_message/{id}', 'BulkSmsController@group_message')->name('group_message');
+    Route::post('getGroupTag', 'MessageController@getGroupTag')->name('getGroupTag');
+    Route::post('sendMultipleMessage', 'BulkSmsController@sendMultipleMessage')->name('sendMultipleMessage');
 });
 
 Route::resource('login_register_edit', 'EditLoginRegisterController');

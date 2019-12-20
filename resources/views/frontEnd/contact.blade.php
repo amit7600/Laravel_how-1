@@ -85,6 +85,21 @@ Contact
     <strong> {{ session()->get('success') }} </strong>
 </div>
 @endif
+@if (session()->has('success'))
+<div class="alert alert-success alert-dismissable custom-success-box" style="margin: 15px;">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong> {{ session()->get('success') }} </strong>
+</div>
+@endif
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 <div class="wrapper">
     <!-- Page Content Holder -->
     <div id="content" class="container">

@@ -263,10 +263,21 @@ Organizations
                     <button class="btn btn-info" data-toggle="modal" data-target="#createGroup">Create group</button>
                 </div>
                 <div class="row">
-                    <label class="control-label col-md-3"><b>Select static group</b></label>
+                    <label class="control-label col-md-3"><b> static group</b></label>
                     {!! Form::select('selectGroup',$GroupDetail,null,['class'
-                    =>'form-control col-md-6','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
-                    <div class="table-responsive" id="groupTable" style="display:none;">
+                    =>'form-control col-md-6','id' => 'selectGroup','placeholder'=>'Select Group','onchange' =>
+                    'changeGroup(this)'])!!}
+                </div>
+                <div class="row mt-4">
+                    <label class="control-label col-md-3"><b>Group tag</b></label>
+                    <div class="col-md-6 p-0">
+                        <div id="groupTag"></div>
+                        <div class="col-md-12 p-0" id="groupTagTemp">
+                            <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mt-4" id="groupTable" style="display:none;">
                         <div class="table-responsive">
                             <table class="table table-striped jambo_table bulk_action nowrap datatable"
                                 id="group_table">
@@ -321,6 +332,15 @@ Organizations
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label sel-label-org pl-4"><b>Group tag</b></label>
+                        <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
+                            <input type="text" class="form-control" id="createGroupToken" name="createGroupToken"
+                                value="" />
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -348,6 +368,35 @@ Organizations
         </div>
     </div>
 </div>
+@endsection
+@section('customScript')
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js">
+</script>
+<script type="text/javascript"
+    src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
+<script type="text/javascript"
+    src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+<script src="{{asset('js/markerclusterer.js')}}"></script>
+<script>
+    $(document).ready(function() {   
+        $('#tokenfield').tokenfield({
+        autocomplete: {
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {   
+        $('#createGroupToken').tokenfield({
+        autocomplete: {
+            delay: 100
+        },
+        showAutocompleteOnFocus: true
+        });
+    });
+</script>
 <script>
     var newContactData = [];
     $(document).ready(function(){
@@ -432,6 +481,7 @@ Organizations
 
         $('#saveGroup').click(function(){
             var id = []
+            let tokenfield = $('#tokenfield').val();
             var checkbox = $('#groupContact').find('input[type="checkbox"]:checked')
             checkbox.each(function(index,data){
                 id.push(data.value)
@@ -455,9 +505,9 @@ Organizations
                 $('#alertModal').modal('show');
                 return false;
             }
-            connect_group(id,groupId)
+            connect_group(id,groupId,tokenfield)
         });
-        function connect_group(id,groupId){
+        function connect_group(id,groupId,tokenfield){
             if($.inArray('on', id) != -1){
                 id.splice(id.indexOf('on'),1)
             }
@@ -467,7 +517,7 @@ Organizations
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
-                data:{ id, groupId,newContactData},
+                data:{ id, groupId,newContactData,tokenfield},
                 success:function(response){
                     $('#message').empty();
                     $('#addClass').removeClass('bg-success');
@@ -497,13 +547,15 @@ Organizations
             if($.inArray('on', id) != -1){
                 id.splice(id.indexOf('on'),1)
             }
-            // if(id.length == 0){
-            //     $('#message').empty();
-            //     $('#addClass').addClass('bg-danger');
-            //     $('#message').append('<h4 style="color:#fff;">Please select any report first!</h4>')
-            //     $('#alertModal').modal('show');
-            //     return false;
-            // }
+            if(id.length == 0){
+                $('#message').empty();
+                $('#addClass').removeClass('bg-danger');
+                $('#addClass').removeClass('bg-success');
+                $('#addClass').addClass('bg-danger');
+                $('#message').append('<h4 style="color:#fff;">Please select any report first!</h4>')
+                $('#alertModal').modal('show');
+                return false;
+            }
             
             $('#loading').show();
             $.ajax({
@@ -514,6 +566,7 @@ Organizations
                     },
                     data:{ id },
                     success:function(response){
+                        $('#loading').hide();
                         $('#groupTable').hide();
                         newContactData = [];
                         if(response.success){
@@ -537,13 +590,19 @@ Organizations
                         }
                     },
                     error:function(error){
-                        $('#error').append('<div class="alert alert-danger">'+error['responseJSON'].message+'</div>')
+                        $('#loading').hide();
+                        $('#message').empty();
+                        $('#addClass').addClass('bg-danger');
+                        $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
+                        $('#alertModal').modal('show');
                     }
                 })
         }
     function createGroup(){
         let group_name = $('#group_name').val();
         let group_type = $('#group_type').val();
+        let createGroupToken = $('#createGroupToken').val();
+
         $('#groupNameError').hide();
         if(group_name == ''){
             $('#groupNameError').show();
@@ -562,11 +621,67 @@ Organizations
             headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
             },
-            data:{ group_name,group_type },
+            data:{ group_name,group_type,createGroupToken },
             success:function(response){
                 $('#createGroup').modal('hide');
                 $('#loading').hide();
                 $('#selectGroup').append('<option selected="selected" value="'+response.data+'">'+group_name+'</option>')
+                $('#groupTag').empty();
+                $('#groupTagTemp').remove();
+                $('#groupTag').append('<div class="col-md-12 p-0"><input type="text" class="form-control" id="tokenfield" name="tokenfield" value="'+createGroupToken+'"></div>');
+                $('#tokenfield').tokenfield({
+                    autocomplete: {
+                    delay: 100
+                    },
+                    showAutocompleteOnFocus: true
+                });
+            },
+            error:function(error){
+                $('#createGroup').modal('hide');
+                $('#loading').hide();
+                $('#message').empty();
+                $('#addClass').removeClass('bg-danger');
+                $('#addClass').removeClass('bg-success');
+                $('#addClass').addClass('bg-danger');
+                $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
+                $('#alertModal').modal('show');
+            }
+        })
+    }
+    function changeGroup(e){
+        let groupRecordId = e.value;
+
+        if (groupRecordId == '') {
+            $('#message').empty();
+            $('#addClass').removeClass('bg-danger');
+            $('#addClass').removeClass('bg-success');
+            $('#addClass').addClass('bg-danger');
+            $('#message').append('<h4 style="color:#fff;">Please select any group first!</h4>')
+            $('#alertModal').modal('show');
+            return false
+        }
+         $('#loading').show();
+        $.ajax({
+            method: 'POST',
+            url: '{{route("getGroupTag")}}',
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            },
+            data:{ groupRecordId },
+            success:function(response){
+                $('#loading').hide();
+               if(response.success){
+                   const groupTag = response.data != null ? response.data : '';
+                   $('#groupTag').empty();
+                   $('#groupTagTemp').remove();
+                   $('#groupTag').append('<div class="col-md-12 p-0"><input type="text" class="form-control" id="tokenfield" name="tokenfield" value="'+groupTag+'"></div>');
+                   $('#tokenfield').tokenfield({
+                        autocomplete: {
+                            delay: 100
+                        },
+                        showAutocompleteOnFocus: true
+                    });
+               }
             },
             error:function(error){
                 $('#createGroup').modal('hide');
@@ -581,9 +696,5 @@ Organizations
         })
     }
 </script>
-
-@endsection
-@section('customScript')
-<script src="{{asset('js/markerclusterer.js')}}"></script>
 
 @endsection
