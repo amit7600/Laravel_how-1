@@ -132,6 +132,8 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('group_message/{id}', 'BulkSmsController@group_message')->name('group_message');
     Route::post('getGroupTag', 'MessageController@getGroupTag')->name('getGroupTag');
     Route::post('sendMultipleMessage', 'BulkSmsController@sendMultipleMessage')->name('sendMultipleMessage');
+    Route::post('saveContactInfo', 'MessageController@saveContactInfo')->name('saveContactInfo');
+    Route::post('addContactToGroup/{id}', 'GroupController@addContactToGroup')->name('addContactToGroup');
 });
 
 Route::resource('login_register_edit', 'EditLoginRegisterController');

@@ -120,21 +120,21 @@ Organizations
                         <label class="form-check-label">
                             <!-- <input type="radio" class="form-check-input" value="1" name="campaign_type" checked="checked" >Email -->
                             {!! Form::radio('campaign_type',1,true,['class'=>
-                            'form-check-input','id'=>'campaign_type','onclick' => 'selectType(this)'])!!} Email
+                            'form-check-input','onclick' => 'selectType(this)'])!!} Email
                         </label>
                     </div>
                     <div class="form-check-inline">
                         <label class="form-check-label">
                             <!-- <input type="radio" class="form-check-input" value="2" name="campaign_type">SMS -->
                             {!! Form::radio('campaign_type',2,null,['class'=>
-                            'form-check-input','id'=>'campaign_type','onclick' => 'selectType(this)'])!!} SMS
+                            'form-check-input','onclick' => 'selectType(this)'])!!} SMS
                         </label>
                     </div>
                     <div class="form-check-inline">
                         <label class="form-check-label">
                             <!-- <input type="radio" class="form-check-input" value="3" name="campaign_type">Audio Recording -->
                             {!! Form::radio('campaign_type',3,null,['class'=>
-                            'form-check-input','id'=>'campaign_type','onclick' => 'selectType(this)'])!!} Audio
+                            'form-check-input','onclick' => 'selectType(this)'])!!} Audio
                             Recording
 
                         </label>
@@ -143,7 +143,7 @@ Organizations
                         <label class="form-check-label">
                             <!-- <input type="radio" class="form-check-input" value="3" name="campaign_type">Audio Recording -->
                             {!! Form::radio('campaign_type',4,null,['class'=>
-                            'form-check-input','id'=>'campaign_type','onclick' => 'selectType(this)'])!!} SMS and Audio
+                            'form-check-input','onclick' => 'selectType(this)'])!!} SMS and Audio
                         </label>
                     </div>
                 </div>
@@ -167,7 +167,7 @@ Organizations
                 <div id="attechment_content">
                     <label class="control-label sel-label-org pl-4"><strong>Attechment</strong></label>
                     <div class="col-md-12 col-sm-12 col-xs-12 organization-details-div">
-                        <input type="file" id="campaign_file" name="attechment_campaign_file">
+                        <input type="file" name="attechment_campaign_file">
                     </div>
                     <!-- @if ($errors->has('attechment_campaign_file'))
                     <div class="error" style="color:red;">
@@ -178,7 +178,7 @@ Organizations
                 <div id="audio_content">
                     <label class="control-label sel-label-org pl-4"><strong>Audio Recording</strong></label>
                     <div class="col-md-12 col-sm-12 col-xs-12 organization-details-div">
-                        <input type="file" id="campaign_file" name="audio_campaign_file">
+                        <input type="file" name="audio_campaign_file">
                     </div>
                     @if ($errors->has('audio_campaign_file'))
                     <div class="error" style="color:red;">
@@ -216,7 +216,7 @@ Organizations
                     <div class="form-check-inline">
                         <label class="form-check-label">
                             {!! Form::radio('sending_type',1,true,['class'=>
-                            'form-check-input','id'=>'sending_type','onclick' => 'sendingType(this)'])!!} Immediately
+                            'form-check-input','onclick' => 'sendingType(this)'])!!} Immediately
                         </label>
                     </div>
                 </div>
@@ -224,7 +224,7 @@ Organizations
                     <div class="form-check-inline">
                         <label class="form-check-label">
                             {!! Form::radio('sending_type',2,false,['class'=>
-                            'form-check-input','id'=>'sending_type','onclick' => 'sendingType(this)'])!!} Schedule
+                            'form-check-input','onclick' => 'sendingType(this)'])!!} Schedule
                         </label>
                     </div>
                 </div>

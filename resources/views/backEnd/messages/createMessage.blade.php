@@ -103,10 +103,10 @@ Create message
                 <div class="form-group" id="contacts" style="display:none;">
                     <label class="control-label sel-label-org pl-4">Select Contacts </label>
                     <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
-                        {!! Form::select('contacts[]',$contactDetail,null,['class' =>
+                        {!! Form::select('contacts[]',$contactDetail,'',['class' =>
                         $errors->has("contacts") ? "form-control selectpicker has-error" :'form-control
                         selectpicker','multiple' =>
-                        'multiple','id' => 'contacts']) !!}
+                        'multiple','data-live-search'=>'true','id' => 'contacts']) !!}
                         {!! $errors->first('contacts', '<p class="help-block" style="color: red">:message</p>') !!}
                     </div>
                 </div>
@@ -115,7 +115,7 @@ Create message
                     <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
                         {!! Form::select('groups[]',$gorupDetail,null,['class' =>
                         $errors->has("groups") ? "form-control selectpicker has-error" :'form-control
-                        selectpicker','multiple' => 'multiple','id' => 'groups']) !!}
+                        selectpicker','multiple' => 'multiple','data-live-search'=>'true','id' => 'groups']) !!}
                         {!! $errors->first('groups', '<p class="help-block" style="color: red">:message</p>') !!}
                     </div>
                 </div>

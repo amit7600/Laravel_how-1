@@ -113,7 +113,8 @@ Organizations
             <li class="nav-item"><a class="{{Request::segment(1) == 'messages' ? 'nav-link active' : 'nav-link'}}"
                     href="{{route('messages.index')}}">View Messages</a></li>
             <li class="nav-item"><a class="nav-link" href="{{route('campaigns.create')}}">Create a Campaign</a></li>
-            <li class="nav-item"><a class="{{Request::segment(1) == 'createMessage' ? 'nav-link active' : 'nav-link'}}" href="{{route('createMessage')}}">Create a Message</a></li>
+            <li class="nav-item"><a class="{{Request::segment(1) == 'createMessage' ? 'nav-link active' : 'nav-link'}}"
+                    href="{{route('createMessage')}}">Create a Message</a></li>
         </ul>
     </div>
     <div class="col-md-10">
@@ -233,7 +234,7 @@ Organizations
                                 @if($getCampaignReport)
                                 @foreach($getCampaignReport as $key=>$value)
                                 <tr>
-                                    @if ($value->status == 'Incoming')
+                                    @if ($value->status == 'Incoming' || $value->campaign_id == '')
                                     <td><b><input type="checkbox" name="checkUncheck[]" id="checkAllAuto"
                                                 value="{{ $value->id}}" class="checkAllAuto"></b>
                                     </td>
@@ -368,15 +369,6 @@ Organizations
                 </div>
                 <div class="form-group">
                     <div class="row">
-                        <label class="control-label sel-label-org pl-4"><b>Group Name</b></label>
-                        <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
-                            {!! Form::select('group_type',['Static' => 'static','Dynamic' =>
-                            'dynamic'],'Static',['class'=> 'form-control','id' => 'group_type']) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
                         <label class="control-label sel-label-org pl-4"><b>Group tag</b></label>
                         <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
                             <input type="text" class="form-control" id="createGroupToken" name="createGroupToken"
@@ -424,9 +416,9 @@ Organizations
 <script>
     $(document).ready(function() {   
         $('#tokenfield').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
+        // autocomplete: {
+        //     delay: 100
+        // },
         showAutocompleteOnFocus: true
         });
     });
@@ -434,9 +426,9 @@ Organizations
 <script>
     $(document).ready(function() {   
         $('#createGroupToken').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
+        // autocomplete: {
+        //     delay: 100
+        // },
         showAutocompleteOnFocus: true
         });
     });
@@ -779,7 +771,7 @@ Organizations
 
     function createGroup(){
         let group_name = $('#group_name').val();
-        let group_type = $('#group_type').val();
+        
         let createGroupToken = $('#createGroupToken').val();
         
         $('#groupNameError').hide();
@@ -800,7 +792,7 @@ Organizations
             headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
             },
-            data:{ group_name,group_type,createGroupToken },
+            data:{ group_name,createGroupToken },
             success:function(response){
                 $('#createGroup').modal('hide');
                 $('#loading').hide();
@@ -809,9 +801,9 @@ Organizations
                 $('#groupTagTemp').remove();
                 $('#groupTag').append('<div class="col-md-12 p-0"><input type="text" class="form-control" id="tokenfield" name="tokenfield" value="'+createGroupToken+'"></div>');
                 $('#tokenfield').tokenfield({
-                    autocomplete: {
-                    delay: 100
-                    },
+                    // autocomplete: {
+                    // delay: 100
+                    // },
                     showAutocompleteOnFocus: true
                 });
                 
@@ -856,9 +848,9 @@ Organizations
                    $('#groupTagTemp').remove();
                    $('#groupTag').append('<div class="col-md-12 p-0"><input type="text" class="form-control" id="tokenfield" name="tokenfield" value="'+groupTag+'"></div>');
                    $('#tokenfield').tokenfield({
-                        autocomplete: {
-                            delay: 100
-                        },
+                        // autocomplete: {
+                        //     delay: 100
+                        // },
                         showAutocompleteOnFocus: true
                     });
                }
