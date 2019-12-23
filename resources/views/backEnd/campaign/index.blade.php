@@ -105,15 +105,24 @@ Organizations
     <div class="col-md-2 left_side_menu">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="{{Request::segment(1) == 'campaigns' ? 'nav-link active' : 'nav-link'}}"
-                    href="{{route('campaigns.index')}}">View Campaigns</a>
-
+                <a class="nav-link" href="#">Campaigns</a>
+                <ul class="nav flex-column">
+                    <li><a class="{{Request::segment(1) == 'campaigns' ? 'nav-link active' : 'nav-link'}}"
+                            href="{{route('campaigns.index')}}">View Campaigns</a></li>
+                    <li><a class="nav-link" href="{{route('campaigns.create')}}">Create a Campaign</a></li>
+                </ul>
             </li>
-            <li class="nav-item"><a class="{{Request::segment(1) == 'messages' ? 'nav-link active' : 'nav-link'}}"
-                    href="{{route('messages.index')}}">View Messages</a></li>
-            <li class="nav-item"><a class="nav-link" href="{{route('campaigns.create')}}">Create a Campaign</a></li>
-            <li class="nav-item"><a class="{{Request::segment(1) == 'createMessage' ? 'nav-link active' : 'nav-link'}}"
-                    href="{{route('createMessage')}}">Create a Message</a></li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('messages.index')}}">Messages</a>
+                <ul class="nav flex-column">
+                    <li><a class="{{Request::segment(1) == 'messages' ? 'nav-link active' : 'nav-link'}}"
+                            href="{{route('messages.index')}}">All</a></li>
+                    <li><a class="{{Request::segment(2) == 'sent' ? 'nav-link active' : 'nav-link'}}"
+                            href="{{url('/message/sent')}}">Sent</a></li>
+                    <li><a class="{{Request::segment(2) == 'recieved' ? 'nav-link active' : 'nav-link'}}"
+                            href="{{url('/message/recieved')}}">Received</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
     <div class="col-md-10">

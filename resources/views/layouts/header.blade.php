@@ -62,9 +62,9 @@
 							</div>
 						</div>
 					</li>
-					{{-- <li class="nav-item responsive_menu">
+					<li class="nav-item responsive_menu">
 						<a class="nav-link waves-effect waves-light waves-round" href="/messages">Messages</a>
-					</li> --}}
+					</li>
 					<li class="nav-item responsive_menu">
 						<a class="nav-link waves-effect waves-light waves-round" href="/dashboard">My Account</a>
 					</li>
