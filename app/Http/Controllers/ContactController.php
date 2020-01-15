@@ -14,10 +14,12 @@ use App\Http\Controllers\Controller;
 use App\Layout;
 use App\Location;
 use App\Map;
+use App\Model\AllLanguage;
+use App\Model\contactType;
+use App\Model\Religion;
 use App\Organization;
 use App\Phone;
 use App\Services\Stringtoint;
-use App\Source_data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use PDF;
@@ -70,8 +72,30 @@ class ContactController extends Controller
                 }
 
                 $contact->contact_organization_id = isset($record['fields']['Organization ID-z']) ? implode(",", $record['fields']['Organization ID-z']) : null;
-                $contact->contact_type = isset($record['fields']['type-z']) ? $record['fields']['type-z'] : null;
-                $contact->contact_languages_spoken = isset($record['fields']['languages spoken-z']) ? implode(",", $record['fields']['languages spoken-z']) : null;
+
+                $contactType = isset($record['fields']['type-z']) ? $record['fields']['type-z'] : null;
+
+                $contact_type = contactType::where('contact_type', 'LIKE', '%' . $contactType . '%')->first();
+
+                $contact->contact_type = isset($contact_type) ? intval($contact_type->id) : null;
+
+                // $contact->contact_type = isset($record['fields']['type-z']) ? $record['fields']['type-z'] : null;
+
+                $languageData = isset($record['fields']['languages spoken-z']) ? $record['fields']['languages spoken-z'] : [];
+                $languageId = [];
+                if (count($languageData) > 0) {
+                    foreach ($languageData as $key => $languageName) {
+                        $AllLanguage = AllLanguage::where('language_name', 'LIKE', '%' . $contactType . '%')->first();
+                        if ($AllLanguage) {
+                            array_push($languageId, $AllLanguage->id);
+                        }
+                    }
+                }
+
+                // $contact->contact_languages_spoken = isset($record['fields']['languages spoken-z']) ? implode(",", $record['fields']['languages spoken-z']) : null;
+
+                $contact->contact_languages_spoken = count($languageId) > 0 ? implode(",", $languageId) : null;
+
                 $contact->contact_other_languages = isset($record['fields']['other languages-z']) ? $record['fields']['other languages-z'] : null;
                 $contact->contact_religious_title = isset($record['fields']['religious title-z']) ? $record['fields']['religious title-z'] : null;
                 $contact->contact_title = isset($record['fields']['title']) ? $record['fields']['title'] : null;
@@ -173,14 +197,97 @@ class ContactController extends Controller
 
     public function index()
     {
-        $contacts = Contact::orderBy('contact_recordid')->paginate(20);
-        $source_data = Source_data::find(1);
+        // $contacts = Contact::orderBy('contact_recordid')->paginate(20);
+        // $source_data = Source_data::find(1);
 
-        return view('backEnd.tables.tb_contacts', compact('contacts', 'source_data'));
+        // return view('backEnd.tables.tb_contacts', compact('contacts', 'source_data'));
+
+        // $contacts = Contact::orderBy('contact_recordid', 'DESC')
+        //     ->paginate(200);
+
+        $address_addresses = Address::select("address_1")->distinct()->get();
+        $address_cities = Address::select("address_city")->distinct()->get();
+        $address_zipcodes = Address::select("address_zip_code")->distinct()->get();
+
+// $contact_types = Contact::select("contact_type")->distinct()->get();
+        $contact_types = contactType::pluck('contact_type', 'id');
+
+// $contact_languages = Contact::select("contact_languages_spoken")->distinct()->get();
+        $contact_languages = AllLanguage::pluck('language_name', 'id');
+
+        $contact_addresses = Contact::select("contact_mailing_address")->distinct()->get();
+// $organization_religions = Organization::select("organization_religion")->distinct()->get();
+        $organization_religions = Religion::where('type', 'religion')->pluck('name', 'id');
+// $organization_faith_traditions = Organization::select("organization_faith_tradition")->distinct()->get();
+        $faith_tradition_list = Religion::where('type', 'faith_tradition')->pluck('name', 'id');
+
+// $organization_denominations = Organization::select("organization_denomination")->distinct()->get();
+        $denomination_list = Religion::where('type', 'denominations')->pluck('name', 'id');
+
+// $organization_judicatory_bodys = Organization::select("organization_judicatory_body")->distinct()->get();
+        $organization_judicatory_bodys = Religion::where('type', 'judicatory_body')->pluck('name', 'id');
+
+        $organization_boroughs = Organization::select("organization_borough")->distinct()->get();
+        $organization_zipcodes = Organization::select("organization_zipcode")->distinct()->get();
+        $contact_tags = Contact::select("contact_tag")->distinct()->get();
+        $locations = Location::with('services', 'address', 'phones')->distinct()->get();
+
+        $tag_list = [];
+        foreach ($contact_tags as $key => $value) {
+            $tags = explode(", ", trim($value->contact_tag));
+            $tag_list = array_merge($tag_list, $tags);
+        }
+        $tag_list = array_unique($tag_list);
+
+        $address_address_list = [];
+        foreach ($address_addresses as $key => $value) {
+            $addresses = explode(", ", trim($value->address_1));
+            $address_address_list = array_merge($address_address_list, $addresses);
+        }
+        $address_address_list = array_unique($address_address_list);
+
+        $address_city_list = [];
+        foreach ($address_cities as $key => $value) {
+            $cities = explode(", ", trim($value->address_city));
+            $address_city_list = array_merge($address_city_list, $cities);
+        }
+        $address_city_list = array_unique($address_city_list);
+
+        $address_zipcode_list = [];
+        foreach ($address_zipcodes as $key => $value) {
+            $zipcodes = explode(", ", trim($value->address_zip_code));
+            $address_zipcode_list = array_merge($address_zipcode_list, $zipcodes);
+        }
+        $address_zipcode_list = array_unique($address_zipcode_list);
+
+// $faith_tradition_list = [];
+        // foreach ($organization_faith_traditions as $key => $value) {
+        //     $faith_traditions = explode(", ", trim($value->organization_faith_tradition));
+        //     $faith_tradition_list = array_merge($faith_tradition_list, $faith_traditions);
+        // }
+        // $faith_tradition_list = array_unique($faith_tradition_list);
+
+// $denomination_list = [];
+        // foreach ($organization_denominations as $key => $value) {
+        //     $denominations = explode(", ", trim($value->organization_denomination));
+        //     $denomination_list = array_merge($denomination_list, $denominations);
+        // }
+        // $denomination_list = array_unique($denomination_list);
+
+        $map = Map::find(1);
+
+        $contacts = Contact::get();
+        $languages = AllLanguage::get();
+
+        return view('frontEnd.contacts', compact('contact_types', 'contact_languages', 'contact_addresses', 'organization_religions', 'organization_judicatory_bodys'
+            , 'organization_boroughs', 'organization_zipcodes', 'address_address_list', 'address_city_list', 'address_zipcode_list',
+            'map', 'locations', 'faith_tradition_list', 'denomination_list', 'tag_list', 'contacts', 'languages'));
+
     }
 
     public function get_all_contacts(Request $request)
     {
+
         $start = $request->start;
         $length = $request->length;
         $search_term = $request->search_term;
@@ -342,9 +449,9 @@ class ContactController extends Controller
             $contacts = $contacts->whereIn('contact_organizations', $filtered_organization_ids);
         }
 
-        if ($filter_contact_languages_list) {
-            $contacts = $contacts->whereIn('contact_languages_spoken', $filter_contact_languages_list);
-        }
+        // if ($filter_contact_languages_list) {
+        //     $contacts = $contacts->whereIn('contact_languages_spoken', $filter_contact_languages_list);
+        // }
         if ($filter_contact_type_list) {
             $contacts = $contacts->whereIn('contact_type', $filter_contact_type_list);
         }
@@ -381,7 +488,7 @@ class ContactController extends Controller
             $contact_info[5] = $contact->contact_middle_name;
             $contact_info[6] = $contact->contact_last_name;
             $contact_info[7] = '';
-            $contact_info[8] = $contact->contact_type;
+            $contact_info[8] = $contact->type != null ? $contact->type->contact_type : '';
             $contact_info[9] = $contact->contact_religious_title;
             $contact_info[10] = str_limit($contact->contact_title, 15, '...');
             $contact_info[11] = $contact->contact_languages_spoken;
@@ -421,7 +528,7 @@ class ContactController extends Controller
             $contact_info[26] = $contact->address['address_city'];
             $contact_info[27] = $contact->address['address_zip_code'];
             $contact_info[28] = $contact->organization['organization_recordid'];
-            $contact_info[29] = $contact->organization['organization_name'];
+            $contact_info[29] = $contact->organization['organization_name'] != null ? $contact->organization['organization_name'] :'' ;
             $contact_info[30] = $contact->contact_tag;
 
             array_push($result, $contact_info);
@@ -438,13 +545,24 @@ class ContactController extends Controller
         $address_cities = Address::select("address_city")->distinct()->get();
         $address_zipcodes = Address::select("address_zip_code")->distinct()->get();
 
-        $contact_types = Contact::select("contact_type")->distinct()->get();
-        $contact_languages = Contact::select("contact_languages_spoken")->distinct()->get();
+        // $contact_types = Contact::select("contact_type")->distinct()->get();
+        $contact_types = contactType::pluck('contact_type', 'contact_type');
+
+        // $contact_languages = Contact::select("contact_languages_spoken")->distinct()->get();
+        $contact_languages = AllLanguage::pluck('language_name', 'language_name');
+
         $contact_addresses = Contact::select("contact_mailing_address")->distinct()->get();
-        $organization_religions = Organization::select("organization_religion")->distinct()->get();
-        $organization_faith_traditions = Organization::select("organization_faith_tradition")->distinct()->get();
-        $organization_denominations = Organization::select("organization_denomination")->distinct()->get();
-        $organization_judicatory_bodys = Organization::select("organization_judicatory_body")->distinct()->get();
+        // $organization_religions = Organization::select("organization_religion")->distinct()->get();
+        $organization_religions = Religion::where('type', 'religion')->pluck('name', 'name');
+        // $organization_faith_traditions = Organization::select("organization_faith_tradition")->distinct()->get();
+        $faith_tradition_list = Religion::where('type', 'faith_tradition')->pluck('name', 'name');
+
+        // $organization_denominations = Organization::select("organization_denomination")->distinct()->get();
+        $denomination_list = Religion::where('type', 'denominations')->pluck('name', 'name');
+
+        // $organization_judicatory_bodys = Organization::select("organization_judicatory_body")->distinct()->get();
+        $organization_judicatory_bodys = Religion::where('type', 'judicatory_body')->pluck('name', 'name');
+
         $organization_boroughs = Organization::select("organization_borough")->distinct()->get();
         $organization_zipcodes = Organization::select("organization_zipcode")->distinct()->get();
         $contact_tags = Contact::select("contact_tag")->distinct()->get();
@@ -478,23 +596,23 @@ class ContactController extends Controller
         }
         $address_zipcode_list = array_unique($address_zipcode_list);
 
-        $faith_tradition_list = [];
-        foreach ($organization_faith_traditions as $key => $value) {
-            $faith_traditions = explode(", ", trim($value->organization_faith_tradition));
-            $faith_tradition_list = array_merge($faith_tradition_list, $faith_traditions);
-        }
-        $faith_tradition_list = array_unique($faith_tradition_list);
+        // $faith_tradition_list = [];
+        // foreach ($organization_faith_traditions as $key => $value) {
+        //     $faith_traditions = explode(", ", trim($value->organization_faith_tradition));
+        //     $faith_tradition_list = array_merge($faith_tradition_list, $faith_traditions);
+        // }
+        // $faith_tradition_list = array_unique($faith_tradition_list);
 
-        $denomination_list = [];
-        foreach ($organization_denominations as $key => $value) {
-            $denominations = explode(", ", trim($value->organization_denomination));
-            $denomination_list = array_merge($denomination_list, $denominations);
-        }
-        $denomination_list = array_unique($denomination_list);
+        // $denomination_list = [];
+        // foreach ($organization_denominations as $key => $value) {
+        //     $denominations = explode(", ", trim($value->organization_denomination));
+        //     $denomination_list = array_merge($denomination_list, $denominations);
+        // }
+        // $denomination_list = array_unique($denomination_list);
 
         $map = Map::find(1);
 
-        return view('frontEnd.contacts', compact('contact_types', 'contact_languages', 'contact_addresses', 'organization_religions', 'organization_faith_traditions', 'organization_denominations', 'organization_judicatory_bodys'
+        return view('frontEnd.contacts', compact('contact_types', 'contact_languages', 'contact_addresses', 'organization_religions', 'organization_judicatory_bodys'
             , 'organization_boroughs', 'organization_zipcodes', 'address_address_list', 'address_city_list', 'address_zipcode_list',
             'map', 'locations', 'faith_tradition_list', 'denomination_list', 'tag_list'));
     }
@@ -1057,7 +1175,7 @@ class ContactController extends Controller
 
         $comment_list = Comment::where('comments_contact', '=', $id)->get();
 
-        return redirect('contact/' . $id);
+        return redirect('contacts/' . $id);
 
     }
 
@@ -1086,7 +1204,7 @@ class ContactController extends Controller
         $group->group_last_modified = date("Y-m-d h:i:sa");
         $group->save();
 
-        return redirect('contact/' . $id);
+        return redirect('contacts/' . $id);
     }
 
     public function contact($id)
@@ -1138,8 +1256,11 @@ class ContactController extends Controller
         if ($contact->contact_group) {
             foreach ($contact_group_recordid_list as $key => $contact_group_recordid) {
                 $contact_group = Group::where('group_recordid', '=', $contact_group_recordid)->first();
-                $contact_group_name = $contact_group->group_name;
-                array_push($contact_group_name_list, $contact_group_name);
+                if ($contact_group) {
+                    $contact_group_name = $contact_group->group_name;
+                    array_push($contact_group_name_list, $contact_group_name);
+                }
+
             }
         }
 
@@ -1158,7 +1279,7 @@ class ContactController extends Controller
         // this section for message table in contact
         $contacts = CampaignReport::where('contact_id', $contact->id)->where('status', 'Delivered')->get();
 
-        return view('frontEnd.contact', compact('organization', 'contact', 'locations', 'mailing_address', 'contact_organization_name', 'organization_id', 'comment_list',
+        return view('frontEnd.contact', compact('contact', 'locations', 'mailing_address', 'contact_organization_name', 'organization_id', 'comment_list',
             'office_phone_number', 'cell_phone_number', 'emergency_phone_number', 'office_fax_phone_number', 'groups', 'group_names', 'contact_group_name_list', 'contact_group_recordid_list',
             'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'contacts'));
     }
@@ -1190,12 +1311,16 @@ class ContactController extends Controller
         }
         $organization_type_list = array_unique($organization_type_list);
 
-        $contact_languages = ['English', 'Spanish', 'Hindi', 'Chinese', 'Arabic', 'Malay', 'German', 'Greek',
-            'Thai', 'French', 'Korean', 'Japanese', 'Italian', 'Cartonese', 'Portuguese', 'Bengali',
-            'Russian', 'Lahnda', 'Turkish', 'Tamil', 'Vietnamese', 'VIETNAMESE', 'Urdu'];
+        // $contact_languages = ['English', 'Spanish', 'Hindi', 'Chinese', 'Arabic', 'Malay', 'German', 'Greek',
+        //     'Thai', 'French', 'Korean', 'Japanese', 'Italian', 'Cartonese', 'Portuguese', 'Bengali',
+        //     'Russian', 'Lahnda', 'Turkish', 'Tamil', 'Vietnamese', 'VIETNAMESE', 'Urdu'];
+
+        $contact_languages = AllLanguage::pluck('language_name', 'id');
+
+        $contact_type = contactType::pluck('contact_type', 'id');
 
         return view('frontEnd.contact-create', compact('map', 'organization_name_list', 'contact_pronoun_list',
-            'organization_type_list', 'contact_languages'));
+            'organization_type_list', 'contact_languages', 'contact_type'));
     }
 
     /**
@@ -1217,8 +1342,68 @@ class ContactController extends Controller
      */
     public function show($id)
     {
-        $contact = Contact::find($id);
-        return response()->json($contact);
+        $contact = Contact::where('contact_recordid', '=', $id)->first();
+        $comment_list = Comment::where('comments_contact', '=', $id)->get();
+        $locations = Location::with('services', 'address', 'phones')->where('location_contact', '=', $id)->get();
+
+        if (count($locations) == 0) {
+            $organization_recordid = $contact->contact_organizations;
+            $organization_info = Organization::where('organization_recordid', '=', $organization_recordid)->first();
+            $organization_location = '';
+            if ($organization_info) {
+                $organization_location = $organization_info->organization_locations;
+            }
+            $locations = Location::with('services', 'address', 'phones')->where('location_recordid', '=', $organization_location)->get();
+        }
+
+        $groups = Group::where('group_type', '=', 'Static')->distinct()->get();
+        $group_names = Group::where('group_type', '=', 'Static')->select("group_name")->distinct()->get();
+
+        $spokenLanguage = $contact->contact_languages_spoken != '' ? explode(',', $contact->contact_languages_spoken) : [];
+        $languageName = [];
+        foreach ($spokenLanguage as $key => $value) {
+            $language = AllLanguage::whereId($value)->first();
+            array_push($languageName, $language->language_name);
+        }
+        $contact_languages_spoken = implode(',', $languageName);
+
+        $contact_group_info = $contact->contact_group;
+        $groupData = explode(',', $contact_group_info);
+        $contact_group_recordid_list = [];
+        foreach ($groupData as $key => $value) {
+            if ($value != '') {
+                array_push($contact_group_recordid_list,$value);
+            }
+        }
+        $contact_group_name_list = [];
+        if ($contact->contact_group) {
+            foreach ($contact_group_recordid_list as $key => $contact_group_recordid) {
+                $contact_group = Group::where('group_recordid', '=', $contact_group_recordid)->first();
+                if ($contact_group) {
+                    $contact_group_name = $contact_group->group_name;
+                    array_push($contact_group_name_list, $contact_group_name);
+                }
+
+            }
+        }
+        $map = Map::find(1);
+        $parent_taxonomy = [];
+        $child_taxonomy = [];
+        $checked_organizations = [];
+        $checked_insurances = [];
+        $checked_ages = [];
+        $checked_languages = [];
+        $checked_settings = [];
+        $checked_culturals = [];
+        $checked_transportations = [];
+        $checked_hours = [];
+
+// this section for message table in contact
+        $contacts = CampaignReport::where('contact_id', $contact->id)->where('status', 'Delivered')->get();
+        
+        return view('frontEnd.contact', compact('contact', 'locations', 'comment_list', 'groups', 'group_names', 'contact_group_name_list', 'contact_group_recordid_list',
+            'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'contacts', 'contact_languages_spoken'));
+
     }
 
     /**
@@ -1237,10 +1422,14 @@ class ContactController extends Controller
         $organization_name_info = Organization::where('organization_recordid', '=', $organization_id)->select('organization_name')->first();
         $contact_organization_name = $organization_name_info["organization_name"];
 
-        $contact_languages = ['English', 'Spanish', 'Hindi', 'Chinese', 'Arabic', 'Malay', 'German', 'Greek',
-            'Thai', 'French', 'Korean', 'Japanese', 'Italian', 'Cartonese', 'Portuguese', 'Bengali',
-            'Russian', 'Lahnda', 'Turkish', 'Tamil', 'Vietnamese', 'VIETNAMESE', 'Urdu'];
-        $contact_types = Contact::select("contact_type")->distinct()->get();
+        // $contact_languages = ['English', 'Spanish', 'Hindi', 'Chinese', 'Arabic', 'Malay', 'German', 'Greek',
+        //     'Thai', 'French', 'Korean', 'Japanese', 'Italian', 'Cartonese', 'Portuguese', 'Bengali',
+        //     'Russian', 'Lahnda', 'Turkish', 'Tamil', 'Vietnamese', 'VIETNAMESE', 'Urdu'];
+        $contact_languages = AllLanguage::pluck('language_name', 'id');
+
+        // $contact_types = Contact::select("contact_type")->distinct()->get();
+        $contact_types = contactType::pluck('contact_type', 'id');
+
         $organization_name_list = [];
         foreach ($organization_names as $key => $value) {
             $org_names = explode(", ", trim($value->organization_name));
@@ -1280,7 +1469,7 @@ class ContactController extends Controller
 
         $map = Map::find(1);
         return view('frontEnd.contact-edit', compact('contact', 'contact_organization_name', 'contact_pronoun_list',
-            'map', 'organization_name_list', 'organization_type_list', 'contact_languages', 'contact_first_name',
+            'map', 'organization_name_list', 'organization_type_list', 'contact_languages',
             'office_phone_number', 'cell_phone_number', 'emergency_phone_number', 'office_fax_phone_number',
             'mailing_address', 'contact_types'));
     }
@@ -1298,14 +1487,12 @@ class ContactController extends Controller
         $contact = Contact::find($id);
         $contact->contact_tag = $request->tokenfield;
         $contact->save();
-        return redirect('contact/' . $id);
+        return redirect('contacts/' . $id);
     }
 
     public function add_new_contact(Request $request)
     {
-
         $contact = new Contact;
-
         $phone_recordids = Phone::select("phone_recordid")->distinct()->get();
         $phone_recordid_list = array();
         foreach ($phone_recordids as $key => $value) {
@@ -1334,14 +1521,8 @@ class ContactController extends Controller
 
         $contact_languages_spoken_list = $request->contact_languages_spoken;
         $contact_languages_spoken_info = '';
-        if (empty($contact_languages_spoken_list) != true) {
-            foreach ($contact_languages_spoken_list as $key => $value) {
-                if ($contact_languages_spoken_info != '') {
-                    $contact_languages_spoken_info = $contact_languages_spoken_info . ', ' . $value;
-                } else {
-                    $contact_languages_spoken_info = $value;
-                }
-            }
+        if (!empty($contact_languages_spoken_list)) {
+            $contact_languages_spoken_info = implode(',', $contact_languages_spoken_list);
         }
         $contact->contact_languages_spoken = $contact_languages_spoken_info;
 
@@ -1403,7 +1584,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_cell_phones;
-            // $phone->phone_type = "cell phone";
+            $phone->phone_type = "cell phone";
             $contact->contact_cell_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1422,7 +1603,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_office_phones;
-            // $phone->phone_type = "office phone";
+            $phone->phone_type = "office phone";
             $contact->contact_office_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1440,7 +1621,7 @@ class ContactController extends Controller
             }
             $phone->phone_recordid = $new_recordid;
             $phone->phone_number = $contact_emergency_phones;
-            // $phone->phone_type = "emergency phone";
+            $phone->phone_type = "emergency phone";
             $contact->contact_emergency_phones = $phone->phone_recordid;
             $phone->save();
         }
@@ -1484,7 +1665,6 @@ class ContactController extends Controller
 
     public function update(Request $request, $id)
     {
-
         $contact = Contact::find($id);
 
         $phone_recordids = Phone::select("phone_recordid")->distinct()->get();
@@ -1514,14 +1694,8 @@ class ContactController extends Controller
 
         $contact_languages_spoken_list = $request->contact_languages_spoken;
         $contact_languages_spoken_info = '';
-        if (empty($contact_languages_spoken_list) != true) {
-            foreach ($contact_languages_spoken_list as $key => $value) {
-                if ($contact_languages_spoken_info != '') {
-                    $contact_languages_spoken_info = $contact_languages_spoken_info . ', ' . $value;
-                } else {
-                    $contact_languages_spoken_info = $value;
-                }
-            }
+        if (!empty($contact_languages_spoken_list)) {
+            $contact_languages_spoken_info = implode(',', $contact_languages_spoken_list);
         }
         $contact->contact_languages_spoken = $contact_languages_spoken_info;
 
@@ -1589,7 +1763,7 @@ class ContactController extends Controller
         }
         if ($request->has('contact_office_phones')) {
             $contact_office_phones = $request->contact_office_phones;
-            $office_phone = Phone::where('phone_number', '=', $contact_office_phones)->where('phone_type','office phone')->first();
+            $office_phone = Phone::where('phone_number', '=', $contact_office_phones)->where('phone_type', 'office phone')->first();
             if ($office_phone != null) {
                 $office_phone_id = $office_phone["phone_recordid"];
                 $contact->contact_office_phones = $office_phone_id;
@@ -1646,7 +1820,7 @@ class ContactController extends Controller
 
         $contact->save();
 
-        return redirect('contact/' . $id);
+        return redirect('contacts/' . $id);
     }
 
     /**

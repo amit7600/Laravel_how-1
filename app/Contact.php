@@ -58,4 +58,8 @@ class Contact extends Model
     {
         return $this->belongsTo('App\Phone', 'contact_office_fax_phones', 'phone_recordid');
     }
+    public function type()
+    {
+        return $this->belongsTo('App\Model\contactType', 'contact_type', 'id');
+    }
 }

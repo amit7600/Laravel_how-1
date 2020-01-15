@@ -20,11 +20,11 @@ Edit organization type : {{$organizationType->organization_type}}
                 {!! $errors->first('organization_type', '<p class="help-block">:message</p>') !!}
             </div>
         </div>
-        <div class="form-group {{ $errors->has('note') ? 'has-error' : ''}}">
-            {!! Form::label('note', 'Note', ['class' => 'col-sm-3 control-label']) !!}
+        <div class="form-group {{ $errors->has('notes') ? 'has-error' : ''}}">
+            {!! Form::label('notes', 'Notes', ['class' => 'col-sm-3 control-label']) !!}
             <div class="col-sm-6">
-                {!! Form::textarea('note', null, ['class' => 'form-control']) !!}
-                {!! $errors->first('note', '<p class="help-block">:message</p>') !!}
+                {!! Form::textarea('notes', null, ['class' => 'form-control']) !!}
+                {!! $errors->first('notes', '<p class="help-block">:message</p>') !!}
             </div>
         </div>
         <div class="form-group">

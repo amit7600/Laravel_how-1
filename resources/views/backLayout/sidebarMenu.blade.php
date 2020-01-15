@@ -44,13 +44,13 @@
             <li><a href="{{route('messagesSetting')}}">Campaigns</a></li>
           </ul>
         </li>
-        <li><a><i class="fa fa-table"></i> Texonomies <span class="fa fa-chevron-down"></span></a>
+        <li><a><i class="fa fa-table"></i> Taxonomies <span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
-            <li><a href="/religions">Religions</a></li>
-            <li><a href="#">Languages</a></li>
-            <li><a href="/organizationTypes">Organization type</a></li>
-            <li><a href="#">Contact type</a></li>
-            <li><a href="#">Facility type</a></li>
+            <li><a href="{{ route('religions.index') }}">Religions</a></li>
+            <li><a href="{{ route('languages.index') }}">Languages</a></li>
+            <li><a href="{{ route('organizationTypes.index') }}">Organization type</a></li>
+            <li><a href="{{ route('ContactTypes.index') }}">Contact type</a></li>
+            <li><a href="{{ route('FacilityTypes.index') }}">Facility type</a></li>
           </ul>
         </li>
         {{-- <li><a href="/analytics"><i class="fa fa-line-chart"></i> Analytics</a> --}}

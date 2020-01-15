@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Model\Religion;
 use DB;
 use Illuminate\Http\Request;
+use Sentinel;
 
 class ReligionsController extends Controller
 {
@@ -28,7 +29,7 @@ class ReligionsController extends Controller
      */
     public function create()
     {
-        return View('backEnd.religions.create', compact('religions'));
+        return View('backEnd.religions.create');
 
     }
 
@@ -41,11 +42,22 @@ class ReligionsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'religion_name' => 'required',
+            'name' => 'required',
+            'type' => 'required',
+            // 'organizations' => 'required',
         ]);
         try {
             DB::beginTransaction();
-            Religion::create($request->all());
+            Religion::create([
+                'name' => $request->get('name'),
+                'type' => $request->get('type'),
+                'parent' => $request->get('parent'),
+                'organizations' => $request->get('organizations'),
+                'icon' => $request->get('icon'),
+                'notes' => $request->get('notes'),
+                'created_by' => Sentinel::check()->id,
+            ]);
+
             DB::commit();
             return redirect()->to('religions')->with('success', 'Religion created successfully');
 
@@ -95,21 +107,22 @@ class ReligionsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'religion_name' => 'required',
-        ]);
+
         try {
             DB::beginTransaction();
             Religion::whereId($id)->update([
-                'religion_name' => $request->get('religion_name'),
-                'note' => $request->get('note'),
+                'name' => $request->get('name'),
+                'type' => $request->get('type'),
+                'parent' => $request->get('parent'),
+                'organizations' => $request->get('organizations'),
+                'icon' => $request->get('icon'),
+                'notes' => $request->get('notes'),
             ]);
             DB::commit();
             return redirect()->to('religions')->with('success', 'Religion updated successfully');
 
         } catch (\Throwable $th) {
             DB::rollBack();
-
             return redirect()->to('religions')->with('error', $th->getMessage());
 
         }

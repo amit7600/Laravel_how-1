@@ -7,15 +7,19 @@ use Kyslik\ColumnSortable\Sortable;
 
 class Location extends Model
 {
-	use Sortable;
+    use Sortable;
 
     protected $table = 'locations';
 
     protected $primaryKey = 'location_recordid';
-    
-	public $timestamps = false;
 
-	public function organization()
+    public $timestamps = false;
+
+    protected $fillable = [
+        'location_recordid', 'location_organization', 'location_name', 'location_address',
+    ];
+
+    public function organization()
     {
         return $this->belongsTo('App\Organization', 'location_organization', 'organization_recordid');
     }
@@ -54,6 +58,12 @@ class Location extends Model
     public function address()
     {
         return $this->belongsToMany('App\Address', 'location_address', 'location_recordid', 'address_recordid');
+        // return $this->hasMany('App\Address', 'address_recordid', 'location_address');
+        // return $this->belongsTo('App\Address', 'location_address', 'address_recordid');
+    }
+    public function addressData()
+    {
+        return $this->belongsTo('App\Address', 'location_address', 'address_recordid');
     }
 
     public function geolocation($latitude, $longitude)
@@ -61,11 +71,15 @@ class Location extends Model
         // $circle_radius = 3959;
         // $max_distance = 2;
 
-        return $cities = Location::select(Location::raw('*, ( 3959 * acos( cos( radians('.$latitude.') ) * cos( radians( location_latitude ) ) * cos( radians( location_longitude ) - radians('.$longitude.') ) + sin( radians('.$latitude.') ) * sin( radians( location_latitude ) ) ) ) AS distance'))
+        return $cities = Location::select(Location::raw('*, ( 3959 * acos( cos( radians(' . $latitude . ') ) * cos( radians( location_latitude ) ) * cos( radians( location_longitude ) - radians(' . $longitude . ') ) + sin( radians(' . $latitude . ') ) * sin( radians( location_latitude ) ) ) ) AS distance'))
             ->having('distance', '<', 2)
             ->orderBy('distance')
             ->get();
-   
+
         // echo "This is a test function";
+    }
+    public function facility()
+    {
+        return $this->belongsTo('App\Model\facilityType', 'location_type', 'id');
     }
 }

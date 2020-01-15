@@ -6,98 +6,114 @@ Contacts
 <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.0.1/css/scroller.dataTables.min.css">
 
 <style type="text/css">
-.table a{
-    text-decoration:none !important;
-    color: rgba(40,53,147,.9);
-    white-space: normal;
-}
-.footable.breakpoint > tbody > tr > td > span.footable-toggle{
-    position: absolute;
-    right: 25px;
-    font-size: 25px;
-    color: #000000;
-}
-.ui-menu .ui-menu-item .ui-state-active {
-    padding-left: 0 !important;
-}
-ul#ui-id-1 {
-    width: 260px !important;
-}
-
-#map{
-    position: relative !important;
-    z-index: 0 !important;
-}
-@media (max-width: 768px) {
-    .property{
-        padding-left: 30px !important;
+    .table a {
+        text-decoration: none !important;
+        color: rgba(40, 53, 147, .9);
+        white-space: normal;
     }
-    #map{
-        display: block !important;
-        width: 100% !important;
+
+    .footable.breakpoint>tbody>tr>td>span.footable-toggle {
+        position: absolute;
+        right: 25px;
+        font-size: 25px;
+        color: #000000;
     }
-}
 
-button[data-id="religion"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="faith_tradition"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="denomination"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="judicatory_body"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="has-email"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="has-phone"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="contact_type"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="tag"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="contact_address"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="contact_languages"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="contact_borough"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="contact_zipcode"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-.sel-label-org {
-    width: 15%;
-}
-#clear-filter-contacts-btn {
-    width: 100%;
-}
-#tbl-contact_wrapper {
-    overflow-x: scroll;
-}
+    .ui-menu .ui-menu-item .ui-state-active {
+        padding-left: 0 !important;
+    }
 
+    ul#ui-id-1 {
+        width: 260px !important;
+    }
 
+    #map {
+        position: relative !important;
+        z-index: 0 !important;
+    }
 
+    @media (max-width: 768px) {
+        .property {
+            padding-left: 30px !important;
+        }
+
+        #map {
+            display: block !important;
+            width: 100% !important;
+        }
+    }
+
+    button[data-id="religion"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="faith_tradition"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="denomination"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="judicatory_body"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="has-email"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="has-phone"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="contact_type"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="tag"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="contact_address"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="contact_languages"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="contact_borough"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="contact_zipcode"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    .sel-label-org {
+        width: 15%;
+    }
+
+    #clear-filter-contacts-btn {
+        width: 100%;
+    }
+
+    #tbl-contact_wrapper {
+        overflow-x: scroll;
+    }
 </style>
 
 @section('content')
@@ -105,49 +121,68 @@ button[data-id="contact_zipcode"] {
     <!-- Page Content Holder -->
     <div id="contacts-content" class="container">
         <form action="/contacts/action_group" id="contacts_form" method="POST">
-        {{ csrf_field() }}
+            {{ csrf_field() }}
             <div class="row">
-                <div class="col-md-6 p-10">                        
+                <div class="col-md-6 p-10">
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Religion: </label>
                         <div class="col-sm-9 col-xs-12" id="religion-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="religion" name="religion">
-                            @foreach($organization_religions as $key => $organization_religion)
-                                <option value="{{$organization_religion->organization_religion}}">{{$organization_religion->organization_religion}}</option>
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="religion"
+                                name="religion">
+                                @foreach($organization_religions as $key => $organization_religion)
+                                <option value="{{$organization_religion->organization_religion}}">
+                            {{$organization_religion->organization_religion}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('religion',$organization_religions,null,['class' => 'form-control
+                            selectpicker','id' =>
+                            'religion','data-live-search' => 'true','multiple' => 'multiple']) !!}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Faith Tradition: </label>
                         <div class="col-sm-9 col-xs-12" id="faith_tradition-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="faith_tradition" name="faith_tradition">
-                            @foreach($faith_tradition_list as $key => $faith_tradition)
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true"
+                                id="faith_tradition" name="faith_tradition">
+                                @foreach($faith_tradition_list as $key => $faith_tradition)
                                 <option value="{{$faith_tradition}}">{{$faith_tradition}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('faith_tradition',$faith_tradition_list,null,['class' => 'form-control
+                            selectpicker','id' =>
+                            'faith_tradition','data-live-search' => 'true','multiple' => 'multiple']) !!}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Denomination: </label>
                         <div class="col-sm-9 col-xs-12" id="denomination-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="denomination" name="denomination">
-                            @foreach($denomination_list as $key => $denomination)
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="denomination"
+                                name="denomination">
+                                @foreach($denomination_list as $key => $denomination)
                                 <option value="{{$denomination}}">{{$denomination}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('denomination',$denomination_list,null,['class' => 'form-control
+                            selectpicker','id' =>
+                            'denomination','data-live-search' => 'true','multiple' => 'multiple']) !!}
                         </div>
-                    </div>  
+                    </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Judicatory Body: </label>
                         <div class="col-sm-9 col-xs-12" id="judicatory_body-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="judicatory_body" name="judicatory_body">
-                            @foreach($organization_judicatory_bodys as $key => $organization_judicatory_body)
-                                <option value="{{$organization_judicatory_body->organization_judicatory_body}}">{{$organization_judicatory_body->organization_judicatory_body}}</option>
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true"
+                                id="judicatory_body" name="judicatory_body">
+                                @foreach($organization_judicatory_bodys as $key => $organization_judicatory_body)
+                                <option value="{{$organization_judicatory_body->organization_judicatory_body}}">
+                            {{$organization_judicatory_body->organization_judicatory_body}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('judicatory_body',$organization_judicatory_bodys,null,['class' =>
+                            'form-control
+                            selectpicker','id' =>
+                            'judicatory_body','data-live-search' => 'true','multiple' => 'multiple']) !!}
                         </div>
-                    </div>  
+                    </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Email: </label>
                         <div class="col-sm-9 col-xs-12" id="email_body-div">
@@ -163,73 +198,87 @@ button[data-id="contact_zipcode"] {
                         <div class="col-sm-9 col-xs-12" id="phone_body-div">
                             <select class="form-control" id="phone" name="phone">
                                 <option value="All" checked>All</option>
-                                <option value="Has Email">Has Phone</option>
-                                <option value="No Email">No Phone</option>
+                                <option value="Has Phone">Has Phone</option>
+                                <option value="No Phone">No Phone</option>
                             </select>
                         </div>
-                    </div>   
+                    </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Address: </label>
                         <div class="col-sm-9 col-xs-12" id="address-div">
-                        <select class="form-control selectpicker"  multiple data-live-search="true" id="contact_address" name="contact_address">
-                            @foreach($address_address_list as $key => $address_address)
+                            <select class="form-control selectpicker" multiple data-live-search="true"
+                                id="contact_address" name="contact_address">
+                                @foreach($address_address_list as $key => $address_address)
                                 <option value="{{$address_address}}">{{$address_address}}</option>
-                            @endforeach
+                                @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Contact Type: </label>
                         <div class="col-sm-9 col-xs-12" id="contact_type-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="contact_type" name="contact_type">
-                            @foreach($contact_types as $key => $contact_type)
-                                <option value="{{$contact_type->contact_type}}">{{$contact_type->contact_type}}</option>
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="contact_type"
+                                name="contact_type">
+                                @foreach($contact_types as $key => $contact_type)
+                                <option value="{{$contact_type->contact_type}}">{{$contact_type->contact_type}}
+                            </option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('contact_type',$contact_types,null,['class' => 'form-control
+                            selectpicker','id' =>
+                            'contact_type','data-live-search' => 'true','multiple' => 'multiple']) !!}
                         </div>
-                    </div>  
+                    </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Languages: </label>
                         <div class="col-sm-9 col-xs-12" id="contact_languages-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="contact_languages" name="contact_languages">
-                            @foreach($contact_languages as $key => $contact_language)
-                                <option value="{{$contact_language->contact_languages_spoken}}">{{$contact_language->contact_languages_spoken}}</option>
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true"
+                                id="contact_languages" name="contact_languages">
+                                @foreach($contact_languages as $key => $contact_language)
+                                <option value="{{$contact_language->contact_languages_spoken}}">
+                            {{$contact_language->contact_languages_spoken}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('contact_languages',$contact_languages,null,['class' =>
+                            'form-control
+                            selectpicker','id' =>
+                            'contact_languages','data-live-search' => 'true','multiple' => 'multiple']) !!}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Borough: </label>
                         <div class="col-sm-9 col-xs-12" id="contact_borough-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="contact_borough" name="contact_borough">
-                            @foreach($address_city_list as $key => $address_city)
+                            <select class="form-control selectpicker" multiple data-live-search="true"
+                                id="contact_borough" name="contact_borough">
+                                @foreach($address_city_list as $key => $address_city)
                                 <option value="{{$address_city}}">{{$address_city}}</option>
-                            @endforeach
+                                @endforeach
                             </select>
                         </div>
-                    </div>  
+                    </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Zipcode: </label>
                         <div class="col-sm-9 col-xs-12" id="contact_zipcode-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="contact_zipcode" name="contact_zipcode">
-                            @foreach($address_zipcode_list as $key => $address_zipcode)
+                            <select class="form-control selectpicker" multiple data-live-search="true"
+                                id="contact_zipcode" name="contact_zipcode">
+                                @foreach($address_zipcode_list as $key => $address_zipcode)
                                 <option value="{{$address_zipcode}}">{{$address_zipcode}}</option>
-                            @endforeach
+                                @endforeach
                             </select>
                         </div>
-                    </div>   
+                    </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Tag: </label>
                         <div class="col-sm-9 col-sm-6 col-xs-12" id="tag-div">
                             <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
-                            @foreach($tag_list as $key => $tag)
+                                @foreach($tag_list as $key => $tag)
                                 <option value="{{$tag}}">{{$tag}}</option>
-                            @endforeach
+                                @endforeach
                             </select>
                         </div>
                     </div>
 
-                    <input type="hidden" id="religion_list" name="religion_list"> 
+                    <input type="hidden" id="religion_list" name="religion_list">
                     <input type="hidden" id="faith_tradition_list" name="faith_tradition_list">
                     <input type="hidden" id="denomination_list" name="denomination_list">
                     <input type="hidden" id="judicatory_body_list" name="judicatory_body_list">
@@ -243,39 +292,53 @@ button[data-id="contact_zipcode"] {
 
                     <div class="form-group row">
                         <div class="col-sm-12 col-xs-12" id="clear-btn-div">
-                            <button class="btn btn-success btn-rounded" id="clear-filter-contacts-btn"><i class="fa fa-refresh"></i> Clear Filters</button>
+                            <button class="btn btn-success btn-rounded" id="clear-filter-contacts-btn"><i
+                                    class="fa fa-refresh"></i> Clear Filters</button>
                         </div>
                         <div class="col-sm-12 col-xs-12">
                             <div class="form-group row mt-5">
                                 <div class="col-sm-6">
                                     <div class="dropdown" style="width: 100%;">
-                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;">
+                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton-group" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false" style="width: 100%;">
                                             Group
                                         </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-group" style="width: 100%;">
-                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit" value="save-to-filter-dynamic-group" id="save-to-filter-dynamic-group" style="width: 100%;">Save Filter as Dynamic Group</button>
-                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit" value="add-to-new-static-group-btn" id="add-to-new-static-group-btn" style="width: 100%;">Add to New Static Group</button>
-                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit" value="add-to-existing-static-group-btn" id="add-to-existing-static-group-btn" style="width: 100%;">Add to Existing Static Group</button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-group"
+                                            style="width: 100%;">
+                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit"
+                                                value="save-to-filter-dynamic-group" id="save-to-filter-dynamic-group"
+                                                style="width: 100%;">Save Filter as Dynamic Group</button>
+                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit"
+                                                value="add-to-new-static-group-btn" id="add-to-new-static-group-btn"
+                                                style="width: 100%;">Add to New Static Group</button>
+                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit"
+                                                value="add-to-existing-static-group-btn"
+                                                id="add-to-existing-static-group-btn" style="width: 100%;">Add to
+                                                Existing Static Group</button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="dropdown" style="width: 100%;">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton-download" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100%;">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton-download" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false" style="width: 100%;">
                                             Download
                                         </button>
-                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-download" style="width: 100%;">
-                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit" value="download_csv" id="download_csv" style="width: 100%;">Export CSV</button>
-                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit" value="download_pdf" id="download_pdf" style="width: 100%;">Export PDF</button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-download"
+                                            style="width: 100%;">
+                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit"
+                                                value="download_csv" id="download_csv" style="width: 100%;">Export
+                                                CSV</button>
+                                            <button type="submit" class="btn btn-info btn-rounded" name="btn_submit"
+                                                value="download_pdf" id="download_pdf" style="width: 100%;">Export
+                                                PDF</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="waiting" style="text-align: center; margin-top: 50px;">
-                        <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom" style="font-size: 100px;"></i>
-                        <span class="sr-only">Loading...</span>
                     </div>
                     
                 </div>
@@ -283,13 +346,16 @@ button[data-id="contact_zipcode"] {
                     <div class="card">
                         <div class="form-group row mt-5">
                             <div class="col-sm-4">
-                                <button type="button" class="btn btn-secondary" id="enable-polygon-btn" style="width: 100%;">Draw</button>
+                                <button type="button" class="btn btn-secondary" id="enable-polygon-btn"
+                                    style="width: 100%;">Draw</button>
                             </div>
                             <div class="col-sm-4">
-                                <button type="button" class="btn btn-primary form-control" id="filter-polygon-btn">Apply</button>
+                                <button type="button" class="btn btn-primary form-control"
+                                    id="filter-polygon-btn">Apply</button>
                             </div>
                             <div class="col-sm-4">
-                                <button type="button" class="btn btn-success form-control" id="reset-filter-polygon-btn" onClick="document.location.reload(true)">Reset</button>
+                                <button type="button" class="btn btn-success form-control" id="reset-filter-polygon-btn"
+                                    onClick="document.location.reload(true)">Reset</button>
                             </div>
                         </div>
                         <div id="map" style="width:initial;margin-top: 10px;height: 50vh;"></div>
@@ -297,15 +363,15 @@ button[data-id="contact_zipcode"] {
                 </div>
                 <div class="col-md-12">
                     <input type="hidden" id="checked_terms" name="checked_terms">
-                </div> 
-                
-                <div class="col-sm-12 p-10"> 
+                </div>
+
+                <div class="col-sm-12 p-10">
                     <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-contact">
                         <thead>
                             <tr>
-                                <th></th>   
+                                <th></th>
                                 <th style="visibility: hidden;">Open Action</th>
-                                <th class="default-inactive" style="visibility: hidden;">Delete Action</th>                         
+                                <th class="default-inactive" style="visibility: hidden;">Delete Action</th>
                                 <th class="default-inactive">Id</th>
                                 <th class="default-active">First Name</th>
                                 <th class="default-active">Middle Name</th>
@@ -314,35 +380,34 @@ button[data-id="contact_zipcode"] {
                                 <th class="default-active">Contact Type</th>
                                 <th class="default-active">Religious Prefix</th>
 
-                                <th class="default-active">Job Title</th> 
+                                <th class="default-active">Job Title</th>
                                 <th class="default-inactive">Languages Spoken</th>
-                                <th class="default-inactive">Other Languages</th>       
+                                <th class="default-inactive">Other Languages</th>
                                 <th class="default-inactive">Pronouns</th>
-                                <th class="default-inactive">Mailing Address</th>   
+                                <th class="default-inactive">Mailing Address</th>
 
-                                <th class="default-inactive">Cell Phone</th>  
-                                <th class="default-active">Office Phone</th>   
-                                <th class="default-inactive">Emergency Phone</th>  
-                                <th class="default-inactive">Office Fax</th>  
-                                <th class="default-inactive">Personal Email</th>  
+                                <th class="default-inactive">Cell Phone</th>
+                                <th class="default-active">Office Phone</th>
+                                <th class="default-inactive">Emergency Phone</th>
+                                <th class="default-inactive">Office Fax</th>
+                                <th class="default-inactive">Personal Email</th>
 
                                 <th class="default-inactive">Work Email</th>
                                 <th class="default-inactive">Religion</th>
                                 <th class="default-inactive">Faith Traditional</th>
                                 <th class="default-inactive">Denomination</th>
-                                <th class="default-inactive">Judicatory Body</th> 
+                                <th class="default-inactive">Judicatory Body</th>
 
-                                <th class="default-inactive">Address1</th> 
-                                <th class="default-inactive">Borough</th> 
-                                <th class="default-inactive">Zipcode</th> 
-                                <th class="default-inactive">Organization ID</th> 
-                                <th class="default-inactive">Organization Name</th> 
+                                <th class="default-inactive">Address1</th>
+                                <th class="default-inactive">Borough</th>
+                                <th class="default-inactive">Zipcode</th>
+                                <th class="default-inactive">Organization ID</th>
+                                <th class="default-inactive">Organization Name</th>
                                 <th class="default-inactive">Tag</th>
-                                                       
+
                             </tr>
                         </thead>
                     </table>
-                   
                 </div>
             </div>
         </form>
@@ -357,10 +422,10 @@ button[data-id="contact_zipcode"] {
                             <h4 class="modal-title" id="myModalLabel">Delete Contact</h4>
                         </div>
                         <div class="modal-body">
-                            
+
                             <input type="hidden" id="contact_recordid" name="contact_recordid">
                             <h4>Are you sure to delete this contact?</h4>
-                            
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -376,16 +441,17 @@ button[data-id="contact_zipcode"] {
 @endsection
 @section('customScript')
 
-<script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+<script type="text/javascript"
+    src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/scroller/2.0.1/js/dataTables.scroller.min.js"></script>
 <script src="{{asset('js/markerclusterer.js')}}"></script>
 <script>
-    var dataTable;
+    // var dataTable;
     var checked_terms_set;
     var filter_map = "";
     var marks = [];
     $(document).ready(function() {
-        $('#waiting').hide();
+        // $('#waiting').hide();
         sessionStorage.setItem('check_marks', '');
         dataTable = $('#tbl-contact').DataTable({
             "scrollX": true,
@@ -420,15 +486,15 @@ button[data-id="contact_zipcode"] {
                     var filter_phone = data.columns[16].search.value;
                     var check_marks = sessionStorage.getItem('check_marks');
                   
-                    console.log(data);
-                    console.log(data.columns);
-
+                    console.log(filter_denomination);
+                    // console.log(data.columns[11],);
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                         }
                     });
-                    $('#waiting').show();
+                    // $('#waiting').show();
+                    $('#loading').show();
                     $.ajax({
                         type: "POST",
                         url: "/get_all_contacts",
@@ -451,7 +517,8 @@ button[data-id="contact_zipcode"] {
                             filter_map: filter_map,
                         },
                         success: function (response) {
-                            $('#waiting').hide();
+                            // $('#waiting').hide();
+                            $('#loading').hide();
                             console.log(response);
                             callback({
                                 draw: data.draw,
@@ -465,12 +532,10 @@ button[data-id="contact_zipcode"] {
                                 var value = $(this).val();
                                 $('input#contact_recordid').val(value);
                             });
-
                             console.log(check_marks);
                             // if (sessionStorage.getItem('check_marks') == 'true') {
                             //     return;
                             // }
-
                             var locations = response.filtered_locations_list;
                             var maplocation = <?php print_r(json_encode($map)) ?>;            
                             if(maplocation.active == 1){
@@ -483,9 +548,11 @@ button[data-id="contact_zipcode"] {
                                 avglat = 40.730981;
                                 avglng = -73.998107;
                                 zoom = 12 * 15;
+
                             }
-                            latitude = locations[0].location_latitude;
-                            longitude = locations[0].location_longitude;
+                            latitude = locations.length > 0 ? locations[0].location_latitude : null;
+                            longitude = locations.length > 0 ? locations[0].location_longitude : null;
+
                             if(latitude == null){
                                 latitude = avglat;
                                 longitude = avglng;
@@ -494,7 +561,6 @@ button[data-id="contact_zipcode"] {
                                 zoom: zoom,
                                 center: {lat: parseFloat(avglat), lng: parseFloat(avglng)}
                             });
-
                             if (sessionStorage.getItem('check_marks') == 'true') {
                                 var poly_coordinate_list = sessionStorage.getItem('poly_coordinate_list');
                                 var point_list = JSON.parse(poly_coordinate_list);
@@ -515,7 +581,6 @@ button[data-id="contact_zipcode"] {
                             }
                             
                             var marks = [];
-
                             $('#enable-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 poly = new google.maps.Polygon({
@@ -526,12 +591,10 @@ button[data-id="contact_zipcode"] {
                                 poly.setMap(map);
                                 map.addListener('click', addLatLng);
                             });
-
                             $('#filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 google.maps.event.clearListeners(map, 'click');
                             });
-
                             $('#reset-filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 google.maps.event.clearListeners(map, 'click');
@@ -539,19 +602,16 @@ button[data-id="contact_zipcode"] {
                                 clearMarkers();
                                 marks = [];
                             });
-
                             // Sets the map on all markers in the array.
                             function setMapOnAll(map) {
                                 for (var i = 0; i < marks.length; i++) {
                                     marks[i].setMap(map);
                                 }
                             }
-
                             // Removes the markers from the map, but keeps them in the array.
                             function clearMarkers() {
                                 setMapOnAll(null);
                             }
-
                             var locations_info = locations.map((value) => {
                                 if (value) {
                                     return {
@@ -577,14 +637,12 @@ button[data-id="contact_zipcode"] {
                             });
                             
                             var markerCluster = new MarkerClusterer(map, markers,
-                +                {imagePath: "{{asset('images/m')}}"});
-
+                                    +                {imagePath: "{{asset('images/m')}}"});
                             function addLatLng(event) {
                                 var path = poly.getPath();
                                 // Because path is an MVCArray, we can simply append a new coordinate
                                 // and it will automatically appear.
                                 path.push(event.latLng);
-
                                 // Add a new marker at the new plotted point on the polyline.
                                 var marker = new google.maps.Marker({
                                     position: event.latLng,
@@ -593,7 +651,6 @@ button[data-id="contact_zipcode"] {
                                 });
                                 marks.push(marker);
                             }
-
                             google.maps.Polygon.prototype.Contains = function (point) {
                                 
                                 var crossings = 0,
@@ -643,7 +700,6 @@ button[data-id="contact_zipcode"] {
                                     return (blue >= red);
                                 }
                             };
-
                             $('#filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 var filtered_points = [];
@@ -661,7 +717,6 @@ button[data-id="contact_zipcode"] {
                                         });
                                     } 
                                 }
-
                                 console.log(filtered_points);
                                 
                                 filter_map = JSON.stringify(filtered_points);
@@ -669,7 +724,6 @@ button[data-id="contact_zipcode"] {
                                 sessionStorage.setItem('check_marks', 'true');
                                 console.log('=========after filter===========');
                                 console.log(marks); 
-
                                 var poly_coordinate_list = [];
                                 for(var i = 0; i < marks.length; i ++) {
                                     var poly_coordinate = {
@@ -703,6 +757,7 @@ button[data-id="contact_zipcode"] {
                             });
                         },
                         error: function (data) {
+                            $('#loading').hide();
                             if (data.status == 0 || data.status == 414) {
                                 console.log('Contacts in filtered Ploygon are too much. Enlarge Map and filter in more detailed area.');
                             }
@@ -711,7 +766,9 @@ button[data-id="contact_zipcode"] {
                     });
                 },
             "columnDefs": [
-                { targets: 'default-inactive', visible: false},
+                { 
+                    targets: 'default-inactive', visible: false
+                },
                 {
                     'targets': 0,
                     'checkboxes': {
@@ -722,7 +779,7 @@ button[data-id="contact_zipcode"] {
                     "targets": 1,
                     "data": null,
                     "render": function ( data, type, row ) {
-                        return '<a class="btn btn-primary open-td" href="/contact/' + row[0] + '" style="color: white;">Open</a>';
+                        return '<a class="open-td" href="/contacts/' + row[0] + '" style="color: #007bff;"><i class="fa fa-fw fa-eye"></i></a>';
                     }
                    
                 },
@@ -730,7 +787,7 @@ button[data-id="contact_zipcode"] {
                     "targets": 2,
                     "data": null,
                     "render": function ( data, type, row ) {
-                        return '<button class="btn btn-danger delete-td" value="' + row[0] + '" data-toggle="modal" data-target=".bs-delete-modal-lg"><i class="fa fa-fw fa-remove"></i>Delete</button>';
+                        return '<button class="btn btn-danger delete-td" value="' + row[0] + '" data-toggle="modal" data-target=".bs-delete-modal-lg" style="color:#fb0c2df7;"><i class="fa fa-fw fa-trash"></i></button>';
                     }
                 },
                 {
@@ -740,8 +797,8 @@ button[data-id="contact_zipcode"] {
                         return '<a id="contact_organization_link" style="color: #3949ab; text-decoration: underline;" href="/organization/' + row[28] + '">' + row[29] + '</a>';
                     }
                 } 
-
             ],
+            
             'select': {
                 'style': 'multi'
             },
@@ -749,8 +806,16 @@ button[data-id="contact_zipcode"] {
                 'loadingIndicator': true
             }
         });   
-    })
-    $('#add-to-existing-static-group-btn').click(function(e){
+    })   
+        $('#check_all').on('change',function(){
+            if($(this).is(":checked")) {
+                $('.contact_check').prop('checked',true);
+            }else{
+                $('.contact_check').prop('checked',false);
+            }
+        });
+
+        $('#add-to-existing-static-group-btn').click(function(e){
         if (!checked_terms_set) {
             e.preventDefault();
             var checked_terms = dataTable.column(0).checkboxes.selected();
@@ -759,7 +824,6 @@ button[data-id="contact_zipcode"] {
             $(this).trigger('click');
         }
     });
-
     $('#add-to-new-static-group-btn').click(function(e){
         if (!checked_terms_set) {
             e.preventDefault();
@@ -769,9 +833,7 @@ button[data-id="contact_zipcode"] {
             $(this).trigger('click');
         }
     });
-
     
-
     $('select#contact_borough').on('change', function() {
         
         var selectedList = $(this).val();
@@ -797,7 +859,7 @@ button[data-id="contact_zipcode"] {
         search = selectedList.join('|')
         dataTable
             .column(11)
-            .search(search ? '^' + search + '$' : '', true, false).draw();
+            .search(search ? search : '', true, false).draw();
     });
     $('select#contact_address').on('change', function() {
         
@@ -882,7 +944,6 @@ button[data-id="contact_zipcode"] {
                 .search('', true, false).draw();
         }
     });
-
     $('select#phone').on('change', function() {
         
         var selected = $(this).val();
@@ -903,11 +964,10 @@ button[data-id="contact_zipcode"] {
         }
     });
 
-    $('button#clear-filter-contacts-btn').on('click', function(e) {
-        e.preventDefault();
-        window.location.reload(true);
-    });
-
+        $('button#clear-filter-contacts-btn').on('click', function(e) {
+            e.preventDefault();
+            window.location.reload(true);
+        });
     var map;
     var poly;
     
@@ -929,8 +989,8 @@ button[data-id="contact_zipcode"] {
             zoom = 12 * 15;
         }
 
-        latitude = locations[0].location_latitude;
-        longitude = locations[0].location_longitude;
+        latitude = locations.length >0 ? locations[0].location_latitude : null;
+        longitude = locations.length >0 ? locations[0].location_longitude : null;
 
         if(latitude == null){
             latitude = avglat;
@@ -961,8 +1021,6 @@ button[data-id="contact_zipcode"] {
     
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap"
-  async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap" async
+    defer></script>
 @endsection
-
-

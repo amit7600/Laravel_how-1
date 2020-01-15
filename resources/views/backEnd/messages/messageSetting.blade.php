@@ -1,6 +1,6 @@
 @extends('backLayout.app')
 @section('title')
-Campaigns
+Message settings
 @stop
 <style>
     .color-pick {

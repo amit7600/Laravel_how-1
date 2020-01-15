@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-Organizations
+Create Campaigns
 @stop
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
@@ -40,7 +40,7 @@ Organizations
         border: 1px solid #ddd;
     }
 
-.form-group button,
+    .form-group button,
     .form-group a.btn {
         width: 32.8%;
     }
@@ -79,6 +79,22 @@ Organizations
 @section('content')
 
 <div class="wrapper">
+    <div class="col-md-2 left_side_menu">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="{{Request::segment(1) == 'campaigns' && Request::segment(2)=='' ? 'nav-link active' : 'nav-link'}}"
+                    href="{{route('campaigns.index')}}">View Campaigns</a>
+
+            </li>
+            <li class="nav-item"><a class="{{Request::segment(1) == 'messages' ? 'nav-link active' : 'nav-link'}}"
+                    href="{{route('messages.index')}}">View Messages</a></li>
+            <li class="nav-item"><a
+                    class="{{Request::segment(1) == 'campaigns' && Request::segment(2)=='create' ? 'nav-link active' : 'nav-link'}}"
+                    href="{{route('campaigns.create')}}">Create a Campaign</a></li>
+            <li class="nav-item"><a class="{{Request::segment(1) == 'createMessage' ? 'nav-link active' : 'nav-link'}}"
+                    href="{{route('createMessage')}}">Create a Message</a></li>
+        </ul>
+    </div>
     <!-- Page Content Holder -->
     <div id="organizations-edit-content" class="container">
 

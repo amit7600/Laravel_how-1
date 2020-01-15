@@ -45,7 +45,8 @@ Contact Edit
 <div class="wrapper">
     <div id="contacts-edit-content" class="container">
         <h1>Add Contacts to Dynamic Group</h1>
-        <form action="/contacts/contacts_update_dynamic_group" method="GET">
+        {{-- <form action="/contacts/contacts_update_dynamic_group" method="GET"> --}}
+            {!! Form::open(['route' => 'contacts_update_dynamic_group']) !!}
             <div class="row">                
                 <!-- <div class="form-group">                 
                     <label class="control-label sel-label-org pl-4">Dynamic Goup list: </label>
@@ -112,7 +113,8 @@ Contact Edit
                     </div>                   
                 </div>
             </div>
-        </form>
+        {{-- </form> --}}
+        {!! Form::close() !!}
     </div>
 </div>
 

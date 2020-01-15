@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-Organizations
+Messages
 @stop
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
@@ -106,24 +106,15 @@ Organizations
     <div class="col-md-2 left_side_menu">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="{{route('campaigns.index')}}">Campaigns</a>
-                <ul class="nav flex-column">
-                    <li><a class="{{Request::segment(1) == 'campaigns' ? 'nav-link active' : 'nav-link'}}"
-                            href="{{route('campaigns.index')}}">View Campaigns</a></li>
-                    <li><a class="nav-link" href="{{route('campaigns.create')}}">Create a Campaign</a></li>
-                </ul>
+                <a class="{{Request::segment(1) == 'campaigns' ? 'nav-link active' : 'nav-link'}}"
+                    href="{{route('campaigns.index')}}">View Campaigns</a>
+
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{route('messages.index')}}">Messages</a>
-                <ul class="nav flex-column">
-                    <li><a class="{{Request::segment(1) == 'messages' ? 'nav-link active' : 'nav-link'}}"
-                            href="{{route('messages.index')}}">All</a></li>
-                    <li><a class="{{Request::segment(2) == 'sent' ? 'nav-link active' : 'nav-link'}}"
-                            href="{{url('/message/sent')}}">Sent</a></li>
-                    <li><a class="{{Request::segment(2) == 'recieved' ? 'nav-link active' : 'nav-link'}}"
-                            href="{{url('/message/recieved')}}">Incoming</a></li>
-                </ul>
-            </li>
+            <li class="nav-item"><a class="{{Request::segment(1) == 'messages' ? 'nav-link active' : 'nav-link'}}"
+                    href="{{route('messages.index')}}">View Messages</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{route('campaigns.create')}}">Create a Campaign</a></li>
+            <li class="nav-item"><a class="{{Request::segment(1) == 'createMessage' ? 'nav-link active' : 'nav-link'}}"
+                    href="{{route('createMessage')}}">Create a Message</a></li>
         </ul>
     </div>
     <div class="col-md-10">
@@ -243,7 +234,7 @@ Organizations
                                 @if($getCampaignReport)
                                 @foreach($getCampaignReport as $key=>$value)
                                 <tr>
-                                    @if ($value->status == 'Incoming')
+                                    @if ($value->status == 'Incoming' || $value->campaign_id == '')
                                     <td><b><input type="checkbox" name="checkUncheck[]" id="checkAllAuto"
                                                 value="{{ $value->id}}" class="checkAllAuto"></b>
                                     </td>
@@ -316,15 +307,20 @@ Organizations
                     <button class="btn btn-info" data-toggle="modal" data-target="#createGroup">Create group</button>
                 </div>
                 <div class="row">
-                    <label class="control-label col-md-3"><b>Select static group</b></label>
+                    <label class="control-label col-md-3"><b> static group</b></label>
                     {!! Form::select('selectGroup',$GroupDetail,null,['class'
-                    =>'form-control col-md-6','id' => 'selectGroup','placeholder'=>'Select Group'])!!}
+                    =>'form-control col-md-6','id' => 'selectGroup','placeholder'=>'Select Group','onchange' =>
+                    'changeGroup(this)'])!!}
                 </div>
                 <div class="row mt-4">
                     <label class="control-label col-md-3"><b>Group tag</b></label>
                     <div class="col-md-6 p-0">
-                        <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="">
+                        <div id="groupTag"></div>
+                        <div class="col-md-12 p-0" id="groupTagTemp">
+                            <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="">
+                        </div>
                     </div>
+
                     <div class="table-responsive mt-4" id="groupTable" style="display:none;">
                         <div class="table-responsive">
                             <table class="table table-striped jambo_table bulk_action nowrap datatable"
@@ -368,15 +364,6 @@ Organizations
                             <input class="form-control selectpicker" type="text" id="group_name" name="group_name"
                                 value="">
                             <span id="groupNameError" style="color:red;display:none;"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <label class="control-label sel-label-org pl-4"><b>Group Name</b></label>
-                        <div class="col-md-12 col-sm-12 col-xs-12 group-details-div">
-                            {!! Form::select('group_type',['Static' => 'static','Dynamic' =>
-                            'dynamic'],'Static',['class'=> 'form-control','id' => 'group_type']) !!}
                         </div>
                     </div>
                 </div>
@@ -429,9 +416,9 @@ Organizations
 <script>
     $(document).ready(function() {   
         $('#tokenfield').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
+        // autocomplete: {
+        //     delay: 100
+        // },
         showAutocompleteOnFocus: true
         });
     });
@@ -439,9 +426,9 @@ Organizations
 <script>
     $(document).ready(function() {   
         $('#createGroupToken').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
+        // autocomplete: {
+        //     delay: 100
+        // },
         showAutocompleteOnFocus: true
         });
     });
@@ -693,7 +680,7 @@ Organizations
                 headers: {
                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
-                data:{ id, groupId,tokenfield},
+                data:{ id, groupId,newContactData,tokenfield},
                 success:function(response){
                     $('#loading').hide();
                     $('#message').empty();
@@ -784,7 +771,7 @@ Organizations
 
     function createGroup(){
         let group_name = $('#group_name').val();
-        let group_type = $('#group_type').val();
+        
         let createGroupToken = $('#createGroupToken').val();
         
         $('#groupNameError').hide();
@@ -805,15 +792,21 @@ Organizations
             headers: {
             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
             },
-            data:{ group_name,group_type,createGroupToken },
+            data:{ group_name,createGroupToken },
             success:function(response){
                 $('#createGroup').modal('hide');
                 $('#loading').hide();
                 $('#selectGroup').append('<option selected="selected" value="'+response.data+'">'+group_name+'</option>')
-                let tags = createGroupToken.split(',');
-                $.each(tags,function(i,v){
-                    $('.tokenfield').append('<div class="token"><span class="token-label" style="max-width: 507.984px;">'+v+'</span><a href="#" class="close"tabindex="-1">×</a></div>')
+                $('#groupTag').empty();
+                $('#groupTagTemp').remove();
+                $('#groupTag').append('<div class="col-md-12 p-0"><input type="text" class="form-control" id="tokenfield" name="tokenfield" value="'+createGroupToken+'"></div>');
+                $('#tokenfield').tokenfield({
+                    // autocomplete: {
+                    // delay: 100
+                    // },
+                    showAutocompleteOnFocus: true
                 });
+                
             },
             error:function(error){
                 $('#createGroup').modal('hide');
@@ -827,6 +820,52 @@ Organizations
             }
         })
     }
-    
+    function changeGroup(e){
+        let groupRecordId = e.value;
+
+        if (groupRecordId == '') {
+            $('#message').empty();
+            $('#addClass').removeClass('bg-danger');
+            $('#addClass').removeClass('bg-success');
+            $('#addClass').addClass('bg-danger');
+            $('#message').append('<h4 style="color:#fff;">Please select any group first!</h4>')
+            $('#alertModal').modal('show');
+            return false
+        }
+         $('#loading').show();
+        $.ajax({
+            method: 'POST',
+            url: '{{route("getGroupTag")}}',
+            headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            },
+            data:{ groupRecordId },
+            success:function(response){
+                $('#loading').hide();
+               if(response.success){
+                   const groupTag = response.data != null ? response.data : '';
+                   $('#groupTag').empty();
+                   $('#groupTagTemp').remove();
+                   $('#groupTag').append('<div class="col-md-12 p-0"><input type="text" class="form-control" id="tokenfield" name="tokenfield" value="'+groupTag+'"></div>');
+                   $('#tokenfield').tokenfield({
+                        // autocomplete: {
+                        //     delay: 100
+                        // },
+                        showAutocompleteOnFocus: true
+                    });
+               }
+            },
+            error:function(error){
+                $('#createGroup').modal('hide');
+                $('#loading').hide();
+                $('#message').empty();
+                $('#addClass').removeClass('bg-danger');
+                $('#addClass').removeClass('bg-success');
+                $('#addClass').addClass('bg-danger');
+                $('#message').append('<h4 style="color:#fff;">'+error['responseJSON'].message+'</h4>')
+                $('#alertModal').modal('show');
+            }
+        })
+    }
 </script>
 @endsection

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use App\Model\OrganizationType;
+use App\Model\contactType;
 use DB;
 use Illuminate\Http\Request;
 use Sentinel;
 
-class OrganizationTypeController extends Controller
+class ContactTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +17,9 @@ class OrganizationTypeController extends Controller
      */
     public function index()
     {
-        $organizationTypes = OrganizationType::get();
+        $ContactTypes = contactType::get();
 
-        return view('backEnd.organizationType.index', compact('organizationTypes'));
+        return view('backEnd.contactType.index', compact('ContactTypes'));
     }
 
     /**
@@ -29,11 +29,8 @@ class OrganizationTypeController extends Controller
      */
     public function create()
     {
-        try {
-            return view('backEnd.organizationType.create');
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
+        return view('backEnd.contactType.create');
+
     }
 
     /**
@@ -45,24 +42,23 @@ class OrganizationTypeController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'organization_type' => 'required',
+            'contact_type' => 'required',
         ]);
         try {
             DB::beginTransaction();
-            OrganizationType::create([
-                'organization_type' => $request->get('organization_type'),
+            contactType::create([
+                'contact_type' => $request->get('contact_type'),
                 'notes' => $request->get('notes'),
                 'created_by' => Sentinel::check()->id,
             ]);
             DB::commit();
-            return redirect()->to('organizationTypes')->with('success', 'organization type created successfully');
-
+            return redirect()->to('ContactTypes')->with('success', 'Contact type added successfully!');
         } catch (\Throwable $th) {
+            //throw $th;
             DB::rollBack();
-            return redirect()->to('organizationTypes')->with('error', $th->getMessage());
+            return redirect()->to('ContactTypes.index')->with('error', $th->getMessage());
 
         }
-
     }
 
     /**
@@ -84,10 +80,9 @@ class OrganizationTypeController extends Controller
      */
     public function edit($id)
     {
-        $organizationType = OrganizationType::whereId($id)->first();
+        $ContactType = contactType::whereId($id)->first();
 
-        return view('backEnd.organizationType.edit', compact('organizationType'));
-
+        return view('backEnd.contactType.edit', compact('ContactType'));
     }
 
     /**
@@ -100,22 +95,20 @@ class OrganizationTypeController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'organization_type' => 'required',
+            'contact_type' => 'required',
         ]);
         try {
             DB::beginTransaction();
-            OrganizationType::whereId($id)->update([
-                'organization_type' => $request->get('organization_type'),
+            contactType::whereId($id)->update([
+                'contact_type' => $request->get('contact_type'),
                 'notes' => $request->get('notes'),
-                'created_by' => Sentinel::check()->id,
             ]);
             DB::commit();
-            return redirect()->to('organizationTypes')->with('success', 'organization type updated successfully');
-
+            return redirect()->to('ContactTypes')->with('success', 'Contact type updated successfully!');
         } catch (\Throwable $th) {
+            //throw $th;
             DB::rollBack();
-            return redirect()->to('organizationTypes')->with('error', $th->getMessage());
-
+            return redirect()->to('ContactTypes.index')->with('error', $th->getMessage());
         }
 
     }
@@ -130,15 +123,16 @@ class OrganizationTypeController extends Controller
     {
         try {
             DB::beginTransaction();
-            OrganizationType::whereId($id)->delete();
-            DB::commit();
-            return redirect()->to('organizationTypes')->with('success', 'organization type deleted successfully');
 
+            contactType::whereId($id)->delete();
+
+            DB::commit();
+            return redirect()->to('ContactTypes')->with('success', 'Contact type deleted successfully!');
         } catch (\Throwable $th) {
+            //throw $th;
             DB::rollBack();
-            return redirect()->to('organizationTypes')->with('error', $th->getMessage());
+            return redirect()->to('ContactTypes.index')->with('error', $th->getMessage());
 
         }
-
     }
 }
