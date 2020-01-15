@@ -9,20 +9,51 @@ create religion
 
     <div class="panel-body">
 
-        {!! Form::open(['route' => 'religions.store', 'class' => 'form-horizontal']) !!}
+        {!! Form::open(['route' => 'religions.store', 'class' => 'form-horizontal','enctype' => 'multipart/form-data'])
+        !!}
 
-        <div class="form-group {{ $errors->has('religion_name') ? 'has-error' : ''}}">
-            {!! Form::label('religion_name', 'Religion name', ['class' => 'col-sm-3 control-label']) !!}
+        <div class="form-group {{ $errors->has('name') ? 'has-error' : ''}}">
+            {!! Form::label('name', 'Religion name', ['class' => 'col-sm-3 control-label']) !!}
             <div class="col-sm-6">
-                {!! Form::text('religion_name', null, ['class' => 'form-control']) !!}
-                {!! $errors->first('religion_name', '<p class="help-block">:message</p>') !!}
+                {!! Form::text('name', null, ['class' => 'form-control']) !!}
+                {!! $errors->first('name', '<p class="help-block">:message</p>') !!}
             </div>
         </div>
-        <div class="form-group {{ $errors->has('note') ? 'has-error' : ''}}">
-            {!! Form::label('note', 'Note', ['class' => 'col-sm-3 control-label']) !!}
+        <div class="form-group {{ $errors->has('type') ? 'has-error' : ''}}">
+            {!! Form::label('type', 'Religion type', ['class' => 'col-sm-3 control-label']) !!}
             <div class="col-sm-6">
-                {!! Form::textarea('note', null, ['class' => 'form-control']) !!}
-                {!! $errors->first('note', '<p class="help-block">:message</p>') !!}
+                {!! Form::select('type',['religion' => 'Religion','faith_tradition' => 'Faith tradition','denominations'
+                => 'Denominations','judicatory_body' => 'Judicatory body'], null, ['class' =>
+                'form-control','placeholder' => 'Please select type']) !!}
+                {!! $errors->first('type', '<p class="help-block">:message</p>') !!}
+            </div>
+        </div>
+        <div class="form-group {{ $errors->has('parent') ? 'has-error' : ''}}">
+            {!! Form::label('parent', 'Parent', ['class' => 'col-sm-3 control-label']) !!}
+            <div class="col-sm-6">
+                {!! Form::text('parent', null, ['class' => 'form-control']) !!}
+                {!! $errors->first('parent', '<p class="help-block">:message</p>') !!}
+            </div>
+        </div>
+        <div class="form-group {{ $errors->has('organizations') ? 'has-error' : ''}}">
+            {!! Form::label('organizations', 'Organizations', ['class' => 'col-sm-3 control-label']) !!}
+            <div class="col-sm-6">
+                {!! Form::text('organizations', null, ['class' => 'form-control']) !!}
+                {!! $errors->first('organizations', '<p class="help-block">:message</p>') !!}
+            </div>
+        </div>
+        <div class="form-group {{ $errors->has('icon') ? 'has-error' : ''}}">
+            {!! Form::label('icon', 'icon', ['class' => 'col-sm-3 control-label']) !!}
+            <div class="col-sm-6">
+                {!! Form::file('icon', ['class' => 'form-control']) !!}
+                {!! $errors->first('icon', '<p class="help-block">:message</p>') !!}
+            </div>
+        </div>
+        <div class="form-group {{ $errors->has('notes') ? 'has-error' : ''}}">
+            {!! Form::label('notes', 'Notes', ['class' => 'col-sm-3 control-label']) !!}
+            <div class="col-sm-6">
+                {!! Form::textarea('notes', null, ['class' => 'form-control']) !!}
+                {!! $errors->first('notes', '<p class="help-block">:message</p>') !!}
             </div>
         </div>
         <div class="form-group">

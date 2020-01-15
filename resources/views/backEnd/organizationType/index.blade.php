@@ -47,7 +47,7 @@ Organization type
               {{-- <td>{{ Form::checkbox('sel', $religion->id, null, ['class' => ''])}}</td> --}}
               <td>{{$organizationType->id}}</td>
               <td>{{$organizationType->organization_type}}</td>
-              <td>{{$organizationType->note}}</td>
+              <td>{{$organizationType->notes}}</td>
               <td>{{$organizationType->created_at}}</td>
               <td>
                 {{-- <a href="{{route('organizationTypes.show', $organizationType->id)}}" class="btn btn-info btn-xs"><i
@@ -60,7 +60,9 @@ Organization type
                 {!! Form::open(['method'=>'DELETE', 'route' => ['organizationTypes.destroy', $organizationType->id],
                 'style' =>
                 'display:inline']) !!}
-                {{Form::button('<i class="fa fa-trash"></i>', array('type' => 'submit', 'class' => 'btn btn-danger btn-xs', 'data-placement' => 'top', 'data-original-title' => 'Delete', 'onclick'=>'confirm(Are you sure to delete this organizationType)'))}}
+                <button type="submit" class="btn btn-danger btn-xs" data-original-title="Delete"
+                  onclick="return confirm('Are you sure to delete this religion')" data-placement="top"><i
+                    class='fa fa-trash'></i></button>
                 {!! Form::close() !!}
 
 

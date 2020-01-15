@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
-use App\Model\OrganizationType;
+use App\Model\facilityType;
 use DB;
 use Illuminate\Http\Request;
 use Sentinel;
 
-class OrganizationTypeController extends Controller
+class FacilityTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +17,9 @@ class OrganizationTypeController extends Controller
      */
     public function index()
     {
-        $organizationTypes = OrganizationType::get();
+        $FacilityTypes = facilityType::get();
 
-        return view('backEnd.organizationType.index', compact('organizationTypes'));
+        return view('backEnd.facility_type.index', compact('FacilityTypes'));
     }
 
     /**
@@ -29,11 +29,8 @@ class OrganizationTypeController extends Controller
      */
     public function create()
     {
-        try {
-            return view('backEnd.organizationType.create');
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
+        return view('backEnd.facility_type.create');
+
     }
 
     /**
@@ -45,21 +42,21 @@ class OrganizationTypeController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'organization_type' => 'required',
+            'facility_type' => 'required',
         ]);
         try {
             DB::beginTransaction();
-            OrganizationType::create([
-                'organization_type' => $request->get('organization_type'),
+            facilityType::create([
+                'facility_type' => $request->get('facility_type'),
                 'notes' => $request->get('notes'),
                 'created_by' => Sentinel::check()->id,
             ]);
             DB::commit();
-            return redirect()->to('organizationTypes')->with('success', 'organization type created successfully');
-
+            return redirect()->to('FacilityTypes')->with('success', 'Facility type added successfully!');
         } catch (\Throwable $th) {
+            //throw $th;
             DB::rollBack();
-            return redirect()->to('organizationTypes')->with('error', $th->getMessage());
+            return redirect()->to('FacilityTypes')->with('error', $th->getMessage());
 
         }
 
@@ -84,9 +81,9 @@ class OrganizationTypeController extends Controller
      */
     public function edit($id)
     {
-        $organizationType = OrganizationType::whereId($id)->first();
+        $FacilityType = facilityType::whereId($id)->first();
 
-        return view('backEnd.organizationType.edit', compact('organizationType'));
+        return view('backEnd.facility_type.edit', compact('FacilityType'));
 
     }
 
@@ -100,21 +97,21 @@ class OrganizationTypeController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'organization_type' => 'required',
+            'facility_type' => 'required',
         ]);
         try {
             DB::beginTransaction();
-            OrganizationType::whereId($id)->update([
-                'organization_type' => $request->get('organization_type'),
+            facilityType::whereId($id)->update([
+                'facility_type' => $request->get('facility_type'),
                 'notes' => $request->get('notes'),
                 'created_by' => Sentinel::check()->id,
             ]);
             DB::commit();
-            return redirect()->to('organizationTypes')->with('success', 'organization type updated successfully');
-
+            return redirect()->to('FacilityTypes')->with('success', 'Facility type updated successfully!');
         } catch (\Throwable $th) {
+            //throw $th;
             DB::rollBack();
-            return redirect()->to('organizationTypes')->with('error', $th->getMessage());
+            return redirect()->to('FacilityTypes')->with('error', $th->getMessage());
 
         }
 
@@ -130,13 +127,20 @@ class OrganizationTypeController extends Controller
     {
         try {
             DB::beginTransaction();
-            OrganizationType::whereId($id)->delete();
-            DB::commit();
-            return redirect()->to('organizationTypes')->with('success', 'organization type deleted successfully');
 
+            facilityType::whereId($id)->update([
+                'deleted_by' => Sentinel::check()->id,
+            ]);
+            DB::commit();
+
+            facilityType::whereId($id)->delete();
+
+            DB::commit();
+            return redirect()->to('FacilityTypes')->with('success', 'Facility type deleted successfully!');
         } catch (\Throwable $th) {
+            //throw $th;
             DB::rollBack();
-            return redirect()->to('organizationTypes')->with('error', $th->getMessage());
+            return redirect()->to('FacilityTypes.index')->with('error', $th->getMessage());
 
         }
 

@@ -6,168 +6,187 @@ Organization
 
 
 <style type="text/css">
-.table a{
-    text-decoration:none !important;
-    color: rgba(40,53,147,.9);
-    white-space: normal;
-}
-.footable.breakpoint > tbody > tr > td > span.footable-toggle{
-    position: absolute;
-    right: 25px;
-    font-size: 25px;
-    color: #000000;
-}
-.ui-menu .ui-menu-item .ui-state-active {
-    padding-left: 0 !important;
-}
-ul#ui-id-1 {
-    width: 260px !important;
-}
-#map{
-    position: relative !important;
-    z-index: 0 !important;
-}
-@media (max-width: 768px) {
-    .property{
-        padding-left: 30px !important;
+    .table a {
+        text-decoration: none !important;
+        color: rgba(40, 53, 147, .9);
+        white-space: normal;
     }
-    #map{
-        display: block !important;
+
+    .footable.breakpoint>tbody>tr>td>span.footable-toggle {
+        position: absolute;
+        right: 25px;
+        font-size: 25px;
+        color: #000000;
+    }
+
+    .ui-menu .ui-menu-item .ui-state-active {
+        padding-left: 0 !important;
+    }
+
+    ul#ui-id-1 {
+        width: 260px !important;
+    }
+
+    #map {
+        position: relative !important;
+        z-index: 0 !important;
+    }
+
+    @media (max-width: 768px) {
+        .property {
+            padding-left: 30px !important;
+        }
+
+        #map {
+            display: block !important;
+            width: 100% !important;
+        }
+    }
+
+    .morecontent span {
+        display: none;
+
+    }
+
+    .morelink {
+        color: #428bca;
+    }
+
+    #tbl-org-profile-contact_wrapper {
+        overflow-x: scroll;
+    }
+
+    #tbl-org-profile-contact {
         width: 100% !important;
     }
-}
-.morecontent span {
-  display: none;
 
-}
-.morelink{
-  color: #428bca;
-}
-#tbl-org-profile-contact_wrapper {
-    overflow-x: scroll;
-}
+    .comment-author {
+        color: #3949ab !important;
+        font-size: 18px !important;
+    }
 
-#tbl-org-profile-contact {
-    width: 100% !important;
-}
+    span.date {
+        font-style: italic;
+        color: maroon;
+    }
 
-.comment-author {
-    color: #3949ab !important;
-    font-size: 18px !important;
-}
-span.date {
-    font-style: italic;
-    color: maroon;
-}
-#tagging-div {
-    margin-top: 12px !important;
-}
-
+    #tagging-div {
+        margin-top: 12px !important;
+    }
 </style>
 
 @section('content')
 <div class="wrapper">
- 
+
     <div id="content" class="container">
-		<div class="row m-0">
-        	<div class="col-md-8 pt-15 pb-15 pl-30">
-               <div class="card">
+        <div class="row m-0">
+            <div class="col-md-8 pt-15 pb-15 pl-30">
+                <div class="card">
                     <div class="card-block" style="height: 570px;">
                         <h4 class="card-title">
-							<a href="">@if($organization->organization_logo_x)<img src="{{$organization->organization_logo_x}}" height="80">@endif {{$organization->organization_name}} @if($organization->organization_alternate_name!='')({{$organization->organization_alternate_name}})@endif
+                            <a href="">@if($organization->organization_logo_x)<img
+                                    src="{{$organization->organization_logo_x}}" height="80">@endif
+                                {{$organization->organization_name}}
+                                @if($organization->organization_alternate_name!='')({{$organization->organization_alternate_name}})@endif
                             </a>
-                            <a href="/organization/{{$organization->organization_recordid}}/edit" class="btn btn-floating btn-success waves-effect waves-classic" style="float: right;">
+                            <a href="/organization/{{$organization->organization_recordid}}/edit"
+                                class="btn btn-floating btn-success waves-effect waves-classic" style="float: right;">
                                 <i class="icon md-edit" style="margin-right: 0px;"></i>
                             </a>
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Religion:</b></span> 
-							{{$organization->organization_religion}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Religion:</b></span>
+                            {{$organization->religion ? $organization->religion->name : ''}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Organization Type:</b></span> 
-							{{$organization->organization_type}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Organization Type:</b></span>
+                            {{$organization->organigationType ? $organization->organigationType->organization_type : ''}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Faith Tradition:</b></span> 
-							{{$organization->organization_faith_tradition}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Faith Tradition:</b></span>
+                            {{$organization->faith_tradition ? $organization->faith_tradition->name : ''}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Denomination:</b></span> 
-							{{$organization->organization_denomination}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Denomination:</b></span>
+                            {{$organization->denomination ? $organization->denomination->name : ''}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Judicatory Body:</b></span> 
-							{{$organization->organization_judicatory_body}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Judicatory Body:</b></span>
+                            {{$organization->judicatory_body ? $organization->judicatory_body->name : ''}}
                         </h4>
                         <h4>
-                        @if(isset($organization->location))
+                            <span class="badge bg-red pl-0 organize_font"><b>Main Address</b></span>
+                            @if(isset($organization->location))
                             @foreach($organization->location as $location)
-							<span class="badge bg-red pl-0 organize_font"><b>Main Address</b></span> 
-                                @if(isset($location->address))
-                                    @foreach($location->address as $address)
-                                    {{ $address->address_1 }}, {{ $address->address_city }}, {{ $address->address_state }}, {{ $address->address_zip_code }}
-                                    @endforeach
-                                @endif
+                            @if(isset($location->address))
+                            @foreach($location->address as $address)
+                            {{ $address->address_1 }}, {{ $address->address_city }}, {{ $address->address_state }},
+                            {{ $address->address_zip_code }} <br>
                             @endforeach
-                        @endif                        
+                            @endif
+                            @endforeach
+                            @endif
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Facebook:</b></span> 
-							{{$organization->organization_facebook}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Facebook:</b></span>
+                            {{$organization->organization_facebook}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Website:</b></span> 
-							{{$organization->organization_url}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Website:</b></span>
+                            {{$organization->organization_url}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Internet Access:</b></span> 
-							{{$organization->organization_internet_access}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Internet Access:</b></span>
+                            {{$organization->organization_internet_access}}
                         </h4>
                         <h4>
-							<span class="badge bg-red pl-0 organize_font"><b>Comments:</b></span> 
-							{{$organization->organization_description}}
+                            <span class="badge bg-red pl-0 organize_font"><b>Comments:</b></span>
+                            {{$organization->organization_description}}
                         </h4>
                     </div>
                 </div>
-            </div>           
+            </div>
             <div class="col-md-4 property">
-				<div class="pt-10 pb-10 pl-0 btn-download">
-                    <form method="GET" action="/organization/{{$organization->organization_recordid}}/tagging" id="organization_tagging">
+                <div class="pt-10 pb-10 pl-0 btn-download">
+                    <form method="GET" action="/organization/{{$organization->organization_recordid}}/tagging"
+                        id="organization_tagging">
                         <div class="row m-0" id="tagging-div">
                             <div class="col-md-10">
-                                <input type="text" class="form-control" id="tokenfield" name="tokenfield" value="{{$organization->organization_tag}}" />
-                            </div> 
-                            <div class="col-md-2">  
+                                <input type="text" class="form-control" id="tokenfield" name="tokenfield"
+                                    value="{{$organization->organization_tag}}" />
+                            </div>
+                            <div class="col-md-2">
                                 <button type="submit" class="btn btn-secondary btn-tag-save">
                                     <i class="fas fa-save"></i>
                                 </button>
-                            </div> 
+                            </div>
                         </div>
                     </form>
-				</div>
-				<div class="card">
-					<div id="map" style="width:initial;margin-top: 0;height: 325px;"></div>
-					<div class="card-block">
-						<div class="p-10">
-						@if(isset($organization->location))
-							@foreach($organization->location as $location)
-							<h4>
-								<span><i class="icon fas fa-building font-size-24 vertical-align-top  "></i>
-                                    <a href="/facility/{{$location->location_recordid}}">{{$location->location_name}}</a>
-								</span> 
-							</h4>
-							<h4>
-								<span><i class="icon md-pin font-size-24 vertical-align-top  "></i>
-									@if(isset($location->address))
-										@foreach($location->address as $address)
-										{{ $address->address_1 }}, {{ $address->address_city }}, {{ $address->address_state }}, {{ $address->address_zip_code }}
-										@endforeach
-									@endif
-								</span> 
-							</h4>
-							@endforeach
-						@endif
+                </div>
+                <div class="card">
+                    <div id="map" style="width:initial;margin-top: 0;height: 325px;"></div>
+                    <div class="card-block">
+                        <div class="p-10">
+                            @if(isset($organization->location))
+                            @foreach($organization->location as $location)
+                            <h4>
+                                <span><i class="icon fas fa-building font-size-24 vertical-align-top  "></i>
+                                    <a
+                                        href="/facility/{{$location->location_recordid}}">{{$location->location_name}}</a>
+                                </span>
+                            </h4>
+                            <h4>
+                                <span><i class="icon md-pin font-size-24 vertical-align-top  "></i>
+                                    @if(isset($location->address))
+                                    @foreach($location->address as $address)
+                                    {{ $address->address_1 }}, {{ $address->address_city }},
+                                    {{ $address->address_state }}, {{ $address->address_zip_code }}
+                                    @endforeach
+                                    @endif
+                                </span>
+                            </h4>
+                            @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -180,49 +199,67 @@ span.date {
                         <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-org-profile-contact">
                             <thead>
                                 <tr>
-                                    <th class="default-active" style="visibility: hidden;">Action</th>
-                                    <th class="default-inactive">ID</th>
-                                    <th class="default-active">Name</th>
-                                    <th class="default-active">Contact Type</th>
-                                    <th class="default-active">Languages Spoken</th>
-                                    <th class="default-active">Religious Title</th>
-                                    <th class="default-active">Position Title</th> 
-                                    <th class="default-active">Other Languages</th> 
-                                    <th class="default-inactive">Pronouns</th> 
-                                    <th class="default-inactive">Organization</th>                                  
-                                    <th class="default-inactive">Mailing Address</th>   
-                                    <th class="default-inactive">Cell Phone</th>  
-                                    <th class="default-inactive">Office Phone</th>   
-                                    <th class="default-inactive">Emergency Phone</th>  
-                                    <th class="default-inactive">Office Fax</th>  
-                                    <th class="default-inactive">Personal Email</th>  
-                                    <th class="default-inactive">Work Email</th>                                 
+                                    <th>Action</th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Contact Type</th>
+                                    <th>Languages Spoken</th>
+                                    <th>Religious Title</th>
+                                    <th>Position Title</th>
+                                    <th>Other Languages</th>
+                                    <th>Pronouns</th>
+                                    <th>Organization</th>
+                                    <th>Mailing Address</th>
+                                    <th>Cell Phone</th>
+                                    <th>Office Phone</th>
+                                    <th>Emergency Phone</th>
+                                    <th>Office Fax</th>
+                                    <th>Personal Email</th>
+                                    <th>Work Email</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach($contacts as $key => $contact)
+                                @foreach($contacts as $key => $contact)
                                 <tr>
                                     <td>
-                                        <a class="btn btn-primary open-td" href="/contact/{{$contact->contact_recordid}}" style="color: white;">Open</a>
+                                        <a class="open-td "
+                                            href="/contacts/{{$contact->contact_recordid}}" style="color:#007bff;"
+                                            ><i class="fa fa-eye"></i></a>
                                     </td>
                                     <td>{{$contact->contact_recordid}}</td>
-                                    <td>{{$contact->contact_first_name}} {{$contact->contact_middle_name}} {{$contact->contact_last_name}}</td>
-                                    <td>{{$contact->contact_type}}</td>
-                                    <td>{{$contact->contact_languages_spoken}}</td>
+                                    <td>{{$contact->contact_first_name}} {{$contact->contact_middle_name}}
+                                        {{$contact->contact_last_name}}</td>
+                                    <td>{{ $contact->type ? $contact->type->contact_type : ''}}</td>
+                                    <td>
+                                        @php
+                                        $languagesData = [];
+                                        if ($contact->contact_languages_spoken != '') {
+                                        $languagesData = explode(',',$contact->contact_languages_spoken);
+                                        }
+                                        @endphp
+                                        @foreach ($languagesData as $id)
+                                        @foreach ($languages as $langugeDetail)
+                                        @if ($langugeDetail->id == (int)$id)
+                                        <span class="badge badge-info">{{$langugeDetail->language_name}}</span>
+                                        @endif
+                                        @endforeach
+                                        @endforeach
+                                    
+                                    </td>
                                     <td>{{$contact->contact_religious_title}}</td>
-                                    <td>{{$contact->contact_title}}</td>  
+                                    <td>{{$contact->contact_title}}</td>
                                     <td>{{$contact->contact_other_languages}}</td>
                                     <td>{{$contact->contact_pronouns}}</td>
-                                    <td>{{$contact->organization['organization_name']}}</td>                                  
-                                    <td>{{$contact->address['address']}}</td>
-                                    <td>{{$contact->cellphone['phone_number']}}</td>
-                                    <td>{{$contact->officephone['phone_number']}}</td>
-                                    <td>{{$contact->emergencyphone['phone_number']}}</td>
-                                    <td>{{$contact->faxphone['phone_number']}}</td>
+                                    <td>{{$contact->organization ? $contact->organization['organization_name'] : ''}}</td>
+                                    <td>{{$contact->address ? $contact->address['address'] : ''}}</td>
+                                    <td>{{$contact->cellphone ? $contact->cellphone['phone_number'] : ''}}</td>
+                                    <td>{{$contact->officephone ? $contact->officephone['phone_number'] : ''}}</td>
+                                    <td>{{$contact->emergencyphone ? $contact->emergencyphone['phone_number'] : ''}}</td>
+                                    <td>{{$contact->faxphone ? $contact->faxphone['phone_number'] : ''}}</td>
                                     <td>{{$contact->contact_personal_email}}</td>
                                     <td>{{$contact->contact_email}}</td>
                                 </tr>
-                            @endforeach
+                                @endforeach
                             <tbody>
                         </table>
                     </div>
@@ -235,27 +272,33 @@ span.date {
                     <div class="card-block">
                         <div class="comment-body media-body">
                             @foreach($comment_list as $key => $comment)
-                                <a class="comment-author" href="javascript:void(0)">{{$comment->comments_user_firstname}} {{$comment->comments_user_lastname}}</a>
-                                <div class="comment-meta">
-                                    <span class="date">{{$comment->comments_datetime}}</span>
-                                </div>
-                                <div class="comment-content">
-                                    <p style="color: black;">{{$comment->comments_content}}</p>
-                                </div>
-                                <hr>
+                            <a class="comment-author" href="javascript:void(0)">{{$comment->comments_user_firstname}}
+                                {{$comment->comments_user_lastname}}</a>
+                            <div class="comment-meta">
+                                <span class="date">{{$comment->comments_datetime}}</span>
+                            </div>
+                            <div class="comment-content">
+                                <p style="color: black;">{{$comment->comments_content}}</p>
+                            </div>
+                            <hr>
                             @endforeach
                             <div class="comment-actions">
-                                <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Add a comment</a>
+                                <a class="active" id="reply-btn" href="javascript:void(0)" role="button">Add a
+                                    comment</a>
                             </div>
-                            <form class="comment-reply" action="/organization/{{$organization->organization_recordid}}/add_comment" method="POST">
+                            <form class="comment-reply"
+                                action="/organization/{{$organization->organization_recordid}}/add_comment"
+                                method="POST">
                                 {{ csrf_field() }}
                                 <div class="form-group">
                                     <textarea class="form-control" id="reply_content" name="reply_content" rows="3">
                                     </textarea>
                                 </div>
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary waves-effect waves-classic">Post</button>
-                                    <button type="button" id="close-reply-window-btn" class="btn btn-link grey-600 waves-effect waves-classic">Close</button>
+                                    <button type="submit"
+                                        class="btn btn-primary waves-effect waves-classic">Post</button>
+                                    <button type="button" id="close-reply-window-btn"
+                                        class="btn btn-link grey-600 waves-effect waves-classic">Close</button>
                                 </div>
                             </form>
                         </div>
@@ -269,15 +312,16 @@ span.date {
                         <form action="/organization_delete_filter" method="POST" id="organization_delete_filter">
                             {!! Form::token() !!}
                             <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                                <button type="button" class="close" data-dismiss="modal"><span
+                                        aria-hidden="true">×</span>
                                 </button>
                                 <h4 class="modal-title" id="myModalLabel">Delete Organization</h4>
                             </div>
                             <div class="modal-body">
-                                
+
                                 <input type="hidden" id="organization_recordid" name="organization_recordid">
                                 <h4>Are you sure to delete this organization?</h4>
-                                
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -290,9 +334,10 @@ span.date {
         </div>
     </div>
 </div>
-
-<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>
-<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
+<script type="text/javascript" src="http://sliptree.github.io/bootstrap-tokenfield/dist/bootstrap-tokenfield.js">
+</script>
+<script type="text/javascript"
+    src="http://sliptree.github.io/bootstrap-tokenfield/docs-assets/js/typeahead.bundle.min.js"></script>
 
 <script>
     var dataTable;
@@ -317,9 +362,9 @@ span.date {
 
     $(document).ready(function() {   
         $('#tokenfield').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
+        // autocomplete: {
+        //     delay: 100
+        // },
         showAutocompleteOnFocus: true
         });
     });
@@ -342,8 +387,8 @@ span.date {
             zoom = 12;
         }
 
-        latitude = locations[0].location_latitude;
-        longitude = locations[0].location_longitude;
+        latitude = locations.length > 0 ? locations[0].location_latitude : null;
+        longitude = locations.length > 0 ? locations[0].location_longitude : null ;
 
         if(latitude == null){
             latitude = avglat;
@@ -435,9 +480,7 @@ span.date {
         $('.comment-reply').hide();
     });
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap"
-  async defer>
+<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap" async
+    defer>
 </script>
 @endsection
-
-

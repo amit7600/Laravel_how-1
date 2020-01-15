@@ -35,6 +35,15 @@ Group Profile
         margin-bottom: 1.143rem !important;
     }
 
+    button[data-id="contacts"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    .form-group button {
+        width: 32.96%;
+    }
+
     #map {
         position: relative !important;
         z-index: 0 !important;
@@ -110,7 +119,8 @@ Group Profile
                     <div class="pt-20 btn-download">
                         <a href="/group/{{$group->group_recordid}}/edit" class="btn btn-primary "><i
                                 class="fa fa-fw fa-edit"></i>Edit</a>
-                        <a href="#" class="btn btn-secondary "><i class="fa fa-fw fa-edit"></i>Add Contact</a>
+                        <button type="button" class="btn btn-secondary " data-toggle="modal"
+                            data-target="#addContact"><i class="fa fa-fw fa-edit"></i>Add Contact</button>
                         {{-- <a href="#" class="btn btn-info "><i class="fa fa-fw fa-envelope"></i>Send a Message</a> --}}
                         <button class="btn btn-info" data-toggle="modal" data-target="#sendMessage"><i
                                 class="fa fa-fw fa-envelope"></i> Send
@@ -168,7 +178,10 @@ Group Profile
                                 id="tbl-group-profile-members">
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        <th>
+                                            <input type="checkbox" name="allCheckGroup" id="allCheckGroup">
+                                        </th>
+                                        <th>Action</th>
                                         <th>ID</th>
                                         <th>First Name</th>
                                         <th>Middle Name</th>
@@ -184,24 +197,35 @@ Group Profile
                                     @if (count($contacts) > 0)
                                     @foreach($contacts as $key => $contact)
                                     <tr>
-
                                         <td>
-                                            <a class="btn btn-primary open-td"
-                                                href="/contact/{{$contact->contact_recordid}}"
-                                                style="color: white;">Open</a>
+                                            <input type="checkbox" name="contactCheck" class="contactCheck"
+                                                value="{{ $contact->contact_recordid }}" id="contactCheck">
+                                        </td>
+                                        <td>
+                                            <a class="open-td"
+                                                href="/contacts/{{$contact->contact_recordid}}" style="color:#007bff;"
+                                                style="color: white;"><i class="fa fa-eye"></i></a>
                                         </td>
                                         <td>{{$contact->contact_recordid}}</td>
                                         <td>{{$contact->contact_first_name}}</td>
                                         <td>{{$contact->contact_middle_name}}</td>
                                         <td>{{$contact->contact_last_name}}</td>
-                                        <td>{{$contact->contact_type}}</td>
+                                        <td>{{ $contact->type ? $contact->type->contact_type : ''}}</td>
                                         <td>{{$contact->contact_religious_title}}</td>
                                         <td>
+                                            @if ($contact->organization)
                                             <a id="contact_organization_link"
                                                 style="color: #3949ab; text-decoration: underline;"
-                                                href="/organization/{{$contact->organization_recordid}}">{{$contact->organization_name}}</a>
+                                                href="/organization/{{$contact->organization->organization_recordid}}">{{$contact->organization->organization_name}}</a>
+                                                
+                                            @endif
                                         </td>
-                                        <td>{{$contact->organization_religion}}</td>
+                                        <td>
+                                            @if ($contact->organization && $contact->organization->religion)
+                                                
+                                            {{$contact->organization ? $contact->organization->religion->name : '' }}
+                                            @endif
+                                        </td>
                                         <td>{{$contact->address_city}}</td>
                                     </tr>
                                     @endforeach
@@ -255,12 +279,12 @@ Group Profile
                             </div>
                             <div class="modal-body">
                                 <input type="hidden" id="group_recordid" name="group_recordid">
-                                <input type="hidden" id="checked_terms" name="checked_terms">
+                                <input type="hidden" id="groupContacts" name="checked_terms">
                                 <h4>Are you sure to remove selected members from this group?</h4>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-danger btn-delete">Remove</button>
+                                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success btn-delete btn-sm">Remove</button>
                             </div>
                         </form>
                     </div>
@@ -305,6 +329,36 @@ Group Profile
         </div>
     </div>
 </div>
+<div class="modal" tabindex="-1" role="dialog" id="addContact">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add contact</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {!! Form::open(['route' => ['addContactToGroup',$group->group_recordid]]) !!}
+            <div class="modal-body">
+                <div class="form-group" id="contacts">
+                    <label class="control-label sel-label-org pl-4">Select Contacts </label>
+                    <div class="col-md-12 col-sm-12 col-xs-12 contact-details-div">
+                        {!! Form::select('contacts[]',$allContacts,'',['class' =>
+                        $errors->has("contacts") ? "form-control selectpicker has-error" :'form-control
+                        selectpicker','multiple' =>
+                        'multiple','data-live-search'=>'true','id' => 'contacts']) !!}
+                        {!! $errors->first('contacts', '<p class="help-block" style="color: red">:message</p>') !!}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
 
 @endsection
 @section('customScript')
@@ -335,7 +389,7 @@ Group Profile
         
         var locations = <?php print_r(json_encode($locations)) ?>;        
         var maplocation = <?php print_r(json_encode($map)) ?>; 
-        console.log(locations);       
+        console.log(locations,'location');       
 
         if(maplocation.active == 1){
             avglat = maplocation.lat;
@@ -386,9 +440,9 @@ Group Profile
 
     $(document).ready(function() {   
         $('#tokenfield').tokenfield({
-        autocomplete: {
-            delay: 100
-        },
+        // autocomplete: {
+        //     delay: 100
+        // },
         showAutocompleteOnFocus: true
         });
     });
@@ -411,23 +465,39 @@ Group Profile
             $(this).html(html);
         }
     });
-
-    $('#remove-members-group-btn').click(function(e){
-        console.log(checked_terms_set);
-        if (!checked_terms_set) {
-            e.preventDefault();
-            var value = $(this).val();
-            $('input#group_recordid').val(value);
-
-            var checked_rows = dataTable.rows('.selected').data();
-            var checked_terms = [];
-            for (i = 0; i < checked_rows.length; i++) {
-                checked_terms.push(checked_rows[i][2]);
-            }            
-            $('#checked_terms').val(checked_terms.join(","));            
-            checked_terms_set = true;
-            $(this).trigger('click');
+    $(document).on('change','#allCheckGroup',function(e){
+        if($(this).is(":checked")) {
+            $('.contactCheck').prop('checked',true);
+        }else{
+            $('.contactCheck').prop('checked',false);
         }
+    }); 
+    $('#remove-members-group-btn').click(function(e){
+        var contactId = []
+        var checkbox = $('#tbl-group-profile-members').find('input[type="checkbox"]:checked')
+        checkbox.each(function(index,data){
+            contactId.push(data.value)
+        })
+        if($.inArray('on', contactId) != -1){
+            contactId.splice(contactId.indexOf('on'),1)
+        }
+        $('#groupContacts').val(contactId)
+        var value = $(this).val();
+        $('input#group_recordid').val(value);
+        // if (!checked_terms_set) {
+        //     e.preventDefault();
+        //     var value = $(this).val();
+        //     $('input#group_recordid').val(value);
+
+        //     var checked_rows = dataTable.rows('.selected').data();
+        //     var checked_terms = [];
+        //     for (i = 0; i < checked_rows.length; i++) {
+        //         checked_terms.push(checked_rows[i][2]);
+        //     }            
+        //     $('#checked_terms').val(checked_terms.join(","));            
+        //     checked_terms_set = true;
+        //     $(this).trigger('click');
+        // }
     });
 
     $(".morelink").click(function(){

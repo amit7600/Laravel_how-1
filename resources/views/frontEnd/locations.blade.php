@@ -6,233 +6,288 @@ Locations
 <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.0.1/css/scroller.dataTables.min.css">
 
 <style type="text/css">
-.table a{
-    text-decoration:none !important;
-    color: rgba(40,53,147,.9);
-    white-space: normal;
-}
-.footable.breakpoint > tbody > tr > td > span.footable-toggle{
-    position: absolute;
-    right: 25px;
-    font-size: 25px;
-    color: #000000;
-}
-.ui-menu .ui-menu-item .ui-state-active {
-    padding-left: 0 !important;
-}
-ul#ui-id-1 {
-    width: 260px !important;
-}
-#map{
-    position: relative !important;
-    z-index: 0 !important;
-}
-@media (max-width: 768px) {
-    .property{
-        padding-left: 30px !important;
+    .table a {
+        text-decoration: none !important;
+        color: rgba(40, 53, 147, .9);
+        white-space: normal;
     }
-    #map{
-        display: block !important;
-        width: 100% !important;
-    }
-}
-.morecontent span {
-  display: none;
 
-}
-.morelink{
-  color: #428bca;
-}
-button[data-id="type"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="borough"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="tag"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="city_council_district"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="community_district"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="zipcode"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="address"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-.sel-label-org {
-    width: 15%;
-}
-#clear-filter-locations-btn {
-    width: 100%;
-}
-#tbl-location_wrapper {
-    overflow-x: scroll;
-}
+    .footable.breakpoint>tbody>tr>td>span.footable-toggle {
+        position: absolute;
+        right: 25px;
+        font-size: 25px;
+        color: #000000;
+    }
+
+    .ui-menu .ui-menu-item .ui-state-active {
+        padding-left: 0 !important;
+    }
+
+    ul#ui-id-1 {
+        width: 260px !important;
+    }
+
+    #map {
+        position: relative !important;
+        z-index: 0 !important;
+    }
+
+    @media (max-width: 768px) {
+        .property {
+            padding-left: 30px !important;
+        }
+
+        #map {
+            display: block !important;
+            width: 100% !important;
+        }
+    }
+
+    .morecontent span {
+        display: none;
+
+    }
+
+    .morelink {
+        color: #428bca;
+    }
+
+    button[data-id="type"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="borough"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="tag"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="city_council_district"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="community_district"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="zipcode"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="address"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    .sel-label-org {
+        width: 15%;
+    }
+
+    #clear-filter-locations-btn {
+        width: 100%;
+    }
+
+    #tbl-location_wrapper {
+        overflow-x: scroll;
+    }
 </style>
 
 @section('content')
 <div class="wrapper">
     <!-- Page Content Holder -->
     <div id="locations-content" class="container">
-        <form action="/facilities/action_group" method="GET">
-            <div class="row">
-                <div class="col-sm-6 p-20">                        
-                    <div class="form-group row">
-                        <label class="control-label sel-label-org pl-4">Type: </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12" id="type-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="type" name="type">
-                            @foreach($location_types as $key => $location_type)
-                                <option value="{{$location_type->location_type}}">{{$location_type->location_type}}</option>
-                            @endforeach
-                            </select>
-                        </div>
+        {{-- <form action="/facilities/action_group" method="POST"> --}}
+        {!! Form::open(['route' => 'facilityAction']) !!}
+        <div class="row">
+            <div class="col-sm-6 p-20">
+                <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4">Type: </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12" id="type-div">
+                        {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="type"
+                                name="type">
+                                @foreach($location_types as $key => $location_type)
+                                <option value="{{$location_type->location_type}}">{{$location_type->location_type}}
+                        </option>
+                        @endforeach
+                        </select> --}}
+                        {!! Form::select('type',$location_types,null,['class' => 'form-control selectpicker','id' =>
+                        'type','data-live-search' => 'true','multiple' => 'multiple']) !!}
                     </div>
-                    <div class="form-group row">
-                        <label class="control-label sel-label-org pl-4">Address: </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12" id="address-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="address" name="address">
-                            @foreach($address_address_list as $key => $address_address)
+                </div>
+                <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4">Address: </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12" id="address-div">
+                        {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="address"
+                                name="address">
+                                @foreach($address_address_list as $key => $address_address)
                                 <option value="{{$address_address}}">{{$address_address}}</option>
-                            @endforeach
-                            </select>
-                        </div>
+                        @endforeach
+                        </select> --}}
+                        {!! Form::select('address',$address_address_list,null,['class' => 'form-control
+                        selectpicker','id' =>
+                        'address','data-live-search' => 'true','multiple' => 'multiple']) !!}
                     </div>
-                    <div class="form-group row">
-                        <label class="control-label sel-label-org pl-4">Borough: </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12" id="borough-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="borough" name="borough">
-                            @foreach($address_city_list as $key => $address_city)
+                </div>
+                <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4">Borough: </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12" id="borough-div">
+                        {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="borough"
+                                name="borough">
+                                @foreach($address_city_list as $key => $address_city)
                                 <option value="{{$address_city}}">{{$address_city}}</option>
-                            @endforeach
-                            </select>
-                        </div>
-                    </div>  
-                    <div class="form-group row">
-                        <label class="control-label sel-label-org pl-4">Zipcode: </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12" id="zipcode-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="zipcode" name="zipcode">
-                            @foreach($address_zipcode_list as $key => $address_zipcode)
+                        @endforeach
+                        </select> --}}
+                        {!! Form::select('borough',$address_city_list,null,['class' => 'form-control
+                        selectpicker','id' =>
+                        'borough','data-live-search' => 'true','multiple' => 'multiple']) !!}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4">Zipcode: </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12" id="zipcode-div">
+                        {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="zipcode"
+                                name="zipcode">
+                                @foreach($address_zipcode_list as $key => $address_zipcode)
                                 <option value="{{$address_zipcode}}">{{$address_zipcode}}</option>
-                            @endforeach
-                            </select>
-                        </div>
+                        @endforeach
+                        </select> --}}
+                        {!! Form::select('zipcode',$address_zipcode_list,null,['class' => 'form-control
+                        selectpicker','id' =>
+                        'zipcode','data-live-search' => 'true','multiple' => 'multiple']) !!}
                     </div>
-                    <div class="form-group row">
-                        <label class="control-label sel-label-org pl-4">Tag: </label>
-                        <div class="col-sm-6 col-sm-6 col-xs-12" id="tag-div">
-                            <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
-                            @foreach($tag_list as $key => $tag)
+                </div>
+                <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4">Tag: </label>
+                    <div class="col-sm-6 col-sm-6 col-xs-12" id="tag-div">
+                        {{-- <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
+                                @foreach($tag_list as $key => $tag)
                                 <option value="{{$tag}}">{{$tag}}</option>
-                            @endforeach
-                            </select>
-                        </div>
-                    </div> 
-                    <div class="form-group row">
-                        <label class="control-label sel-label-org pl-4">City Council District: </label>
-                        <div class="col-sm-6 col-sm-6 col-xs-12" id="city_council_district-div">
-                            <select class="form-control selectpicker" data-live-search="true" id="city_council_district" name="city_council_district">
-                            @foreach($city_council_district_list as $key => $city_council_district)
+                        @endforeach
+                        </select> --}}
+                        {!! Form::select('tag',$tag_list,null,['class' => 'form-control
+                        selectpicker','id' =>
+                        'tag','data-live-search' => 'true','multiple' => 'multiple']) !!}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4">City Council District: </label>
+                    <div class="col-sm-6 col-sm-6 col-xs-12" id="city_council_district-div">
+                        {{-- <select class="form-control selectpicker" data-live-search="true" id="city_council_district"
+                                name="city_council_district">
+                                @foreach($city_council_district_list as $key => $city_council_district)
                                 <option value="{{$city_council_district}}">{{$city_council_district}}</option>
-                            @endforeach
-                            </select>
-                        </div>
-                    </div>  
-                    <div class="form-group row">
-                        <label class="control-label sel-label-org pl-4">Community District: </label>
-                        <div class="col-sm-6 col-sm-6 col-xs-12" id="city_council_district-div">
-                            <select class="form-control selectpicker" data-live-search="true" id="community_district" name="community_district">
-                            @foreach($community_district_list as $key => $community_district)
+                        @endforeach
+                        </select> --}}
+                        {!! Form::select('city_council_district',$city_council_district_list,'',['class' =>
+                        'form-control
+                        selectpicker','id' =>
+                        'city_council_district','data-live-search' => 'true','multiple' => 'multiple']) !!}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4">Community District: </label>
+                    <div class="col-sm-6 col-sm-6 col-xs-12" id="city_council_district-div">
+                        {{-- <select class="form-control selectpicker" data-live-search="true" id="community_district"
+                                name="community_district">
+                                @foreach($community_district_list as $key => $community_district)
                                 <option value="{{$community_district}}">{{$community_district}}</option>
-                            @endforeach
-                            </select>
-                        </div>
-                    </div>  
+                        @endforeach
+                        </select> --}}
+                        {!! Form::select('community_district',$community_district_list,null,['class' =>
+                        'form-control
+                        selectpicker','id' =>
+                        'community_district','data-live-search' => 'true','multiple' => 'multiple']) !!}
+                    </div>
+                </div>
 
-                    <input type="hidden" id="address_list" name="address_list"> 
-                    <input type="hidden" id="borough_list" name="borough_list">
-                    <input type="hidden" id="zipcode_list" name="zipcode_list">
-                    <input type="hidden" id="type_list" name="type_list">
-                    <input type="hidden" id="tag_list" name="tag_list">
-                    <input type="hidden" id="city_council_district_list" name="city_council_district_list">
-                    <input type="hidden" id="community_district_list" name="community_district_list">                      
-                    
-                    <div class="form-group row">
-                        <label class="control-label sel-label-org pl-4"></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12" id="clear-btn-div">
-                            <button class="btn btn-success btn-rounded" id="clear-filter-locations-btn"><i class="fa fa-refresh"></i> Clear Filters</button>
-                        </div>
-                    </div>  
+                <input type="hidden" id="address_list" name="address_list">
+                <input type="hidden" id="borough_list" name="borough_list">
+                <input type="hidden" id="zipcode_list" name="zipcode_list">
+                <input type="hidden" id="type_list" name="type_list">
+                <input type="hidden" id="tag_list" name="tag_list">
+                <input type="hidden" id="city_council_district_list" name="city_council_district_list">
+                <input type="hidden" id="community_district_list" name="community_district_list">
 
-                    <div id="waiting" style="text-align: center; margin-top: 50px;">
-                        <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom" style="font-size: 100px;"></i>
-                        <span class="sr-only">Loading...</span>
-                    </div>
-                          
-                </div>
-                <div class="col-md-6 property">
-                    <div class="card">
-                        <div class="form-group row mt-5">
-                            <div class="col-sm-4">
-                                <button type="button" class="btn btn-secondary" id="enable-polygon-btn" style="width: 100%;">Draw</button>
-                            </div>
-                            <div class="col-sm-4">
-                                <button type="button" class="btn btn-primary form-control" id="filter-polygon-btn">Apply</button>
-                            </div>
-                            <div class="col-sm-4">
-                                <button type="button" class="btn btn-success form-control" id="reset-filter-polygon-btn" onClick="document.location.reload(true)">Reset</button>
-                            </div>
-                        </div>
-                        <div id="map" style="width:initial;margin-top: 0;height: 50vh;"></div>
+                <div class="form-group row">
+                    <label class="control-label sel-label-org pl-4"></label>
+                    <div class="col-md-6 col-sm-6 col-xs-12" id="clear-btn-div">
+                        <button class="btn btn-success btn-rounded" id="clear-filter-locations-btn"><i
+                                class="fa fa-refresh"></i> Clear Filters</button>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <div class="form-group row mt-5">
-                        <div class="col-sm-3">
-                            <button type="submit" class="btn btn-primary btn-rounded" name="btn_submit" value="download_csv" id="download_csv" style="width: 100%;">Export CSV</button>
-                        </div>
-                        <div class="col-sm-3">
-                            <button type="submit" class="btn btn-secondary btn-rounded" name="btn_submit" value="download_pdf" id="download_pdf" style="width: 100%;">Export PDF</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-12 p-20"> 
-                    <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-location">
-                        <thead>
-                            <tr>
-                                <th class="default-active"></th>
-                                <th class="default-active"></th>
-                                <th class="default-inactive">Id</th>
-                                <th class="default-active">Organization</th>
-                                <th class="default-active">Address</th>
-                                <th class="default-active">Congregation</th>
-                                <th class="default-active">Building Status</th>
-                                <th class="default-active">Call in Emergency</th>
-                                <th class="default-inactive">Facility Name</th>
-                                <th class="default-inactive">Facility Type</th>
-                                <th class="default-inactive">Zipcode</th>
-                                <th class="default-inactive">Borough</th>
-                                <th class="default-inactive">Comments</th>
-                                <th class="default-inactive">Tag</th>
-                                <th class="default-inactive">City Council District</th>
-                                <th class="default-inactive">Community District</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>            
+
+                {{-- <div id="waiting" style="text-align: center; margin-top: 50px;">
+                    <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom" style="font-size: 100px;"></i>
+                    <span class="sr-only">Loading...</span>
+                </div> --}}
+
             </div>
-        </form>
+            <div class="col-md-6 property">
+                <div class="card">
+                    <div class="form-group row mt-5">
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-secondary" id="enable-polygon-btn"
+                                style="width: 100%;">Draw</button>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary form-control"
+                                id="filter-polygon-btn">Apply</button>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-success form-control" id="reset-filter-polygon-btn"
+                                onClick="document.location.reload(true)">Reset</button>
+                        </div>
+                    </div>
+                    <div id="map" style="width:initial;margin-top: 0;height: 50vh;"></div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group row mt-5">
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-primary btn-rounded" name="btn_submit" value="download_csv"
+                            id="download_csv" style="width: 100%;">Export CSV</button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-secondary btn-rounded" name="btn_submit"
+                            value="download_pdf" id="download_pdf" style="width: 100%;">Export PDF</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 p-20">
+                <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-location">
+                    <thead>
+                        <tr>
+                            <th class="default-active"></th>
+                            <th class="default-active"></th>
+                            <th class="default-inactive">Id</th>
+                            <th class="default-active">Organization</th>
+                            <th class="default-active">Address</th>
+                            <th class="default-active">Congregation</th>
+                            <th class="default-active">Building Status</th>
+                            <th class="default-active">Call in Emergency</th>
+                            <th class="default-inactive">Facility Name</th>
+                            <th class="default-inactive">Facility Type</th>
+                            <th class="default-inactive">Zipcode</th>
+                            <th class="default-inactive">Borough</th>
+                            <th class="default-inactive">Comments</th>
+                            <th class="default-inactive">Tag</th>
+                            <th class="default-inactive">City Council District</th>
+                            <th class="default-inactive">Community District</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        {{-- </form> --}}
+        {!! Form::close() !!}
         <div class="modal fade bs-delete-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -244,10 +299,10 @@ button[data-id="address"] {
                             <h4 class="modal-title" id="myModalLabel">Delete Facility</h4>
                         </div>
                         <div class="modal-body">
-                            
+
                             <input type="hidden" id="facility_recordid" name="facility_recordid">
                             <h4>Are you sure delete this facility?</h4>
-                            
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -262,7 +317,8 @@ button[data-id="address"] {
 
 @endsection
 @section('customScript')
-<script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+<script type="text/javascript"
+    src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/scroller/2.0.1/js/dataTables.scroller.min.js"></script>
 <script src="{{asset('js/markerclusterer.js')}}"></script>
 <script>
@@ -271,7 +327,7 @@ button[data-id="address"] {
     var marks = [];
 
     $(document).ready(function() {
-        $('#waiting').hide();
+        // $('#waiting').hide();
         sessionStorage.setItem('check_marks', '');
         dataTable = $('#tbl-location').DataTable({
             "scrollX": true,
@@ -299,13 +355,13 @@ button[data-id="address"] {
                     var filter_city_council_district = data.columns[14].search.value;
                     var filter_community_district = data.columns[15].search.value;
                     var check_marks = sessionStorage.getItem('check_marks');
-
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                         }
                     });
-                    $('#waiting').show();
+                    // $('#waiting').show();
+                    $('#loading').show();
               
                     $.ajax({
                         type: "POST",
@@ -324,7 +380,8 @@ button[data-id="address"] {
                             filter_map: filter_map
                         },
                         success: function (response) {
-                            $('#waiting').hide();
+                            // $('#waiting').hide();
+                            $('#loading').hide();
                             callback({
                                 draw: data.draw,
                                 data: response.data,
@@ -337,9 +394,8 @@ button[data-id="address"] {
                                 var value = $(this).val();
                                 $('input#facility_recordid').val(value);
                             });
-
                             var locations = response.filtered_locations_list;  
-                            console.log(locations);     
+                            
                             var maplocation = <?php print_r(json_encode($map)) ?>;
                             if(maplocation.active == 1){
                                 avglat = maplocation.lat;
@@ -352,8 +408,8 @@ button[data-id="address"] {
                                 avglng = -73.998107;
                                 zoom = 12 * 15;
                             }
-                            latitude = locations[0].location_latitude;
-                            longitude = locations[0].location_longitude;
+                            latitude = locations.length > 0 ? locations[0].location_latitude : null ;
+                            longitude = locations.length > 0 ? locations[0].location_longitude : null;
                             if(latitude == null){
                                 latitude = avglat;
                                 longitude = avglng;
@@ -362,7 +418,6 @@ button[data-id="address"] {
                                 zoom: zoom,
                                 center: {lat: parseFloat(avglat), lng: parseFloat(avglng)}
                             });
-
                             if (sessionStorage.getItem('check_marks') == 'true') {
                                 var poly_coordinate_list = sessionStorage.getItem('poly_coordinate_list');
                                 var point_list = JSON.parse(poly_coordinate_list);
@@ -381,7 +436,6 @@ button[data-id="address"] {
                                     strokeWeight: 3
                                 });
                             }
-
                             $('#enable-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 poly = new google.maps.Polygon({
@@ -393,12 +447,10 @@ button[data-id="address"] {
                                 poly.setMap(map);
                                 map.addListener('click', addLatLng);
                             });
-
                             $('#filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 google.maps.event.clearListeners(map, 'click');
                             });
-
                             $('#reset-filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 google.maps.event.clearListeners(map, 'click');
@@ -406,19 +458,16 @@ button[data-id="address"] {
                                 clearMarkers();
                                 marks = [];
                             });
-
                             // Sets the map on all markers in the array.
                             function setMapOnAll(map) {
                                 for (var i = 0; i < marks.length; i++) {
                                     marks[i].setMap(map);
                                 }
                             }
-
                             // Removes the markers from the map, but keeps them in the array.
                             function clearMarkers() {
                                 setMapOnAll(null);
                             }
-
                             var locations_info = locations.map((value) => {
                                 if (value) {
                                     return {
@@ -444,13 +493,11 @@ button[data-id="address"] {
                             var markerCluster = new MarkerClusterer(map, markers,
                                 {imagePath: "{{asset('images/m')}}"}
                             );
-
                             function addLatLng(event) {
                                 var path = poly.getPath();
                                 // Because path is an MVCArray, we can simply append a new coordinate
                                 // and it will automatically appear.
                                 path.push(event.latLng);
-
                                 // Add a new marker at the new plotted point on the polyline.
                                 var marker = new google.maps.Marker({
                                     position: event.latLng,
@@ -459,7 +506,6 @@ button[data-id="address"] {
                                 });
                                 marks.push(marker);
                             }
-
                             google.maps.Polygon.prototype.Contains = function (point) {
                                 
                                 var crossings = 0,
@@ -509,7 +555,6 @@ button[data-id="address"] {
                                     return (blue >= red);
                                 }
                             };
-
                             $('#filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 var filtered_points = [];
@@ -530,8 +575,7 @@ button[data-id="address"] {
                                 dataTable.ajax.reload();
                                 sessionStorage.setItem('check_marks', 'true');
                                 console.log('=========after filter===========');
-                                console.log(marks);  
-
+                                
                                 var poly_coordinate_list = [];
                                 for(var i = 0; i < marks.length; i ++) {
                                     var poly_coordinate = {
@@ -541,11 +585,10 @@ button[data-id="address"] {
                                     poly_coordinate_list.push(poly_coordinate);
                                 }
                                 sessionStorage.setItem('poly_coordinate_list', JSON.stringify(poly_coordinate_list)); 
-                                console.log(poly_coordinate_list);                              
                             });
-
                         },
                         error: function (data) {
+                            $('#loading').hide();
                             if (data.status == 0 || data.status == 414) {
                                 console.log('Organizations in filtered Ploygon are too much. Enlarge Map and filter in more detailed area.');
                             }
@@ -559,7 +602,7 @@ button[data-id="address"] {
                     "targets": 0,
                     "data": null,
                     "render": function ( data, type, row ) {
-                        return '<a class="btn btn-primary open-td" href="/facility/' + row[2] + '" style="color: white;">Open</a>';
+                        return '<a class=" open-td" href="/facility/' + row[2] + '" style="color: #007bff;"><i class="fa fa-fw fa-eye"></a>';
                     }
                    
                 },
@@ -567,7 +610,7 @@ button[data-id="address"] {
                     "targets": 1,
                     "data": null,
                     "render": function ( data, type, row ) {
-                        return '<button class="btn btn-danger delete-td" value="' + row[2] + '" data-toggle="modal" data-target=".bs-delete-modal-lg"><i class="fa fa-fw fa-remove"></i>Delete</button>';
+                        return '<button class="delete-td" value="' + row[2] + '" data-toggle="modal" data-target=".bs-delete-modal-lg" style="color:#fb0c2df7;"><i class="fa fa-fw fa-trash"></i></button>';
                     }
                 } 
             ],
@@ -586,7 +629,6 @@ button[data-id="address"] {
         $("#city_council_district").selectpicker("");
         $("#community_district").selectpicker("");
     })
-
     $('select#address').on('change', function() {
         
         var selectedList = $(this).val();
@@ -675,8 +717,8 @@ button[data-id="address"] {
                 zoom = 12 * 15;
             }
 
-            latitude = locations[0].location_latitude;
-            longitude = locations[0].location_longitude;
+            latitude = locations.length > 0 ? locations[0].location_latitude : null;
+            longitude = locations.length > 0 ? locations[0].location_longitude : null ;
 
             if(latitude == null){
                 latitude = avglat;
@@ -707,8 +749,7 @@ button[data-id="address"] {
     });
 
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap"
-  async defer>
+<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap" async
+    defer>
 </script>
 @endsection
-

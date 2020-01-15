@@ -346,8 +346,10 @@ class MessageController extends Controller
             // push phone number data
             foreach ($phone_recordid as $key => $value) {
                 $contact = Contact::where('contact_cell_phones', strval($value))->first();
+                if ($contact) {
+                    array_push($allContact, $contact);
+                }
 
-                array_push($allContact, $contact);
             }
             //  push email contact data
             foreach ($contacts as $key => $contact) {
@@ -359,6 +361,7 @@ class MessageController extends Controller
             // get require data
             $finalArray = [];
             foreach ($allContact as $key => $data) {
+
                 $phoneData = Phone::where('phone_recordid', $data->contact_cell_phones)->first();
                 $organizationData = Organization::where('organization_recordid', $data->contact_organizations)->first();
                 $id = $data->id;
@@ -505,7 +508,7 @@ class MessageController extends Controller
         try {
             $group = new Group;
             $group->group_name = $request->group_name;
-            $group->group_type = $request->group_type;
+            $group->group_type = 'Static';
             $group->group_tag = $request->createGroupToken;
             // $group->group_emails = $request->group_email;
             $group->group_last_modified = Carbon::now();
@@ -543,5 +546,116 @@ class MessageController extends Controller
 
         }
 
+    }
+    public function getGroupTag(Request $request)
+    {
+        try {
+            $groupRecordId = $request->get('groupRecordId');
+            $group = Group::where('group_recordid', $groupRecordId)->first();
+            $group_tag = $group ? $group->group_tag : '';
+
+            return response()->json([
+                'data' => $group_tag,
+                'success' => true,
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+                'success' => false,
+            ], 500);
+
+        }
+    }
+    public function createMessage()
+    {
+        try {
+            $home = Layout::find(1);
+            $map = Map::find(1);
+            $taxonomies = Taxonomy::where('taxonomy_parent_name', '=', null)->orderBy('taxonomy_name', 'asc')->get();
+            $parent_taxonomy = [];
+            $child_taxonomy = [];
+            $checked_organizations = [];
+            $checked_insurances = [];
+            $checked_ages = [];
+            $checked_languages = [];
+            $checked_settings = [];
+            $checked_culturals = [];
+            $checked_transportations = [];
+            $checked_hours = [];
+
+            // $contactDetail = Contact::orderBy('id', 'desc')->where('contact_cell_phones', '!=', '')->pluck('contact_first_name', 'contact_cell_phones');
+            $contacts = Contact::orderBy('id', 'desc')->where('contact_cell_phones', '!=', '')->get();
+            $contactDetail = [];
+            foreach ($contacts as $key => $value) {
+                $contactDetail[$value->contact_cell_phones] = $value->contact_first_name . ' ' . $value->contact_last_name . ' ,' . $value->organization->organization_name;
+            }
+            $gorupDetail = Group::pluck('group_name', 'group_recordid');
+
+            return view('backEnd.messages.createMessage', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'gorupDetail', 'contactDetail'));
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', $th->getMessage());
+        }
+    }
+    public function saveContactInfo(Request $request)
+    {
+        try {
+            $id = $request->get('id');
+            $type = $request->get('type');
+            $email = $request->get('email');
+            $phone = $request->get('phone');
+            $officePhone = $request->get('officePhone');
+            DB::beginTransaction();
+            if ($type == 1) {
+                if ($email != '') {
+                    Contact::whereId($id)->update([
+                        'contact_email' => $email,
+                    ]);
+                    DB::commit();
+
+                    return response()->json([
+                        'message' => 'Email added successfully!',
+                        'success' => true,
+                    ], 200);
+                }
+                return response()->json([
+                    'message' => 'Email is required!',
+                    'success' => false,
+                ], 500);
+            } else {
+                $contact = Contact::whereId($id)->first();
+                if ($type == 2) {
+                    Phone::where('phone_recordid', $contact->contact_cell_phones)->update([
+                        'phone_number' => $phone,
+                        'phone_type' => 'cell phone',
+                    ]);
+                    DB::commit();
+                    return response()->json([
+                        'message' => 'Phone added successfully!',
+                        'success' => true,
+                    ], 200);
+
+                } else {
+                    Phone::where('phone_recordid', $contact->contact_office_phones)->update([
+                        'phone_number' => $phone,
+                        'phone_type' => 'office phone',
+                    ]);
+                    DB::commit();
+                    return response()->json([
+                        'message' => 'Office phone added successfully!',
+                        'success' => true,
+                    ], 200);
+
+                }
+            }
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+                'success' => false,
+            ], 500);
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Campaign;
 use App\CampaignReport;
 use App\Contact;
+use App\Phone;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PhpMimeMailParser\Parser;
@@ -36,13 +37,27 @@ class WebhookController extends Controller
 
                 $contactId = $campaign ? explode(',', $campaign->recipient) : [];
 
-                foreach ($contactId as $key => $value) {
-                    $contact = Contact::whereId($value)->where('contact_email', $from)->first();
-                    if ($contact) {
-                        $fromContact = $contact->contact_first_name;
-                        $contact_id = $contact->id;
+                $fromNumberSms = substr($from, 2);
+                $phoneNumber = Phone::get();
+                $phoneData = '';
+                foreach ($phoneNumber as $key => $phone) {
+                    $phone_number = str_replace('-', '', $phone->phone_number);
+                    $phone_number = preg_replace('/[^A-Za-z0-9\-]/', '', $phone_number);
+                    if ($phone_number == $fromNumberSms) {
+                        $phoneData = $phone;
                     }
                 }
+                if ($phoneData != '') {
+                    foreach ($contactId as $key => $value) {
+                        $contact = Contact::whereId($value)->where('contact_cell_phones', $phoneData->phone_recordid)->first();
+                        if ($contact) {
+                            $fromContact = $contact->contact_first_name;
+                            $contact_id = $contact->id;
+                        }
+                    }
+
+                }
+
             }
 
             $webhook = new CampaignReport();

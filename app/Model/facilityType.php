@@ -5,11 +5,11 @@ namespace App\Model;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\softDeletes;
 
-class OrganizationType extends Model
+class facilityType extends Model
 {
     use softDeletes;
 
     protected $fillable = [
-        'organization_type', 'created_by', 'deleted_by', 'notes',
+        'facility_type', 'created_by', 'deleted_by', 'notes',
     ];
 }

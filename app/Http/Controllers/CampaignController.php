@@ -70,7 +70,7 @@ class CampaignController extends Controller
         $checked_hours = [];
 
         // Here Get List of group [Start]
-        $groupList = Group::pluck('group_name', 'id');
+        $groupList = Group::where('group_type', 'Static')->pluck('group_name', 'id');
 
         // Here Get List of group [Start]
 
@@ -78,7 +78,7 @@ class CampaignController extends Controller
         //   $imagePath = Session::put('imagePath','');
         // }
 
-        return view('backEnd.campaign.create', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'imagePath', 'groupList'));
+        return view('backEnd.campaign.create', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'groupList'));
     }
 
     /**
@@ -133,7 +133,7 @@ class CampaignController extends Controller
                 'sending_type' => $request->get('sending_type'),
                 'sending_status' => $sending_status,
             ]);
-
+            DB::commit();
             //Get Latest Campaign Confirm
             $campaignConfirm = Campaign::where('id', $insertCam->id)->first();
 
@@ -146,7 +146,8 @@ class CampaignController extends Controller
                 foreach ($groupTemp as $value) {
                     if ($value->id == $id) {
                         $groupContactList = $value->contact;
-                        foreach ($groupContactList as $key => $valuenew) {
+                        $contacts = Contact::where('contact_group', 'LIKE', '%' . $value->group_recordid . '%')->get();
+                        foreach ($contacts as $key => $valuenew) {
                             $groupContact[] = $valuenew;
                             $recipient[] = $valuenew->id;
                         }
@@ -215,7 +216,7 @@ class CampaignController extends Controller
         // }
         $campaignConfirm = Campaign::where('id', $id)->first();
         $grouId = explode(',', $campaignConfirm->group_id);
-        return view('backEnd.campaign.edit', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'imagePath', 'groupList', 'campaignConfirm', 'grouId'));
+        return view('backEnd.campaign.edit', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'groupList', 'campaignConfirm', 'grouId'));
     }
 
     /**
@@ -338,6 +339,7 @@ class CampaignController extends Controller
             }
 
             $getRecipient = $recipient != null ? implode(',', $recipient) : '';
+
             Campaign::where('id', $campaignConfirm->id)->update(['recipient' => $getRecipient]);
 
             DB::commit();
@@ -395,13 +397,29 @@ class CampaignController extends Controller
         //Get Latest Campaign Confirm
         $recipient = $campaignConfirm->recipient != '' ? explode(',', $campaignConfirm->recipient) : null;
         $groupContact = [];
+        $blankContact = [];
+        $campaignType = $campaignConfirm->campaign_type;
         if ($recipient != null) {
+            $i = 0;
             foreach ($recipient as $key => $value) {
                 $groupContact[] = Contact::whereId($value)->first();
+                $contact = Contact::whereId($value)->first();
+                $phone = $contact->contact_cell_phones != null ? $contact->cellphone->phone_number : '';
+                $officePhone = $contact->officephone->phone_number;
+
+                $email = $contact->contact_email;
+                if ($campaignType == 1 && $email == '' || $campaignType == 2 && $phone == '' || $campaignType == 3 && $officePhone == '') {
+                    $blankContact[$i]['id'] = $contact->id;
+                    $blankContact[$i]['name'] = $contact->contact_first_name;
+                    $blankContact[$i]['email'] = $contact->contact_email;
+                    $blankContact[$i]['phone'] = $phone;
+                    $blankContact[$i]['office_phone'] = $phone;
+                    $blankContact[$i]['organization'] = $contact->organization->organization_name;
+                    $i++;
+                }
             }
         }
-
-        return view('backEnd.campaign.confirm', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'campaignConfirm', 'groupContact'));
+        return view('backEnd.campaign.confirm', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'campaignConfirm', 'groupContact', 'blankContact', 'campaignType'));
     }
     public function campaign_report($id)
     {
@@ -429,7 +447,7 @@ class CampaignController extends Controller
 
         $GroupDetail = Group::where('group_type', 'Static')->pluck('group_name', 'group_recordid');
 
-        return view('backEnd.campaign.campaign_report', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'campaign_data', 'campaign', 'response', 'delivered', 'file_type', 'user', 'GroupDetail'));
+        return view('backEnd.campaign.campaign_report', compact('home', 'taxonomies', 'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'campaign_data', 'campaign', 'response', 'delivered', 'user', 'GroupDetail'));
     }
     public function deleteRecipient(Request $request)
     {
@@ -509,11 +527,11 @@ class CampaignController extends Controller
     {
         try {
             $campaign = Campaign::whereId($id)->first();
-            if ($campaign) {
+            if ($campaign && $campaign->campaign_file != '') {
                 $file = public_path($campaign->campaign_file);
                 return response()->download($file);
-
             }
+
         } catch (\Throwable $th) {
             //throw $th;
         }

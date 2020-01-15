@@ -39,13 +39,17 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/services', 'ServiceController@services');
     Route::get('/service/{id}', 'ServiceController@service');
 
-    Route::get('/contacts', 'ContactController@contacts');
+    // Route::get('/contacts', 'ContactController@contacts');
+    Route::resource('contacts', 'ContactController');
     Route::post('/get_all_contacts', 'ContactController@get_all_contacts');
     Route::post('/contacts/action_group', 'ContactController@group_operation');
-    Route::get('/contacts/contacts_update_static_group', 'ContactController@contacts_update_static_group');
-    Route::get('/contacts/contacts_update_dynamic_group', 'ContactController@contacts_update_dynamic_group');
-    Route::get('/contacts/create_new_static_group_add_members', 'ContactController@create_new_static_group_add_members');
-    Route::get('/contact/{id}', 'ContactController@contact');
+    // Route::get('/contacts/contacts_update_static_group', 'ContactController@contacts_update_static_group');
+    Route::post('contacts_update_static_group', 'ContactController@contacts_update_static_group')->name('contacts_update_static_group');
+    // Route::get('/contacts/contacts_update_dynamic_group', 'ContactController@contacts_update_dynamic_group');
+    Route::post('/contacts/contacts_update_dynamic_group', 'ContactController@contacts_update_dynamic_group')->name('contacts_update_dynamic_group');
+    // Route::get('/contacts/create_new_static_group_add_members', 'ContactController@create_new_static_group_add_members');
+    Route::post('create_new_static_group_add_members', 'ContactController@create_new_static_group_add_members')->name('create_new_static_group_add_members');
+    // Route::get('/contact/{id}', 'ContactController@contact');
     Route::get('/contact/{id}/tagging', 'ContactController@tagging');
     Route::get('/contact/{id}/edit', 'ContactController@edit');
     Route::get('/contact/{id}/update', 'ContactController@update');
@@ -55,7 +59,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/contact_create', 'ContactController@create');
     Route::get('/add_new_contact', 'ContactController@add_new_contact');
 
-    Route::get('/organizations', 'OrganizationController@organizations');
+    Route::resource('/organizations', 'OrganizationController');
     Route::post('/get_all_organizations', 'OrganizationController@get_all_organizations');
     Route::post('/organizations/action_group', 'OrganizationController@group_operation');
     Route::get('/organization/{id}', 'OrganizationController@organization');
@@ -64,7 +68,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/organization/{id}/update', 'OrganizationController@update');
     Route::post('/organization/{id}/add_comment', 'OrganizationController@add_comment');
     Route::get('/organization_create', 'OrganizationController@create');
-    Route::get('/add_new_organization', 'OrganizationController@add_new_organization');
+    // Route::get('/add_new_organization', 'OrganizationController@add_new_organization');
 
     Route::get('/groups', 'GroupController@groups');
     Route::get('/group/{id}', 'GroupController@group');
@@ -74,13 +78,15 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/group_create', 'GroupController@create');
     Route::get('/add_new_group', 'GroupController@add_new_group');
 
-    Route::get('/facilities', 'LocationController@facilities');
+    // Route::get('/facilities', 'LocationController@facilities');
+    Route::resource('facilities', 'LocationController');
     Route::post('/get_all_facilities', 'LocationController@get_all_facilities');
-    Route::get('/facilities/action_group', 'LocationController@group_operation');
-    Route::get('/facility/{id}', 'LocationController@facility');
+    Route::post('/facilities/action_group', 'LocationController@group_operation')->name('facilityAction');
+    // Route::get('/facility/{id}', 'LocationController@facility');
     Route::get('/facility/{id}/tagging', 'LocationController@tagging');
-    Route::get('/facility/{id}/edit', 'LocationController@edit');
-    Route::get('/facility/{id}/update', 'LocationController@update');
+    // Route::get('/facility/{id}/edit', 'LocationController@edit');
+    Route::resource('facility', 'LocationController');
+    // Route::get('/facility/{id}/update', 'LocationController@update');
     Route::post('/facility/{id}/add_comment', 'LocationController@add_comment');
     Route::get('/facility_create', 'LocationController@create');
     Route::get('/add_new_facility', 'LocationController@add_new_facility');
@@ -126,9 +132,14 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::post('/checkTwillio', 'HomeController@checkTwillio')->name('checkTwillio');
     Route::post('/create_group', 'MessageController@create_group')->name('create_group');
     Route::get('download_attachment/{id}', 'CampaignController@download_attachment');
+    Route::get('createMessage', 'MessageController@createMessage')->name('createMessage');
 
     Route::post('send_message/{id}', 'BulkSmsController@send_message')->name('send_message');
     Route::post('group_message/{id}', 'BulkSmsController@group_message')->name('group_message');
+    Route::post('getGroupTag', 'MessageController@getGroupTag')->name('getGroupTag');
+    Route::post('sendMultipleMessage', 'BulkSmsController@sendMultipleMessage')->name('sendMultipleMessage');
+    Route::post('saveContactInfo', 'MessageController@saveContactInfo')->name('saveContactInfo');
+    Route::post('addContactToGroup/{id}', 'GroupController@addContactToGroup')->name('addContactToGroup');
 });
 
 Route::resource('login_register_edit', 'EditLoginRegisterController');
@@ -232,4 +243,36 @@ Route::group(['middleware' => ['web', 'auth', 'permission']], function () {
 
 });
 Route::resource('religions', 'backend\ReligionsController');
-Route::resource('organizationTypes', 'backend\organizationTypeController');
+Route::resource('organizationTypes', 'backend\OrganizationTypeController');
+Route::resource('ContactTypes', 'backend\ContactTypeController');
+Route::resource('FacilityTypes', 'backend\FacilityTypeController');
+Route::resource('languages', 'backend\LanguageController');
+
+Route::group(
+    ['prefix' => 'ivr'], function () {
+        Route::any(
+            '/welcome', [
+                'as' => 'welcome', 'uses' => 'IvrController@showWelcome',
+            ]
+        );
+        Route::any(
+            '/menu-response', [
+                'as' => 'menu-response', 'uses' => 'IvrController@showMenuResponse',
+            ]
+        );
+        Route::any(
+            '/planet', [
+                'as' => 'planet-connection',
+                'uses' => 'IvrController@showPlanetConnection',
+            ]
+        );
+    }
+);
+// Route::any(
+//     '/voice', [
+//         'as' => 'voice',
+//         'uses' => 'BulkSmsController@voice',
+//     ]
+// );
+Route::match(['get', 'post'], '/voice', 'BulkSmsController@voice')->name('voice');
+Route::match(['get', 'post'], '/callResponse', 'BulkSmsController@callResponse')->name('callResponse');

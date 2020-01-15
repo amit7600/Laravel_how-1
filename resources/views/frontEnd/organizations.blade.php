@@ -7,83 +7,98 @@ Organizations
 
 
 <style type="text/css">
-.table a{
-    text-decoration:none !important;
-    color: rgba(40,53,147,.9);
-    white-space: normal;
-}
-.footable.breakpoint > tbody > tr > td > span.footable-toggle{
-    position: absolute;
-    right: 25px;
-    font-size: 25px;
-    color: #000000;
-}
-.ui-menu .ui-menu-item .ui-state-active {
-    padding-left: 0 !important;
-}
-ul#ui-id-1 {
-    width: 260px !important;
-}
-#map{
-    position: relative !important;
-    z-index: 0 !important;
-}
-@media (max-width: 768px) {
-    .property{
-        padding-left: 30px !important;
+    .table a {
+        text-decoration: none !important;
+        color: rgba(40, 53, 147, .9);
+        white-space: normal;
     }
-    #map{
-        display: block !important;
-        width: 100% !important;
+
+    .footable.breakpoint>tbody>tr>td>span.footable-toggle {
+        position: absolute;
+        right: 25px;
+        font-size: 25px;
+        color: #000000;
     }
-}
-.morecontent span {
-  display: none;
 
-}
-.morelink{
-  color: #428bca;
-}
-button[data-id="religion"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="faith_tradition"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="denomination"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="judicatory_body"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="type"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="tag"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-button[data-id="borough"] {
-    height: 100%;
-    border: 1px solid #ddd;
-}
-.sel-label-org {
-    width: 15%;
-}
-#clear-filter-org-btn {
-    width: 100%;
-}
-#tbl-organization_wrapper {
-    overflow-x: scroll;
-}
+    .ui-menu .ui-menu-item .ui-state-active {
+        padding-left: 0 !important;
+    }
 
+    ul#ui-id-1 {
+        width: 260px !important;
+    }
 
+    #map {
+        position: relative !important;
+        z-index: 0 !important;
+    }
 
+    @media (max-width: 768px) {
+        .property {
+            padding-left: 30px !important;
+        }
+
+        #map {
+            display: block !important;
+            width: 100% !important;
+        }
+    }
+
+    .morecontent span {
+        display: none;
+
+    }
+
+    .morelink {
+        color: #428bca;
+    }
+
+    button[data-id="religion"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="faith_tradition"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="denomination"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="judicatory_body"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="type"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="tag"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    button[data-id="borough"] {
+        height: 100%;
+        border: 1px solid #ddd;
+    }
+
+    .sel-label-org {
+        width: 15%;
+    }
+
+    #clear-filter-org-btn {
+        width: 100%;
+    }
+
+    #tbl-organization_wrapper {
+        overflow-x: scroll;
+    }
 </style>
 
 @section('content')
@@ -91,102 +106,127 @@ button[data-id="borough"] {
     <!-- Page Content Holder -->
     <div id="organizations-content" class="container">
         <form action="/organizations/action_group" id="organizations_form" method="POST">
-        {{ csrf_field() }}
+            {{ csrf_field() }}
             <div class="row">
-                <div class="col-md-6 p-20">                        
+                <div class="col-md-6 p-20">
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Religion: </label>
                         <div class="col-sm-9 col-sm-6 col-xs-12" id="religion-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="religion" name="religion">
-                            @foreach($religion_list as $key => $religion)
+
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="religion"
+                                name="religion">
+                                @foreach($religion_list as $key => $religion)
                                 <option value="{{$religion}}">{{$religion}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+
+                            {!! Form::select('religion',$religion_list,null,['class' =>'form-control
+                            selectpicker','data-live-search' => 'true','id' =>'religion','multiple' => 'multiple']) !!}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Faith Tradition: </label>
                         <div class="col-sm-9 col-sm-6 col-xs-12" id="faith_tradition-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="faith_tradition" name="faith_tradition">
-                            @foreach($faith_tradition_list as $key => $faith_tradition)
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true"
+                                id="faith_tradition" name="faith_tradition">
+                                @foreach($faith_tradition_list as $key => $faith_tradition)
                                 <option value="{{$faith_tradition}}">{{$faith_tradition}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('faith_tradition',$faith_tradition_list,null,['class' =>'form-control
+                            selectpicker','data-live-search' => 'true','id' =>'faith_tradition','multiple' =>
+                            'multiple']) !!}
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Denomination: </label>
                         <div class="col-sm-9 col-sm-6 col-xs-12" id="denomination-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="denomination" name="denomination">
-                            @foreach($denomination_list as $key => $denomination)
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="denomination"
+                                name="denomination">
+                                @foreach($denomination_list as $key => $denomination)
                                 <option value="{{$denomination}}">{{$denomination}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('denomination',$denomination_list,null,['class' =>'form-control
+                            selectpicker','data-live-search' => 'true','id' =>'denomination','multiple' => 'multiple'])
+                            !!}
                         </div>
-                    </div>  
+                    </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Judicatory Body: </label>
                         <div class="col-sm-9 col-sm-6 col-xs-12" id="judicatory_body-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="judicatory_body" name="judicatory_body">
-                            @foreach($judicatory_body_list as $key => $judicatory_body)
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true"
+                                id="judicatory_body" name="judicatory_body">
+                                @foreach($judicatory_body_list as $key => $judicatory_body)
                                 <option value="{{$judicatory_body}}">{{$judicatory_body}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('judicatory_body',$judicatory_body_list,null,['class' =>'form-control
+                            selectpicker','data-live-search' => 'true','id' =>'judicatory_body','multiple' =>
+                            'multiple']) !!}
                         </div>
-                    </div>  
+                    </div>
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Type: </label>
                         <div class="col-sm-9 col-sm-6 col-xs-12" id="type-div">
-                            <select class="form-control selectpicker"  multiple data-live-search="true" id="type" name="type">
-                            @foreach($type_list as $key => $type)
+                            {{-- <select class="form-control selectpicker" multiple data-live-search="true" id="type"
+                                name="type">
+                                @foreach($type_list as $key => $type)
                                 <option value="{{$type}}">{{$type}}</option>
                             @endforeach
-                            </select>
+                            </select> --}}
+                            {!! Form::select('type',$type_list,null,['class' =>'form-control
+                            selectpicker','data-live-search' => 'true','id' =>'type','multiple' =>
+                            'multiple']) !!}
                         </div>
-                    </div>  
+                    </div>
 
                     <div class="form-group row">
                         <label class="control-label sel-label-org col-sm-3">Tag: </label>
                         <div class="col-sm-9 col-sm-6 col-xs-12" id="tag-div">
                             <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
-                            @foreach($tag_list as $key => $tag)
+                                @foreach($tag_list as $key => $tag)
                                 <option value="{{$tag}}">{{$tag}}</option>
-                            @endforeach
+                                @endforeach
                             </select>
                         </div>
                     </div>
 
-                    <input type="hidden" id="religion_list" name="religion_list"> 
+                    <input type="hidden" id="religion_list" name="religion_list">
                     <input type="hidden" id="faith_tradition_list" name="faith_tradition_list">
                     <input type="hidden" id="denomination_list" name="denomination_list">
                     <input type="hidden" id="judicatory_body_list" name="judicatory_body_list">
                     <input type="hidden" id="type_list" name="type_list">
                     <input type="hidden" id="tag_list" name="tag_list">
-                    
+
                     <div class="form-group row">
                         <div class="col-sm-12 col-xs-12" id="clear-btn-div">
-                            <button class="btn btn-success btn-rounded" id="clear-filter-org-btn"><i class="fa fa-refresh"></i> Clear Filters</button>
+                            <button class="btn btn-success btn-rounded" id="clear-filter-org-btn"><i
+                                    class="fa fa-refresh"></i> Clear Filters</button>
                         </div>
-                    </div>  
-                    
-                    <div id="waiting" style="text-align: center; margin-top: 50px;">
+                    </div>
+
+                    {{-- <div id="waiting" style="text-align: center; margin-top: 50px;">
                         <i class="fa fa-spinner fa-spin fa-3x fa-fw margin-bottom" style="font-size: 100px;"></i>
                         <span class="sr-only">Loading...</span>
-                    </div>    
-                        
+                    </div> --}}
+
                 </div>
 
                 <div class="col-md-6 property">
                     <div class="card">
                         <div class="form-group row mt-5">
                             <div class="col-sm-4">
-                                <button type="button" class="btn btn-secondary" id="enable-polygon-btn" style="width: 100%;">Draw</button>
+                                <button type="button" class="btn btn-secondary" id="enable-polygon-btn"
+                                    style="width: 100%;">Draw</button>
                             </div>
                             <div class="col-sm-4">
-                                <button type="button" class="btn btn-primary form-control" id="filter-polygon-btn">Apply</button>
+                                <button type="button" class="btn btn-primary form-control"
+                                    id="filter-polygon-btn">Apply</button>
                             </div>
                             <div class="col-sm-4">
-                                <button type="button" class="btn btn-success form-control" id="reset-filter-polygon-btn" onClick="document.location.reload(true)">Reset</button>
+                                <button type="button" class="btn btn-success form-control" id="reset-filter-polygon-btn"
+                                    onClick="document.location.reload(true)">Reset</button>
                             </div>
                         </div>
                         <div id="map" style="width:initial;margin-top: 10px;height: 50vh;"></div>
@@ -198,15 +238,17 @@ button[data-id="borough"] {
                 <div class="col-md-12">
                     <div class="form-group row mt-5">
                         <div class="col-sm-3">
-                            <button type="submit" class="btn btn-primary btn-rounded" name="btn_submit" value="download_csv" id="download_csv" style="width: 100%;">Export CSV</button>
+                            <button type="submit" class="btn btn-primary btn-rounded" name="btn_submit"
+                                value="download_csv" id="download_csv" style="width: 100%;">Export CSV</button>
                         </div>
                         <div class="col-sm-3">
-                            <button type="submit" class="btn btn-secondary btn-rounded" name="btn_submit" value="download_pdf" id="download_pdf" style="width: 100%;">Export PDF</button>
+                            <button type="submit" class="btn btn-secondary btn-rounded" name="btn_submit"
+                                value="download_pdf" id="download_pdf" style="width: 100%;">Export PDF</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-sm-12 p-20"> 
+                <div class="col-sm-12 p-20">
                     <table class="table table-striped jambo_table bulk_action nowrap" id="tbl-organization">
                         <thead>
                             <tr>
@@ -217,13 +259,13 @@ button[data-id="borough"] {
                                 <th class="default-active">Religion</th>
                                 <th class="default-active">Faith Tradition</th>
                                 <th class="default-active">Denomination</th>
-                                <th class="default-active">Judicatory Body</th>                            
-                                <th class="default-inactive">Organization Type</th>
+                                <th class="default-active">Judicatory Body</th>
+                                <th class="default-active">Organization Type</th>
                                 <th class="default-inactive">Website</th>
                                 <th class="default-inactive">Facebook</th>
                                 <th class="default-inactive">Internet Access</th>
-                                <th class="default-inactive">Comments</th>  
-                                <th class="default-inactive">Tag</th>                         
+                                <th class="default-inactive">Comments</th>
+                                <th class="default-inactive">Tag</th>
                             </tr>
                         </thead>
                     </table>
@@ -241,10 +283,10 @@ button[data-id="borough"] {
                             <h4 class="modal-title" id="myModalLabel">Delete Organization</h4>
                         </div>
                         <div class="modal-body">
-                            
+
                             <input type="hidden" id="organization_recordid" name="organization_recordid">
                             <h4>Are you sure to delete this organization?</h4>
-                            
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -254,14 +296,15 @@ button[data-id="borough"] {
                 </div>
             </div>
         </div>
-        
-        </div>
+
     </div>
+</div>
 </div>
 
 @endsection
 @section('customScript')
-<script type="text/javascript" src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+<script type="text/javascript"
+    src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/scroller/2.0.1/js/dataTables.scroller.min.js"></script>
 <script src="{{asset('js/markerclusterer.js')}}"></script>
 <script>
@@ -270,9 +313,11 @@ button[data-id="borough"] {
     var marks = [];
 
     $(document).ready(function() {
-        $('#waiting').hide();
+        // $('#waiting').hide();
+        // $('#loading').show();
         sessionStorage.setItem('check_marks', '');
         dataTable = $('#tbl-organization').DataTable({
+            pageLength: 5,
             "scrollX": true,
             "dom": 'lBfrtip',
             "order": [[ 2, 'desc' ]],
@@ -281,8 +326,8 @@ button[data-id="borough"] {
                 columns: ':gt(8)'
             }],
             "serverSide": true,          
-            "searching": true,                   
-            "scrollY": 500,
+            "searching": true,        
+            "scrollY": 500, 
             "scroller": {
                 "loadingIndicator": true
             },
@@ -297,13 +342,15 @@ button[data-id="borough"] {
                     var filter_type = data.columns[8].search.value;
                     var filter_tag = data.columns[13].search.value;
                     var check_marks = sessionStorage.getItem('check_marks');
+
                   
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                         }
                     });
-                    $('#waiting').show();
+                    // $('#waiting').show();
+                    $('#loading').show();
                     $.ajax({
                         type: "POST",
                         url: "/get_all_organizations",
@@ -320,8 +367,8 @@ button[data-id="borough"] {
                             filter_map: filter_map
                         },
                         success: function (response) {
-                            $('#waiting').hide();
-                           
+                            // $('#waiting').hide();
+                            $('#loading').hide();
                             callback({
                                 draw: data.draw,
                                 data: response.data,
@@ -334,12 +381,9 @@ button[data-id="borough"] {
                                 var value = $(this).val();
                                 $('input#organization_recordid').val(value);
                             });
-
                             var locations = response.filtered_locations_list;  
-                            console.log(response);  
                             
                             var maplocation = <?php print_r(json_encode($map)) ?>;  
-
                             if(maplocation.active == 1){
                                 avglat = maplocation.lat;
                                 avglng = maplocation.long;
@@ -351,9 +395,8 @@ button[data-id="borough"] {
                                 avglng = -73.998107;
                                 zoom = 12 * 15;
                             }
-                            latitude = locations[0].location_latitude;
-                            longitude = locations[0].location_longitude;
-
+                            latitude = locations.length > 0 ? locations[0].location_latitude : null;
+                            longitude = locations.length > 0 ? locations[0].location_longitude : null;
                             if(latitude == null){
                                 latitude = avglat;
                                 longitude = avglng;
@@ -362,7 +405,6 @@ button[data-id="borough"] {
                                 zoom: zoom,
                                 center: {lat: parseFloat(avglat), lng: parseFloat(avglng)}
                             });
-
                             if (sessionStorage.getItem('check_marks') == 'true') {
                                 var poly_coordinate_list = sessionStorage.getItem('poly_coordinate_list');
                                 var point_list = JSON.parse(poly_coordinate_list);
@@ -381,7 +423,6 @@ button[data-id="borough"] {
                                     strokeWeight: 3
                                 });
                             }
-
                             $('#enable-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 poly = new google.maps.Polygon({
@@ -393,12 +434,10 @@ button[data-id="borough"] {
                                 poly.setMap(map);
                                 map.addListener('click', addLatLng);
                             });
-
                             $('#filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 google.maps.event.clearListeners(map, 'click');
                             });
-
                             $('#reset-filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 google.maps.event.clearListeners(map, 'click');
@@ -406,19 +445,16 @@ button[data-id="borough"] {
                                 clearMarkers();
                                 marks = [];
                             });
-
                             // Sets the map on all markers in the array.
                             function setMapOnAll(map) {
                                 for (var i = 0; i < marks.length; i++) {
                                     marks[i].setMap(map);
                                 }
                             }
-
                             // Removes the markers from the map, but keeps them in the array.
                             function clearMarkers() {
                                 setMapOnAll(null);
                             }
-
                             var locations_info = locations.map((value) => {
                                 if (value) {
                                     return {
@@ -449,16 +485,13 @@ button[data-id="borough"] {
                                 // });
                                 return marker;
                             });
-
                             var markerCluster = new MarkerClusterer(map, markers,
                                 {imagePath: "{{asset('images/m')}}"});
-
                             function addLatLng(event) {
                                 var path = poly.getPath();
                                 // Because path is an MVCArray, we can simply append a new coordinate
                                 // and it will automatically appear.
                                 path.push(event.latLng);
-
                                 // Add a new marker at the new plotted point on the polyline.
                                 var marker = new google.maps.Marker({
                                     position: event.latLng,
@@ -467,7 +500,6 @@ button[data-id="borough"] {
                                 });
                                 marks.push(marker);
                             }
-
                             google.maps.Polygon.prototype.Contains = function (point) {
                                 
                                 var crossings = 0,
@@ -517,7 +549,6 @@ button[data-id="borough"] {
                                     return (blue >= red);
                                 }
                             };
-
                             $('#filter-polygon-btn').on('click', function(e) {
                                 e.preventDefault();
                                 var filtered_points = [];
@@ -537,9 +568,6 @@ button[data-id="borough"] {
                                 
                                 dataTable.ajax.reload();
                                 sessionStorage.setItem('check_marks', 'true');                               
-                                console.log('=========after filter===========');
-                                console.log(marks); 
-
                                 var poly_coordinate_list = [];
                                 for(var i = 0; i < marks.length; i ++) {
                                     var poly_coordinate = {
@@ -549,9 +577,7 @@ button[data-id="borough"] {
                                     poly_coordinate_list.push(poly_coordinate);
                                 }
                                 sessionStorage.setItem('poly_coordinate_list', JSON.stringify(poly_coordinate_list)); 
-                                console.log(poly_coordinate_list); 
                             });
-
                             $('#download_pdf').on('click', function(e) {
                                 e.preventDefault();                               
                                 var center_lat = map.center.lat();
@@ -567,16 +593,15 @@ button[data-id="borough"] {
                                     var markers_param = "&markers="+ lat + ", " + lng;
                                     img_url += markers_param;
                                 }
-                                console.log(img_url);
                                 $('input#organization_map_image').val(img_url);
                                 $('#organizations_form').submit();
                             });
                         },
                         error: function (data) {
+                            $('#loading').hide();
                             if (data.status == 0 || data.status == 414) {
                                 console.log('Organizations in filtered Ploygon are too much. Enlarge Map and filter in more detailed area.');
                             }
-                            console.log('Error:', data);
                         }
                     });
                 },
@@ -586,7 +611,7 @@ button[data-id="borough"] {
                     "targets": 0,
                     "data": null,
                     "render": function ( data, type, row ) {
-                        return '<a class="btn btn-primary open-td" href="/organization/' + row[2] + '" style="color: white;">Open</a>';
+                        return '<a class="open-td" href="/organization/' + row[2] + '" style="color: #007bff;"><i class="fa fa-fw fa-eye"></i></a>';
                     }
                    
                 },
@@ -594,10 +619,11 @@ button[data-id="borough"] {
                     "targets": 1,
                     "data": null,
                     "render": function ( data, type, row ) {
-                        return '<button class="btn btn-danger delete-td" value="' + row[2] + '" data-toggle="modal" data-target=".bs-delete-modal-lg"><i class="fa fa-fw fa-remove"></i>Delete</button>';
+                        return '<button class="delete-td" value="' + row[2] + '" data-toggle="modal" data-target=".bs-delete-modal-lg" style="color:#fb0c2df7;"><i class="fa fa-fw fa-trash"></i></button>';
                     }
                 } 
             ],
+
             'select': {
                 'style': 'multi'
             },
@@ -613,6 +639,7 @@ button[data-id="borough"] {
         $("#location").selectpicker("");  
         $("#tag").selectpicker("");
     })
+    
     $('select#religion').on('change', function() {
         
         var selectedList = $(this).val();        
@@ -620,7 +647,7 @@ button[data-id="borough"] {
         search = selectedList.join('|')
         dataTable
             .column(4)
-            .search(search ? search : '', true, false).draw();
+            .search(search ? search : '' ,true,false).draw();
             // .search(search ? '^' + search + '$' : '', true, false).draw();
     });
     $('select#faith_tradition').on('change', function() {
@@ -631,7 +658,7 @@ button[data-id="borough"] {
 
         dataTable
             .column(5)
-            .search(search ? search : '', true, false).draw();
+            .search(search ? search : '').draw();
     });
     $('select#denomination').on('change', function() {
         
@@ -641,7 +668,7 @@ button[data-id="borough"] {
  
         dataTable
             .column(6)
-            .search(search ? search : '', true, false).draw();
+            .search(search ? search : '').draw();
     });
     $('select#judicatory_body').on('change', function() {
         
@@ -651,17 +678,16 @@ button[data-id="borough"] {
 
         dataTable
             .column(7)
-            .search(search ? search : '', true, false).draw();
+            .search(search ? search : '',true,false).draw();
     });
     $('select#type').on('change', function() {
         
         var selectedList = $(this).val();
         $('input#type_list').val(selectedList);
         search = selectedList.join('|')
- 
         dataTable
             .column(8)
-            .search(search ? search : '', true, false).draw();
+            .search(search ? search : '',true,false).draw();
     });
     $('select#tag').on('change', function() {
         
@@ -670,7 +696,7 @@ button[data-id="borough"] {
         search = selectedList
  
         dataTable
-            .column(13)
+            .column(11)
             .search(search ? search : '', true, false).draw();
     });
 
@@ -679,7 +705,7 @@ button[data-id="borough"] {
         window.location.reload(true);
     });
 
-    $('button.delete-td').on('click', function() {
+    $('a.delete-td').on('click', function() {
         var value = $(this).val();
         $('input#organization_recordid').val(value);
     });
@@ -687,9 +713,9 @@ button[data-id="borough"] {
     $(document).ready(function(){  
         setTimeout(function(){
             var locations = <?php print_r(json_encode($locations)) ?>; 
-            console.log(locations);       
+                
             var maplocation = <?php print_r(json_encode($map)) ?>;  
-
+            
             if(maplocation.active == 1){               
                 avglat = maplocation.lat;
                 avglng = maplocation.long;
@@ -702,8 +728,8 @@ button[data-id="borough"] {
                 zoom = 12 * 15; 
             }
 
-            latitude = locations[0].location_latitude;
-            longitude = locations[0].location_longitude;
+            latitude = locations.length > 0 ? locations[0].location_latitude : null;
+            longitude = locations.length > 0 ? locations[0].location_longitude : null;
 
             if(latitude == null){
                 latitude = avglat;
@@ -768,7 +794,6 @@ button[data-id="borough"] {
     });
 
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap"
-  async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{$map->api_key}}&libraries=places&callback=initMap" async
+    defer></script>
 @endsection
-

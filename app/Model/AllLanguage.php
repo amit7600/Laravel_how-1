@@ -5,11 +5,9 @@ namespace App\Model;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Religion extends Model
+class AllLanguage extends Model
 {
     use SoftDeletes;
-    protected $fillable = [
-        'name', 'notes', 'type', 'parent', 'organizations', 'icon',
-    ];
-    //
+
+    protected $fillable = ['language_name', 'notes', 'flag', 'created_by', 'updated_by', 'deleted_by'];
 }

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Campaign;
+use App\CampaignReport;
 use App\Contact;
 use App\Group;
 use App\Location;
 use App\Map;
+use DB;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller
@@ -54,19 +56,20 @@ class GroupController extends Controller
         if ($group_type == 'Static') {
             $contacts = Contact::orderBy('contact_recordid')
                 ->where('contact_group', 'LIKE', '%' . $group->group_recordid . '%')
-                ->join('organizations', 'organizations.organization_recordid', '=', 'contacts.contact_organizations')
-                ->join('locations', 'locations.location_recordid', '=', 'organizations.organization_locations')
-                ->join('address', 'address.address_recordid', '=', 'locations.location_address')
+                // ->join('organizations', 'organizations.organization_recordid', '=', 'contacts.contact_organizations')
+                // ->join('locations', 'locations.location_recordid', '=', 'organizations.organization_locations')
+                // ->join('address', 'address.address_recordid', '=', 'locations.location_address')
                 ->get();
 
             $group_members_list = Contact::orderBy('contact_recordid')->where('contacts.contact_group', '=', $id)->select('contact_recordid')->get();
-
             $locations = [];
             foreach ($group_members_list as $key => $value) {
                 $group_contact_recordid = $value->contact_recordid;
-                $location_info = Location::with('services', 'address', 'phones')->where('location_contact', '=', $group_contact_recordid)->get();
+                // $location_info = Location::with('services', 'address', 'phones')->where('location_contact' , '=', $group_contact_recordid)->get();
+                $location_info = Location::with('services', 'address', 'phones')->where('location_contact' , 'LIKE', '%' . $group_contact_recordid . '%')->get();
                 array_push($locations, $location_info);
             }
+
         } elseif ($group_type == 'Dynamic') {
 
             $group_filters = $group->group_filters;
@@ -149,7 +152,6 @@ class GroupController extends Controller
                 $location_info = Location::with('services', 'address', 'phones')->where('location_contact', '=', $group_contact_recordid)->get();
                 array_push($locations, $location_info);
             }
-
         }
 
         $map = Map::find(1);
@@ -159,9 +161,18 @@ class GroupController extends Controller
 
         // this section for get campaign
 
-        $campaigns = Campaign::where('group_id', 'LIKE', '%' . $group->id . '%')->get();
+        $AllCampaign = Campaign::where('group_id', 'LIKE', '%' . $group->id . '%')->get();
+        $campaigns = [];
+        foreach ($AllCampaign as $key => $value) {
+            $CampaignReport = CampaignReport::where('campaign_id', $value->id)->get();
+            if (count($CampaignReport) > 0) {
+                $campaigns[] = $value;
+            }
+        }
 
-        return view('frontEnd.group', compact('group', 'map', 'locations', 'contacts', 'group_date_created', 'campaigns'));
+        $allContacts = Contact::orderBy('id', 'desc')->pluck('contact_first_name', 'id');
+        
+        return view('frontEnd.group', compact('group', 'map', 'locations', 'contacts', 'group_date_created', 'campaigns', 'allContacts'));
 
     }
 
@@ -272,23 +283,34 @@ class GroupController extends Controller
 
     public function group_remove_members(Request $request)
     {
-        $group_recordid = $request->input('group_recordid');
-        $checked_terms = $request->input('checked_terms');
-        $checked_terms_list = explode(",", $checked_terms);
-        foreach ($checked_terms_list as $key => $value) {
-            $checked_contact = Contact::where('contact_recordid', '=', $value)->first();
-            $checked_contact->contact_group = str_replace(', ' . $group_recordid, "", $checked_contact->contact_group);
-            $checked_contact->contact_group = str_replace($group_recordid . ', ', "", $checked_contact->contact_group);
-            $checked_contact->contact_group = str_replace($group_recordid, "", $checked_contact->contact_group);
-            $checked_contact->save();
+        try {
+            $group_recordid = $request->input('group_recordid');
+            $checked_terms = $request->input('checked_terms');
+            if ($checked_terms == '') {
+                return redirect()->back()->with('error', 'Please select any contact from list');
+
+            }
+            $checked_terms_list = explode(",", $checked_terms);
+            foreach ($checked_terms_list as $key => $value) {
+                $checked_contact = Contact::where('contact_recordid', '=', $value)->first();
+                $checked_contact->contact_group = str_replace(', ' . $group_recordid, "", $checked_contact->contact_group);
+                $checked_contact->contact_group = str_replace($group_recordid . ', ', "", $checked_contact->contact_group);
+                $checked_contact->contact_group = str_replace($group_recordid, "", $checked_contact->contact_group);
+                $checked_contact->save();
+            }
+
+            $group = Group::where('group_recordid', '=', $group_recordid)->first();
+            $group_members_count = Contact::where('contact_group', 'LIKE', '%' . $group_recordid . '%')->count();
+            $group->group_members = $group_members_count;
+            $group->save();
+
+            return redirect()->back()->with('success', 'Contact remove successfully!');
+
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', $th->getMessage());
+
         }
 
-        $group = Group::where('group_recordid', '=', $group_recordid)->first();
-        $group_members_count = Contact::where('contact_group', 'LIKE', '%' . $group_recordid . '%')->count();
-        $group->group_members = $group_members_count;
-        $group->save();
-
-        return redirect('group/' . $group_recordid);
     }
 
     public function delete_group(Request $request)
@@ -299,5 +321,47 @@ class GroupController extends Controller
         $group->delete();
 
         return redirect('groups');
+    }
+    public function addContactToGroup(Request $request, $id)
+    {
+        $this->validate($request, [
+            'contacts' => 'required',
+        ]);
+        try {
+            DB::beginTransaction();
+            $contactId = $request->get('contacts');
+            foreach ($contactId as $key => $value) {
+                $contact = Contact::whereId($value)->first();
+                $contactGroup = $contact->contact_group  ;
+                $groups = [];
+                if($contactGroup == null){
+                    array_push($groups, $id);
+                }else{
+                    $groupsId = explode(',', $contactGroup);
+                    $exist = in_array($id, $groupsId);
+                    if ($exist == false) {
+                        array_push($groups, $id);
+                    }
+                }
+                $newGroup = count($groups) > 0 ? implode(',', $groups) : $contactGroup;
+
+                Contact::whereId($value)->update([
+                    'contact_group' => $newGroup,
+                ]);
+                DB::commit();
+
+                $group = Group::where('group_recordid', $id)->first();
+                $group_members = $group->group_members;
+                Group::where('group_recordid', $id)->update([
+                    'group_members' => ($group_members + 1),
+                ]);
+                DB::commit();
+            }
+            return redirect()->back()->with('success', 'Contact added successfully!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $th->getMessage());
+
+        }
     }
 }

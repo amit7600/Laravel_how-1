@@ -90,10 +90,10 @@ button[data-id="tag"] {
                     @foreach($groups as $key => $group)
                         <tr>
                             <td>
-                                <a class="btn btn-primary open-td" href="/group/{{$group->group_recordid}}" style="color: white;">Open</a>
+                                <a class="open-td" href="/group/{{$group->group_recordid}}" style="color: #007bff;"><i class="fa fa-fw fa-eye"></i></a>
                             </td>
                             <td>
-                                <button class="btn btn-danger delete-td" value="{{$group->group_recordid}}" data-toggle="modal" data-target=".bs-delete-modal-lg"><i class="fa fa-fw fa-remove"></i>Delete</button>
+                                <button class="delete-td" value="{{$group->group_recordid}}" data-toggle="modal" data-target=".bs-delete-modal-lg" style="color:#fb0c2df7;"><i class="fa fa-fw fa-trash"></i></button>
                             </td>
                             <td>{{$group->group_recordid}}</td>
                             <td>{{$group->group_name}}</td>
@@ -144,15 +144,15 @@ button[data-id="tag"] {
     var dataTable;
     $(document).ready(function() {
         dataTable = $('#tbl-group').DataTable({
-            "scrollX": true,
-            dom: 'lBfrtip',
-            buttons: [{
-                extend: 'colvis',
-                columns: [8]
-            }],
-            columnDefs: [
-                { targets: 'default-inactive', visible: false},
-            ]
+            // "scrollX": true,
+            // dom: 'lBfrtip',
+            // buttons: [{
+            //     extend: 'colvis',
+            //     columns: [8]
+            // }],
+            // columnDefs: [
+            //     { targets: 'default-inactive', visible: false},
+            // ]
         });
     });
    

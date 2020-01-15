@@ -7,14 +7,17 @@ use Kyslik\ColumnSortable\Sortable;
 
 class Address extends Model
 {
-	use Sortable;
+    use Sortable;
 
     protected $table = 'address';
-    
+
     protected $primaryKey = 'address_recordid';
 
-	public $timestamps = false;
+    public $timestamps = false;
 
+    protected $fillable = [
+        'address_recordid', 'address', 'address_1', 'address_city', 'address_state', 'address_zip_code', 'address_type',
+    ];
 
     public function locations()
     {

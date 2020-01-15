@@ -85,6 +85,21 @@ Contact
     <strong> {{ session()->get('success') }} </strong>
 </div>
 @endif
+@if (session()->has('success'))
+<div class="alert alert-success alert-dismissable custom-success-box" style="margin: 15px;">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <strong> {{ session()->get('success') }} </strong>
+</div>
+@endif
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 <div class="wrapper">
     <!-- Page Content Holder -->
     <div id="content" class="container">
@@ -112,11 +127,15 @@ Contact
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Organization:</b></span>
-                            <a href="/organization/{{$organization_id}}">{{$contact_organization_name}}</a>
+                            @if ($contact->organization)
+                            <a
+                                href="/organization/{{$contact->organization->organization_recordid}}">{{ $contact->organization->organization_name }}</a>
+
+                            @endif
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Type:</b></span>
-                            {{$contact->contact_type}}
+                            {{ $contact->type ? $contact->type->contact_type : '' }}
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Pronouns:</b></span>
@@ -124,15 +143,15 @@ Contact
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Mailing Address:</b></span>
-                            {{$mailing_address}}
+                            {{$contact->address ? $contact->address->address : ''}}
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Office Phone:</b></span>
-                            {{$office_phone_number}}
+                            {{ $contact->officephone ? $contact->officephone->phone_number : '' }}
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Languages Spoken:</b></span>
-                            {{$contact->contact_languages_spoken}}
+                            {{$contact_languages_spoken}}
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Other Languages:</b></span>
@@ -140,15 +159,15 @@ Contact
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Cell Phone:</b></span>
-                            {{$cell_phone_number}}
+                            {{ $contact->cellphone ? $contact->cellphone->phone_number : '' }}
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Emergency Phone:</b></span>
-                            {{$emergency_phone_number}}
+                            {{ $contact->emergencyphone ? $contact->emergencyphone->phone_number : '' }}
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Office Fax:</b></span>
-                            {{$office_fax_phone_number}}
+                            {{ $contact->faxphone ? $contact->faxphone->phone_number : '' }}
                         </h4>
                         <h4>
                             <span class="badge bg-red pl-0 organize_font"><b>Personal Email:</b></span>
@@ -401,7 +420,7 @@ Contact
         var locations = <?php print_r(json_encode($locations)) ?>;
         var contact = <?php print_r(json_encode($contact->contact_first_name)) ?>;
         var maplocation = <?php print_r(json_encode($map)) ?>;
-        console.log(locations);
+        
         var latitude = null;
         var longitude = null;
         if(maplocation.active == 1){
