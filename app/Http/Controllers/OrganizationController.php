@@ -56,7 +56,6 @@ class OrganizationController extends Controller
             'api_key' => env('AIRTABLE_API_KEY'),
             'base' => env('AIRTABLE_BASE_URL'),
         ));
-
         $request = $airtable->getContent('organizations');
 
         do {
@@ -228,6 +227,7 @@ class OrganizationController extends Controller
             $tags = explode(", ", trim($value->organization_tag));
             $tag_list = array_merge($tag_list, $tags);
         }
+        $tag_list = array_filter($tag_list);
         $tag_list = array_unique($tag_list);
 
         // $address_city_list = [];
@@ -243,7 +243,7 @@ class OrganizationController extends Controller
         //     $type_list = array_merge($type_list, $types);
         // }
         // $type_list = array_unique($type_list);
-        $type_list = OrganizationType::pluck('organization_type', 'organization_type');
+        $type_list = OrganizationType::pluck('organization_type', 'id');
 
 // $religion_list = [];
         // foreach ($organization_religions as $key => $value) {
@@ -324,7 +324,6 @@ class OrganizationController extends Controller
         $filter_type = $request->filter_type;
         $filter_tag = $request->filter_tag;
         $filter_map = $request->filter_map;
-
         $organizations = Organization::orderBy('organization_recordid', 'DESC');
         if ($search_term) {
             $organizations = $organizations
@@ -412,7 +411,7 @@ class OrganizationController extends Controller
             $organizations = $organizations->whereIn('organization_locations', $filtered_location_recordid_list);
         }
 
-        if ($filter_religion_list || $filter_faith_tradition_list || $filter_denomination_list || $filter_judicatory_body_list || $filter_type_list || $filter_type_list || $filtered_location_recordid_list) {
+        if ($filter_religion_list || $filter_faith_tradition_list || $filter_denomination_list || $filter_judicatory_body_list || $filter_type_list || $filter_tag || $filtered_location_recordid_list) {
 
             $filtered_locations_list = new Collection();
             $filtered_all_organizations = $organizations->get();
@@ -453,7 +452,6 @@ class OrganizationController extends Controller
 
     public function group_operation(Request $request)
     {
-
         switch ($request->input('btn_submit')) {
             case 'download_csv':
 
@@ -505,8 +503,14 @@ class OrganizationController extends Controller
                     $organizations = $organizations->whereIn('organization_type', $filter_type_list);
                 }
 
-                $organizations = $organizations->get();
-
+                $organizations = $organizations->whereId(1)->get();
+                $organizationsData = [];
+                foreach ($organizations as $key => $value) {
+                    $organizations[$key]['organization_faith_tradition'] = $value->faith_tradition ? $value->faith_tradition->name : '';
+                    $organizations[$key]['organization_denomination'] = $value->denomination ? $value->denomination->name : '';
+                    $organizations[$key]['organization_judicatory_body'] = $value->judicatory_body ? $value->judicatory_body->name : '';
+                    $organizations[$key]['organization_type'] = $value->organigationType ? $value->organigationType->organization_type : '';
+                }
                 $csvExporter = new \Laracsv\Export();
 
                 $csv = CSV::find(1);
@@ -831,10 +835,11 @@ class OrganizationController extends Controller
                 // $new_recordid = Address::orderBy('id', 'desc')->first();
                 // $address_recordid = $new_recordid != null ? $new_recordid->id + 1 : 1;
 
-                $new_recordid = strval(rand(5339708216194320, 9999999999999990));
-                if (in_array($new_recordid, $address_recordid_list)) {
-                    $new_recordid = strval(rand(5339708216194320, 9999999999999990));
-                }
+                // $new_recordid = strval(rand(5339708216194320, 9999999999999990));
+                // if (in_array($new_recordid, $address_recordid_list)) {
+                //     $new_recordid = strval(rand(5339708216194320, 9999999999999990));
+                // }
+                $new_recordid = Address::max("address_recordid") + 1;
 
                 $location_address_info = $new_recordid;
                 Address::create([
@@ -859,10 +864,13 @@ class OrganizationController extends Controller
                 // $allLocation = Location::orderBy('id', 'desc')->first();
                 // $location_recordid = $allLocation != null ? $allLocation->id + 1 : 1;
 
-                $new_recordid = strval(rand(533970821619432, 999999999999999));
-                if (in_array($new_recordid, $location_recordid_list)) {
-                    $new_recordid = strval(rand(533970821619432, 999999999999999));
-                }
+                // $new_recordid = strval(rand(533970821619432, 999999999999999));
+                // if (in_array($new_recordid, $location_recordid_list)) {
+                //     $new_recordid = strval(rand(533970821619432, 999999999999999));
+                // }
+
+                $new_recordid = Location::max("location_recordid") + 1;
+
 
                 Location::create([
                     'location_recordid' => $new_recordid,
@@ -1119,7 +1127,7 @@ class OrganizationController extends Controller
                 DB::commit();
             }
 
-            Organization::whereId($id)->update([
+            Organization::where('organization_recordid',$id)->update([
                 'organization_name' => $request->organization_organization_name,
                 'organization_recordid' => $organization_recordid,
                 'organization_id' => $request->organization_organization_id,
