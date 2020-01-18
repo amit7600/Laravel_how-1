@@ -376,76 +376,81 @@ class BulkSmsController extends Controller
             $body = $request->get('message_body');
             $subject = $request->get('subject');
             $contacts = Contact::where('contact_group', 'LIKE', '%' . $id . '%')->get();
-            foreach ($contacts as $key => $contact) {
-                $phone = $contact->cellphone->phone_number;
-                $contact_email = $contact->contact_email;
+            
+            if (count($contacts) > 0) {
+                foreach ($contacts as $key => $contact) {
+                    $phone = $contact->cellphone->phone_number;
+                    $contact_email = $contact->contact_email;
 
-                if ($type == 'sms') {
-                    $response = $this->client->messages->create(
-                        $phone,
-                        [
-                            'from' => env('TWILIO_FROM'),
+                    if ($type == 'sms') {
+                        $response = $this->client->messages->create(
+                            $phone,
+                            [
+                                'from' => env('TWILIO_FROM'),
+                                'body' => $body,
+                            ]
+                        );
+                        $response = \Curl::to('https://api.twilio.com/' . $response->uri)
+                            ->withOption('USERPWD', $this->sid . ':' . $this->token)
+                            ->get();
+
+                        $data = json_decode($response);
+
+                        DB::beginTransaction();
+                        CampaignReport::create([
+                            'user_id' => Sentinel::check()->id,
+                            'type' => '2',
+                            'status' => $data->status,
+                            'contact_id' => $contact->id,
+                            'date_sent' => Carbon::now(),
+                            'direction' => $data->direction,
+                            'toNumber' => $data->to,
+                            'toContact' => $contact->contact_first_name,
+                            'fromNumber' => $data->from,
+                            'fromContact' => 'HowCalm',
                             'body' => $body,
-                        ]
-                    );
-                    $response = \Curl::to('https://api.twilio.com/' . $response->uri)
-                        ->withOption('USERPWD', $this->sid . ':' . $this->token)
-                        ->get();
+                        ]);
+                        DB::commit();
 
-                    $data = json_decode($response);
+                    } elseif ($type == 'email') {
+                        $from = env('MAIL_FROM_ADDRESS');
+                        $name = env('MAIL_FROM_NAME');
+                        $email = new \SendGrid\Mail\Mail();
+                        $email->setFrom($from, $name);
+                        $email->setSubject($subject);
+                        $email->addTo($contact_email, $contact->contact_first_name);
+                        $email->addContent("text/plain", $body);
+                        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
 
-                    DB::beginTransaction();
-                    CampaignReport::create([
-                        'user_id' => Sentinel::check()->id,
-                        'type' => '2',
-                        'status' => $data->status,
-                        'contact_id' => $contact->id,
-                        'date_sent' => Carbon::now(),
-                        'direction' => $data->direction,
-                        'toNumber' => $data->to,
-                        'toContact' => $contact->contact_first_name,
-                        'fromNumber' => $data->from,
-                        'fromContact' => 'HowCalm',
-                        'body' => $body,
-                    ]);
-                    DB::commit();
+                        $response = $sendgrid->send($email);
 
-                } elseif ($type == 'email') {
-                    $from = env('MAIL_FROM_ADDRESS');
-                    $name = env('MAIL_FROM_NAME');
-                    $email = new \SendGrid\Mail\Mail();
-                    $email->setFrom($from, $name);
-                    $email->setSubject($subject);
-                    $email->addTo($contact_email, $contact->contact_first_name);
-                    $email->addContent("text/plain", $body);
-                    $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+                        $error = '';
+                        if ($response->statusCode() == 401) {
+                            $error = json_decode($response->body());
+                        }
+                        DB::beginTransaction();
+                        CampaignReport::create([
+                            'user_id' => Sentinel::check()->id,
+                            'type' => '1',
+                            'status' => $response->statusCode() == 202 ? 'Delivered' : 'Undelivered',
+                            'date_sent' => Carbon::now(),
+                            'error_message' => $error != '' ? $error->errors[0]->message : '',
+                            'toContact' => $contact->contact_first_name,
+                            'fromNumber' => env('MAIL_FROM_ADDRESS'),
+                            'toNumber' => $contact_email,
+                            'direction' => 'outbound-api',
+                            'fromContact' => 'HowCalm',
+                            'contact_id' => $contact->id,
+                            'subject' => $subject,
+                            'body' => $body,
+                        ]);
+                        DB::commit();
 
-                    $response = $sendgrid->send($email);
-
-                    $error = '';
-                    if ($response->statusCode() == 401) {
-                        $error = json_decode($response->body());
                     }
-                    DB::beginTransaction();
-                    CampaignReport::create([
-                        'user_id' => Sentinel::check()->id,
-                        'type' => '1',
-                        'status' => $response->statusCode() == 202 ? 'Delivered' : 'Undelivered',
-                        'date_sent' => Carbon::now(),
-                        'error_message' => $error != '' ? $error->errors[0]->message : '',
-                        'toContact' => $contact->contact_first_name,
-                        'fromNumber' => env('MAIL_FROM_ADDRESS'),
-                        'toNumber' => $contact_email,
-                        'direction' => 'outbound-api',
-                        'fromContact' => 'HowCalm',
-                        'contact_id' => $contact->id,
-                        'subject' => $subject,
-                        'body' => $body,
-                    ]);
-                    DB::commit();
 
                 }
-
+            } else {
+                return redirect()->back()->with('error', 'Contact not found!');
             }
             if ($type == 'sms') {
                 return redirect()->back()->with('success', 'SMS sent succesfully!');

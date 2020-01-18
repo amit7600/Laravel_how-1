@@ -1,10 +1,13 @@
 <style>
-table, th, td {
-  border: 1px solid black;
-}
-thead{
-    background: grey;
-}
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
+
+    thead {
+        background: grey;
+    }
 </style>
 <div class="wrapper">
     <div id="content" class="container">
@@ -20,7 +23,7 @@ thead{
                             <th class="default-inactive">Id</th>
                             <th class="default-active">Name</th>
                             <th class="default-active">Religion</th>
-                            <th class="default-inactive">Facility Address</th>                          
+                            <th class="default-inactive">Facility Address</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,17 +31,18 @@ thead{
                         <tr>
                             <td>{{$organization->organization_recordid}}</td>
                             <td>{{$organization->organization_name}}</td>
-                            <td>{{$organization->organization_religion}}</td>
+                            <td>{{$organization->religion ? $organization->religion->name : ''}}</td>
                             @if($organization->organization_locations!='')
-                                @foreach($organization->location as $location)
-                                    <td>
-                                        @if($location->location_address!='')
-                                            @foreach($location->address as $address)
-                                                {{ $address->address_1 }} {{ $address->address_city }} {{ $address->address_state_province }} {{ $address->address_postal_code }}
-                                            @endforeach
-                                        @endif
-                                    </td>
+                            @foreach($organization->location as $location)
+                            <td>
+                                @if($location->location_address!='')
+                                @foreach($location->address as $address)
+                                {{ $address->address_1 }} {{ $address->address_city }}
+                                {{ $address->address_state_province }} {{ $address->address_postal_code }}
                                 @endforeach
+                                @endif
+                            </td>
+                            @endforeach
                             @endif
                         </tr>
                         @endforeach

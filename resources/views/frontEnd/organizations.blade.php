@@ -185,6 +185,7 @@ Organizations
                         <label class="control-label sel-label-org col-sm-3">Tag: </label>
                         <div class="col-sm-9 col-sm-6 col-xs-12" id="tag-div">
                             <select class="form-control selectpicker" data-live-search="true" id="tag" name="tag">
+                                <option value="">Select tag</option>
                                 @foreach($tag_list as $key => $tag)
                                 <option value="{{$tag}}">{{$tag}}</option>
                                 @endforeach
@@ -694,9 +695,8 @@ Organizations
         var selectedList = $(this).val();
         $('input#tag_list').val(selectedList);
         search = selectedList
- 
         dataTable
-            .column(11)
+            .column(13)
             .search(search ? search : '', true, false).draw();
     });
 

@@ -202,9 +202,9 @@ Group Profile
                                                 value="{{ $contact->contact_recordid }}" id="contactCheck">
                                         </td>
                                         <td>
-                                            <a class="open-td"
-                                                href="/contacts/{{$contact->contact_recordid}}" style="color:#007bff;"
-                                                style="color: white;"><i class="fa fa-eye"></i></a>
+                                            <a class="open-td" href="/contacts/{{$contact->contact_recordid}}"
+                                                style="color:#007bff;" style="color: white;"><i
+                                                    class="fa fa-eye"></i></a>
                                         </td>
                                         <td>{{$contact->contact_recordid}}</td>
                                         <td>{{$contact->contact_first_name}}</td>
@@ -217,12 +217,12 @@ Group Profile
                                             <a id="contact_organization_link"
                                                 style="color: #3949ab; text-decoration: underline;"
                                                 href="/organization/{{$contact->organization->organization_recordid}}">{{$contact->organization->organization_name}}</a>
-                                                
+
                                             @endif
                                         </td>
                                         <td>
                                             @if ($contact->organization && $contact->organization->religion)
-                                                
+
                                             {{$contact->organization ? $contact->organization->religion->name : '' }}
                                             @endif
                                         </td>
@@ -389,8 +389,7 @@ Group Profile
         
         var locations = <?php print_r(json_encode($locations)) ?>;        
         var maplocation = <?php print_r(json_encode($map)) ?>; 
-        console.log(locations,'location');       
-
+        
         if(maplocation.active == 1){
             avglat = maplocation.lat;
             avglng = maplocation.long;
