@@ -13,7 +13,7 @@ class Contact extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'contact_recordid', 'contact_cell_phones', 'contact_email', 'flag',
+        'contact_recordid', 'contact_cell_phones', 'contact_email', 'flag','contact_group'
     ];
 
     public function organization()

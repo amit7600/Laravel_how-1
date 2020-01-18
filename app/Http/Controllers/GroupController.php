@@ -25,7 +25,7 @@ class GroupController extends Controller
 
     public function groups()
     {
-        $groups = Group::orderBy('group_recordid')->get();
+        $groups = Group::orderBy('id', 'DESC')->get();
         $group_tags = Group::select("group_tag")->distinct()->get();
         $type_list = ['Static', 'Dynamic', 'Previously Messaged'];
         $map = Map::find(1);
@@ -56,9 +56,9 @@ class GroupController extends Controller
         if ($group_type == 'Static') {
             $contacts = Contact::orderBy('contact_recordid')
                 ->where('contact_group', 'LIKE', '%' . $group->group_recordid . '%')
-                // ->join('organizations', 'organizations.organization_recordid', '=', 'contacts.contact_organizations')
-                // ->join('locations', 'locations.location_recordid', '=', 'organizations.organization_locations')
-                // ->join('address', 'address.address_recordid', '=', 'locations.location_address')
+            // ->join('organizations', 'organizations.organization_recordid', '=', 'contacts.contact_organizations')
+            // ->join('locations', 'locations.location_recordid', '=', 'organizations.organization_locations')
+            // ->join('address', 'address.address_recordid', '=', 'locations.location_address')
                 ->get();
 
             $group_members_list = Contact::orderBy('contact_recordid')->where('contacts.contact_group', '=', $id)->select('contact_recordid')->get();
@@ -66,7 +66,7 @@ class GroupController extends Controller
             foreach ($group_members_list as $key => $value) {
                 $group_contact_recordid = $value->contact_recordid;
                 // $location_info = Location::with('services', 'address', 'phones')->where('location_contact' , '=', $group_contact_recordid)->get();
-                $location_info = Location::with('services', 'address', 'phones')->where('location_contact' , 'LIKE', '%' . $group_contact_recordid . '%')->get();
+                $location_info = Location::with('services', 'address', 'phones')->where('location_contact', 'LIKE', '%' . $group_contact_recordid . '%')->get();
                 array_push($locations, $location_info);
             }
 
@@ -88,8 +88,9 @@ class GroupController extends Controller
             $contact_zipcode_filter = $filters->contact_zipcode_filter;
 
             $contacts = Contact::orderBy('contact_recordid')
-                ->where('contacts.contact_type', '=', $contact_type_filter)
-                ->where('contacts.contact_languages_spoken', '=', $contact_languages_filter)
+                ->where('contact_group', 'LIKE', '%' . $group->group_recordid . '%')
+            // ->where('contacts.contact_type', '=', $contact_type_filter)
+            // ->where('contacts.contact_languages_spoken', '=', $contact_languages_filter)
                 ->join('organizations', 'organizations.organization_recordid', '=', 'contacts.contact_organizations')
                 ->join('locations', 'locations.location_recordid', '=', 'organizations.organization_locations')
                 ->join('address', 'address.address_recordid', '=', 'locations.location_address');
@@ -171,7 +172,7 @@ class GroupController extends Controller
         }
 
         $allContacts = Contact::orderBy('id', 'desc')->pluck('contact_first_name', 'id');
-        
+
         return view('frontEnd.group', compact('group', 'map', 'locations', 'contacts', 'group_date_created', 'campaigns', 'allContacts'));
 
     }
@@ -332,11 +333,11 @@ class GroupController extends Controller
             $contactId = $request->get('contacts');
             foreach ($contactId as $key => $value) {
                 $contact = Contact::whereId($value)->first();
-                $contactGroup = $contact->contact_group  ;
+                $contactGroup = $contact->contact_group;
                 $groups = [];
-                if($contactGroup == null){
+                if ($contactGroup == null) {
                     array_push($groups, $id);
-                }else{
+                } else {
                     $groupsId = explode(',', $contactGroup);
                     $exist = in_array($id, $groupsId);
                     if ($exist == false) {

@@ -340,7 +340,7 @@ Contacts
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div class="col-md-6 property">
                     <div class="card">
@@ -486,8 +486,6 @@ Contacts
                     var filter_phone = data.columns[16].search.value;
                     var check_marks = sessionStorage.getItem('check_marks');
                   
-                    console.log(filter_denomination);
-                    // console.log(data.columns[11],);
                     $.ajaxSetup({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
@@ -519,7 +517,6 @@ Contacts
                         success: function (response) {
                             // $('#waiting').hide();
                             $('#loading').hide();
-                            console.log(response);
                             callback({
                                 draw: data.draw,
                                 data: response.data,
@@ -532,7 +529,6 @@ Contacts
                                 var value = $(this).val();
                                 $('input#contact_recordid').val(value);
                             });
-                            console.log(check_marks);
                             // if (sessionStorage.getItem('check_marks') == 'true') {
                             //     return;
                             // }
@@ -704,8 +700,7 @@ Contacts
                                 e.preventDefault();
                                 var filtered_points = [];
                                 // var point = new google.maps.LatLng(41.781227, -88.141844);
-                                console.log(markers[0].position.lng());
-                                console.log(markers[0].position.lat());
+                                
                                 for (i = 0; i < markers.length; i++) {
                                     var point = new google.maps.LatLng(markers[i].position.lat(), markers[i].position.lng());
                                     if (poly.Contains(point)) {
@@ -717,13 +712,11 @@ Contacts
                                         });
                                     } 
                                 }
-                                console.log(filtered_points);
                                 
                                 filter_map = JSON.stringify(filtered_points);
                                 dataTable.ajax.reload();
                                 sessionStorage.setItem('check_marks', 'true');
-                                console.log('=========after filter===========');
-                                console.log(marks); 
+                                
                                 var poly_coordinate_list = [];
                                 for(var i = 0; i < marks.length; i ++) {
                                     var poly_coordinate = {
@@ -733,7 +726,6 @@ Contacts
                                     poly_coordinate_list.push(poly_coordinate);
                                 }
                                 sessionStorage.setItem('poly_coordinate_list', JSON.stringify(poly_coordinate_list)); 
-                                console.log(poly_coordinate_list); 
                                                                  
                             });
                             $('#download_pdf').on('click', function(e) {
@@ -751,7 +743,6 @@ Contacts
                                     var markers_param = "&markers="+ lat + ", " + lng;
                                     img_url += markers_param;
                                 }
-                                console.log(img_url);
                                 $('input#contact_map_image').val(img_url);
                                 $('#contacts_form').submit();
                             });
@@ -825,6 +816,15 @@ Contacts
         }
     });
     $('#add-to-new-static-group-btn').click(function(e){
+        if (!checked_terms_set) {
+            e.preventDefault();
+            var checked_terms = dataTable.column(0).checkboxes.selected();
+            $('#checked_terms').val(checked_terms.join(","));
+            checked_terms_set = true;
+            $(this).trigger('click');
+        }
+    });
+    $('#save-to-filter-dynamic-group').click(function(e){
         if (!checked_terms_set) {
             e.preventDefault();
             var checked_terms = dataTable.column(0).checkboxes.selected();
@@ -975,7 +975,7 @@ Contacts
     function initMap(){
         var locations = <?php print_r(json_encode($locations)) ?>;        
         var maplocation = <?php print_r(json_encode($map)) ?>;  
-        console.log(maplocation);
+        
 
         if(maplocation.active == 1){
             avglat = maplocation.lat;

@@ -20,6 +20,7 @@ use App\Model\Religion;
 use App\Organization;
 use App\Phone;
 use App\Services\Stringtoint;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use PDF;
@@ -287,7 +288,6 @@ class ContactController extends Controller
 
     public function get_all_contacts(Request $request)
     {
-
         $start = $request->start;
         $length = $request->length;
         $search_term = $request->search_term;
@@ -479,6 +479,7 @@ class ContactController extends Controller
         $total_count = Contact::count();
         $result = [];
         $contact_info = [];
+        $allLanguage = AllLanguage::get();
         foreach ($contacts as $contact) {
             $contact_info[0] = $contact->contact_recordid;
             $contact_info[1] = '';
@@ -491,7 +492,16 @@ class ContactController extends Controller
             $contact_info[8] = $contact->type != null ? $contact->type->contact_type : '';
             $contact_info[9] = $contact->contact_religious_title;
             $contact_info[10] = str_limit($contact->contact_title, 15, '...');
-            $contact_info[11] = $contact->contact_languages_spoken;
+            $languageData = $contact->contact_languages_spoken != null ? explode(',', $contact->contact_languages_spoken) : [];
+            $languageName = [];
+            foreach ($allLanguage as $key => $value) {
+                foreach ($languageData as $key1 => $value1) {
+                    if ($value->id == (int) $value1) {
+                        array_push($languageName, '<span class="badge badge-primary">' . $value->language_name . '</span>');
+                    }
+                }
+            }
+            $contact_info[11] = count($languageName) > 0 ? implode(' ', $languageName) : '';
             $contact_info[12] = $contact->contact_other_languages;
             $contact_info[13] = $contact->contact_pronouns;
 
@@ -528,7 +538,7 @@ class ContactController extends Controller
             $contact_info[26] = $contact->address['address_city'];
             $contact_info[27] = $contact->address['address_zip_code'];
             $contact_info[28] = $contact->organization['organization_recordid'];
-            $contact_info[29] = $contact->organization['organization_name'] != null ? $contact->organization['organization_name'] :'' ;
+            $contact_info[29] = $contact->organization['organization_name'] != null ? $contact->organization['organization_name'] : '';
             $contact_info[30] = $contact->contact_tag;
 
             array_push($result, $contact_info);
@@ -639,6 +649,14 @@ class ContactController extends Controller
                 $groups = Group::where('group_type', '=', 'Dynamic')->distinct()->get();
                 $group_names = Group::where('group_type', '=', 'Dynamic')->select("group_name")->distinct()->get();
 
+                // this section only for display religion name
+                $religions = Religion::select('*');
+
+                $religion_name = $request->input('religion') != null ? $religions->whereId($request->input('religion'))->select('name')->first()->name : '';
+                $faith_tradition_name = $request->input('faith_tradition') != null ? $religions->whereId($request->input('faith_tradition'))->select('name')->first()->name : '';
+                $denomination_name = $request->input('denomination') != null ? $religions->whereId($request->input('denomination'))->select('name')->first()->name : '';
+                $judicatory_body_name = $request->input('judicatory_body') != null ? $religions->whereId($request->input('judicatory_body'))->select('name')->first()->name : '';
+
                 $religion_filter = $request->input('religion');
                 $faith_tradition_filter = $request->input('faith_tradition');
                 $denomination_filter = $request->input('denomination');
@@ -652,6 +670,12 @@ class ContactController extends Controller
                 $contact_zipcode_filter = $request->input('contact_zipcode');
 
                 $filters = (object) [];
+
+                $filters->religion_name = $religion_name;
+                $filters->faith_tradition_name = $faith_tradition_name;
+                $filters->denomination_name = $denomination_name;
+                $filters->judicatory_body_name = $judicatory_body_name;
+
                 $filters->religion_filter = $religion_filter;
                 $filters->faith_tradition_filter = $faith_tradition_filter;
                 $filters->denomination_filter = $denomination_filter;
@@ -799,8 +823,25 @@ class ContactController extends Controller
                 }
                 $filtered_count = $contacts->count();
 
-                $csvExporter = new \Laracsv\Export();
+                $contactData = $contacts->get();
+                $AllContacts = [];
+                $allLanguage = AllLanguage::get();
+                foreach ($contactData as $key => $value) {
+                    $languageId = $value->contact_languages_spoken != '' ? explode(',',$value->contact_languages_spoken) : [];
+                    $tempLanguage = [];
+                    foreach ($languageId as $key1 => $id) {
+                        foreach ($allLanguage as $key2 => $language) {
+                            if($language->id == (int)$id){
+                                array_push($tempLanguage,$language->language_name);
+                            }
+                        }
+                    }
 
+                    $value->contact_languages_spoken = count($tempLanguage) > 0 ? implode(',',$tempLanguage) : '';
+                }
+                
+                $csvExporter = new \Laracsv\Export();
+                
                 $csv = CSV::find(1);
                 $layout = Layout::find(1);
                 $source = $layout->footer_csv;
@@ -809,7 +850,7 @@ class ContactController extends Controller
 
                 $csv = CSV::all();
 
-                return $csvExporter->build($contacts->get(), [
+                return $csvExporter->build($contactData, [
                     'contact_first_name' => 'First Name', 'contact_middle_name' => 'Middle Name',
                     'contact_last_name' => 'Last Name', 'contact_languages_spoken' => 'Languages',
                     'contact_other_languages' => 'Other Languages', 'contact_religious_title' => 'Religious Title',
@@ -938,7 +979,7 @@ class ContactController extends Controller
                     $contacts = $contacts->whereIn('contact_languages_spoken', $filter_contact_languages_list);
                 }
                 $contacts = $contacts->get();
-
+                
                 $layout = Layout::find(1);
                 set_time_limit(0);
                 $pdf = PDF::loadView('frontEnd.contacts_download', compact('contacts', 'layout', 'contact_map_image'));
@@ -1050,14 +1091,36 @@ class ContactController extends Controller
         $group_email = $request->group_email;
         $checked_contact_terms = $request->checked_contact_terms;
 
+        $group_recordids = Group::select("group_recordid")->distinct()->get();
+        $group_recordid_list = array();
+        foreach ($group_recordids as $key => $value) {
+            $group_recordid = $value->group_recordid;
+            array_push($group_recordid_list, $group_recordid);
+        }
+        $group_recordid_list = array_unique($group_recordid_list);
+
+        $new_recordid = Group::max('group_recordid') + 1;
+        if (in_array($new_recordid, $group_recordid_list)) {
+            $new_recordid = Group::max('group_recordid') + 1;
+        }
+        $group->group_recordid = $new_recordid;
+
         $checked_contact_list = [];
         if ($checked_contact_terms != '') {
             $checked_contact_list = explode(", ", $checked_contact_terms);
 
             foreach ($checked_contact_list as $key => $id) {
                 $contact = Contact::find($id);
-                $contact->contact_group = $group->group_recordid;
-                $contact->save();
+                // $contact->contact_group = $group->group_recordid;
+                // $contact->save();
+                $groupsValue = $contact->contact_group;
+                $groupsArray = $groupsValue != null ? explode(',',$groupsValue) : [];
+                array_push($groupsArray, $new_recordid);
+
+                Contact::where('contact_recordid', $id)->update([
+                    'contact_group' => implode(',', $groupsArray),
+                ]);
+                DB::commit();
             }
         }
 
@@ -1114,20 +1177,6 @@ class ContactController extends Controller
             $contacts = $contacts->whereNotNull('contacts.contact_cell_phones');
         }
 
-        $group_recordids = Group::select("group_recordid")->distinct()->get();
-        $group_recordid_list = array();
-        foreach ($group_recordids as $key => $value) {
-            $group_recordid = $value->group_recordid;
-            array_push($group_recordid_list, $group_recordid);
-        }
-        $group_recordid_list = array_unique($group_recordid_list);
-
-        $new_recordid = Group::max('group_recordid') + 1;
-        if (in_array($new_recordid, $group_recordid_list)) {
-            $new_recordid = Group::max('group_recordid') + 1;
-        }
-        $group->group_recordid = $new_recordid;
-
         $group_contact_list = $contacts->get();
 
         $group->group_name = $group_name;
@@ -1135,7 +1184,8 @@ class ContactController extends Controller
         $group->group_type = "Dynamic";
         $group->group_created_at = date("Y-m-d h:i:sa");
         $group->group_filters = $filters_criteria;
-        $group->group_members = count($group_contact_list);
+        // $group->group_members = count($group_contact_list);
+        $group->group_members = count($checked_contact_list);
         $group->group_last_modified = date("Y-m-d h:i:sa");
 
         $group->save();
@@ -1372,7 +1422,7 @@ class ContactController extends Controller
         $contact_group_recordid_list = [];
         foreach ($groupData as $key => $value) {
             if ($value != '') {
-                array_push($contact_group_recordid_list,$value);
+                array_push($contact_group_recordid_list, $value);
             }
         }
         $contact_group_name_list = [];
@@ -1400,7 +1450,7 @@ class ContactController extends Controller
 
 // this section for message table in contact
         $contacts = CampaignReport::where('contact_id', $contact->id)->where('status', 'Delivered')->get();
-        
+
         return view('frontEnd.contact', compact('contact', 'locations', 'comment_list', 'groups', 'group_names', 'contact_group_name_list', 'contact_group_recordid_list',
             'map', 'parent_taxonomy', 'child_taxonomy', 'checked_organizations', 'checked_insurances', 'checked_ages', 'checked_languages', 'checked_settings', 'checked_culturals', 'checked_transportations', 'checked_hours', 'contacts', 'contact_languages_spoken'));
 
